@@ -69,4 +69,27 @@ class TicketController extends Controller
 
     return view('ticketer.tickets.report', compact('tickets'));
 }
+public function showScanForm()
+{
+    return view('ticketer.tickets.scan');
+}
+
+public function processScan(Request $request)
+{
+    $request->validate([
+        'ticket_code' => 'required|string'
+    ]);
+
+    $ticket = Ticket::where('ticket_code', $request->ticket_code)->first();
+
+    if (!$ticket) {
+        return redirect()->back()->with('error', 'Ticket not found.');
+    }
+
+    $ticket->ticket_status = 'confirmed'; // or 'completed' if that's your final status
+    $ticket->save();
+
+    return redirect()->back()->with('success', 'Ticket status updated successfully.');
+}
+
 }

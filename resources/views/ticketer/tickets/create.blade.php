@@ -49,8 +49,16 @@
 
         <div class="mb-4">
             <label for="departure_datetime" class="block">Departure Date and Time</label>
-            <input type="datetime-local" name="departure_datetime" id="departure_datetime" class="w-full p-2 border rounded" required>
+            <input 
+                type="datetime-local" 
+                name="departure_datetime" 
+                id="departure_datetime" 
+                class="w-full p-2 border rounded" 
+                value="{{ now()->format('Y-m-d\TH:i') }}" 
+                required
+                disabled>
         </div>
+        
 
         <div class="mb-4">
             <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded">Create Ticket</button>
