@@ -32,4 +32,5 @@ class Ticket extends Model
     {
         return $this->belongsTo(User::class, 'creator_user_id');
     }
+    
 }

@@ -7,6 +7,7 @@ use App\Models\Destination;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class TicketController extends Controller
 {
@@ -53,4 +54,15 @@ class TicketController extends Controller
         $ticket = Ticket::with('destination')->findOrFail($id);
         return view('ticketer.tickets.receipt', compact('ticket'));
     }
+
+
+    public function report()
+{
+    $tickets = Ticket::with('destination')
+        ->where('creator_user_id', Auth::id())
+        ->latest()
+        ->get();
+
+    return view('ticketer.tickets.report', compact('tickets'));
+}
 }

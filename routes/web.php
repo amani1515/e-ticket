@@ -55,6 +55,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 
 
+Route::get('/tickets/report', [TicketController::class, 'report'])->name('ticketer.tickets.report')->middleware('auth');
 
 Route::get('/ticketer/tickets/report', [TicketController::class, 'report'])->name('ticketer.tickets.report');
 Route::get('/ticketer/tickets/create', [TicketController::class, 'create'])->name('ticketer.tickets.create');
