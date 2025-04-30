@@ -13,6 +13,10 @@ return [
     |
     */
 
+    // bar code generator 
+    'DNS1D' => Milon\Barcode\Facades\DNS1DFacade::class,
+
+
     'name' => env('APP_NAME', 'Laravel'),
 
     /*

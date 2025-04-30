@@ -27,17 +27,22 @@ class DestinationController extends Controller
             'destination_name' => 'required|string|max:255',
             'start_from' => 'required|string|max:255',
             'tariff' => 'required|string|max:255',
+            'tax' => 'required|numeric', // Validate as numeric
+            'service_fee' => 'required|numeric', // Validate as numeric
         ]);
-
+    
         // Save destination
         Destination::create([
             'destination_name' => $request->destination_name,
             'start_from' => $request->start_from,
             'tariff' => $request->tariff,
+            'tax' => $request->tax,  // Save tax as a decimal
+            'service_fee' => $request->service_fee,  // Save service fee as a decimal
         ]);
-
+    
         // Redirect back or to list
         return redirect()->route('admin.destinations.index')->with('success', 'Destination added successfully.');
     }
+    
 }
 

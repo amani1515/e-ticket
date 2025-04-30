@@ -13,5 +13,7 @@ class Destination extends Model
         'destination_name',
         'start_from',
         'tariff',
+        'tax',
+        'service_fee',
     ];
 }

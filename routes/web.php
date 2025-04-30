@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\DestinationController;
+use App\Http\Controllers\TicketerController;
+use App\Http\Controllers\Ticketer\TicketController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -49,3 +51,14 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('destinations', DestinationController::class);
 });
+
+
+
+
+
+Route::get('/ticketer/tickets/report', [TicketController::class, 'report'])->name('ticketer.tickets.report');
+Route::get('/ticketer/tickets/create', [TicketController::class, 'create'])->name('ticketer.tickets.create');
+Route::post('/ticketer/tickets/store', [TicketController::class, 'store'])->name('ticketer.tickets.store');
+Route::get('/ticketer/tickets/receipt/{ticketId}', [TicketController::class, 'showReceipt'])->name('ticketer.tickets.receipt');
+Route::get('/ticketer/tickets/scan', [TicketController::class, 'scan'])->name('ticketer.tickets.scan');
+Route::get('/ticketer/tickets/{id}/receipt', [TicketController::class, 'receipt'])->name('ticketer.tickets.receipt');
