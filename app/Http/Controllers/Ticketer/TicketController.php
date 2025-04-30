@@ -8,16 +8,21 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use App\Models\Bus;
 
 class TicketController extends Controller
 {
     // Show the create ticket form
     public function create()
 {
-    $user = auth()->user(); // Get logged-in ticketer
-
+    $user = auth()->user()->load('destinations');
+    $destinations = $user->destinations;
+    
     // Only get destinations assigned to this user
     $destinations = $user->destinations;
+
 
     return view('ticketer.tickets.create', compact('user', 'destinations'));
 }
@@ -47,7 +52,6 @@ class TicketController extends Controller
             'service_fee' => $destination->service_fee,
             'ticket_status' => 'created',
         ]);
-    
         return redirect()->route('ticketer.tickets.receipt', $ticket->id);
     }
     

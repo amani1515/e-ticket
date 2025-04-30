@@ -68,8 +68,13 @@ class User extends Authenticatable
         ];
     }
 
-    public function destinations()
-    {
-        return $this->belongsToMany(Destination::class, 'destination_user');
-    }
+   // app/Models/User.php
+// app/Models/User.php
+public function destinations()
+{
+    return $this->belongsToMany(Destination::class);
+}
+
+
+
 }

@@ -64,9 +64,11 @@
     <p><strong>Departure:</strong> {{ $ticket->departure_datetime }}</p>
     <p><strong>Bus No:</strong> {{ $ticket->bus_id }}</p>
     <p><strong>Ticket Code:</strong> {{ $ticket->ticket_code }}</p>
-    <p><strong>Price:</strong> {{ $ticket->destination->tariff }} ETB</p>
-    <p><strong>Tax:</strong> {{ $ticket->destination->tax }} ETB</p>
-    <p><strong>Service Fee:</strong> {{ $ticket->destination->service_fee }} ETB</p>
+    <p><strong>Total Price:</strong> 
+        {{ 
+            $ticket->destination->tariff + $ticket->destination->tax + $ticket->destination->service_fee 
+        }} ETB
+    </p>
 
     <!-- Barcode -->
     <div class="center barcode">

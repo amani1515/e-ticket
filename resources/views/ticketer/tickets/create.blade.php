@@ -56,7 +56,7 @@
                 class="w-full p-2 border rounded" 
                 value="{{ now()->format('Y-m-d\TH:i') }}" 
                 required
-                disabled>
+                >
         </div>
         
 

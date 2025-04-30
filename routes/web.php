@@ -65,3 +65,5 @@ Route::get('/ticketer/tickets/scan', [TicketController::class, 'scan'])->name('t
 Route::get('/ticketer/tickets/{id}/receipt', [TicketController::class, 'receipt'])->name('ticketer.tickets.receipt');
 Route::get('/ticketer/scan', [TicketController::class, 'showScanForm'])->name('ticketer.tickets.scan');
 Route::post('/ticketer/scan', [TicketController::class, 'processScan'])->name('ticketer.tickets.processScan');
+// web.php
+
