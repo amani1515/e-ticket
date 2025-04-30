@@ -5,7 +5,7 @@
     <style>
         body {
             font-family: monospace;
-            width: 58mm;
+            width: 58mm; /* or 80mm depending on your printer */
             font-size: 12px;
             margin: 0;
             padding: 5px;
@@ -23,6 +23,31 @@
             border-top: 1px dashed #000;
             margin: 5px 0;
         }
+
+        .buttons {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .btn-back {
+            background-color: #f44336;
+        }
+
+        .btn:hover {
+            opacity: 0.8;
+        }
+
     </style>
 </head>
 <body>
@@ -43,6 +68,7 @@
     <p><strong>Tax:</strong> {{ $ticket->destination->tax }} ETB</p>
     <p><strong>Service Fee:</strong> {{ $ticket->destination->service_fee }} ETB</p>
 
+    <!-- Barcode -->
     <div class="center barcode">
         {!! DNS1D::getBarcodeHTML($ticket->ticket_code, 'C128', 1, 30) !!}
     </div>
@@ -50,6 +76,14 @@
     <div class="center divider"></div>
     <div class="center">
         <p>Thank you for choosing SEBus</p>
+    </div>
+
+    <!-- Print and Back Buttons -->
+    <div class="buttons">
+        <button class="btn" onclick="window.print()">Print Receipt</button>
+        <a href="{{ route('ticketer.tickets.create') }}">
+            <button class="btn btn-back">Back</button>
+        </a>
     </div>
 
 </body>
