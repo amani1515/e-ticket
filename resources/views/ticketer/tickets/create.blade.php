@@ -23,6 +23,14 @@
                 <option value="senior">Senior</option>
             </select>
         </div>
+        <div class="mb-4">
+            <label for="gender">Gender</label>
+            <select name="gender" required>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+            </select>
+            
+        </div>
 
         <div class="mb-4">
             <label for="destination_id" class="block">Destination</label>
