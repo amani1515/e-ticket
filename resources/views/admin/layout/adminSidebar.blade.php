@@ -17,6 +17,23 @@
             </div>
         </div>
 
+
+        {{-- destination --}}
+
+        <div x-data="{ openReports: false }">
+            <button @click="openReports = !openReports" class="w-full text-left font-semibold flex justify-between items-center">
+                Destination
+                <svg :class="{'rotate-180': openReports}" class="w-4 h-4 transform transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
+            <div x-show="openReports" x-cloak class="ml-4 mt-2 space-y-1">
+                <a href="{{ route('admin.destinations.index') }}" class="block hover:text-yellow-300">Destinations</a>
+                <a href="{{ route('admin.destinations.create') }}" class="block hover:text-yellow-300">Add new destination</a>
+            </div>
+        </div>
+        
+
         <!-- Reports Menu -->
         <div>
             <button @click="openReports = !openReports" class="w-full text-left font-semibold flex justify-between items-center">

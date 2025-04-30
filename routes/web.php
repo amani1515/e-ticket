@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\DestinationController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -42,4 +43,9 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('admin.users.edit');
     Route::put('/users/{id}', [UserController::class, 'update'])->name('admin.users.update');
     Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('admin.users.destroy');
+});
+// Admin destination routes
+
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::resource('destinations', DestinationController::class);
 });

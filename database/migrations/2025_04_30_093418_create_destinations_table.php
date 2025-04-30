@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('destination_name');
             $table->string('start_from');
-            $table->decimal('tariff', 8, 2);
+            $table->string('tariff')->nullable();
             $table->timestamps();
         });
     }
