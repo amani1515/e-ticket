@@ -47,7 +47,7 @@ class PartnerDataSeeder extends Seeder
 
         // Seed Tickets
         Ticket::create([
-            'passenger_name' => 'John Doe',
+            'passenger_name' => 'John',
             'age_status' => 'adult',
             'destination_id' => $destination1->id,
             'bus_id' => 'AB-12345',
