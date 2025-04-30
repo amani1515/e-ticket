@@ -43,6 +43,7 @@
             <label>National ID</label>
             <input type="text" name="national_id" value="{{ $user->national_id }}" class="w-full border p-2 rounded">
         </div>
+        
 
         <div>
             <label>Profile Picture</label>

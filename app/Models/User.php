@@ -64,6 +64,12 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'assigned_destinations' => 'array', 
         ];
+    }
+
+    public function destinations()
+    {
+        return $this->belongsToMany(Destination::class, 'destination_user');
     }
 }

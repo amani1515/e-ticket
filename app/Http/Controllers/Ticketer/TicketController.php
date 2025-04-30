@@ -13,10 +13,14 @@ class TicketController extends Controller
 {
     // Show the create ticket form
     public function create()
-    {
-        $destinations = Destination::all(); // Get all destinations
-        return view('ticketer.tickets.create', compact('destinations'));
-    }
+{
+    $user = auth()->user(); // Get logged-in ticketer
+
+    // Only get destinations assigned to this user
+    $destinations = $user->destinations;
+
+    return view('ticketer.tickets.create', compact('user', 'destinations'));
+}
 
     // Store the ticket data and generate a ticket code
     public function store(Request $request)

@@ -18,8 +18,8 @@
         <div class="mb-4">
             <label for="age_status" class="block">Age Status</label>
             <select name="age_status" id="age_status" class="w-full p-2 border rounded" required>
-                <option value="baby">Baby</option>
                 <option value="adult">Adult</option>
+                <option value="baby">Baby</option>
                 <option value="senior">Senior</option>
             </select>
         </div>
@@ -35,9 +35,10 @@
         <div class="mb-4">
             <label for="destination_id" class="block">Destination</label>
             <select name="destination_id" id="destination_id" class="w-full p-2 border rounded" required>
-                @foreach($destinations as $destination)
-                    <option value="{{ $destination->id }}">{{ $destination->destination_name }} ({{ $destination->start_from }})</option>
-                @endforeach
+                @foreach (auth()->user()->destinations as $destination)
+    <option value="{{ $destination->id }}">{{ $destination->destination_name }}</option>
+@endforeach
+
             </select>
         </div>
 

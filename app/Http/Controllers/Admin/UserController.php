@@ -5,6 +5,8 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Destination;
+
 
 class UserController extends Controller
 {
@@ -16,34 +18,44 @@ class UserController extends Controller
 
     // Show the form for creating a new user
     public function create()
-    {
-        return view('admin.users.create');
-    }
+{
+    $destinations = Destination::all(); // ✅ this fetches destinations for the form
+    return view('admin.users.create', compact('destinations'));
+}
 
     // Store the newly created user in the database
-    public function store(Request $request)
-    {
-        // Validate the user data
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'phone' => 'nullable|string|max:10',
-            'usertype' => 'required|string|in:admin,ticketer,traffic,mahberat,balehabt',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
+  // Inside the store method of UserController
 
-        // Create a new user
-        $user = User::create([
-            'name' => $validatedData['name'],
-            'email' => $validatedData['email'],
-            'phone' => $validatedData['phone'],
-            'usertype' => $validatedData['usertype'],
-            'password' => Hash::make($validatedData['password']),
-        ]);
+public function store(Request $request)
+{
+    // Validate input
+    $validatedData = $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|unique:users',
+        'phone' => 'required|string',
+        'usertype' => 'required|string',
+        'password' => 'required|string|confirmed',
+        'assigned_destinations' => 'nullable|array',
+        'assigned_destinations.*' => 'exists:destinations,id', // Validate that destination IDs exist
+    ]);
 
-        // Redirect to users list with success message
-        return redirect()->route('admin.users.index')->with('success', 'User created successfully!');
+    // Create the user
+    $user = User::create([
+        'name' => $validatedData['name'],
+        'email' => $validatedData['email'],
+        'phone' => $validatedData['phone'],
+        'usertype' => $validatedData['usertype'],
+        'password' => Hash::make($validatedData['password']),
+    ]);
+
+    // Assign the selected destinations to the user
+    if (isset($validatedData['assigned_destinations'])) {
+        $user->destinations()->sync($validatedData['assigned_destinations']);
     }
+
+    // Redirect or respond back
+    return redirect()->route('admin.users.index')->with('success', 'User created successfully!');
+}
 
 
 public function destroy(User $user)

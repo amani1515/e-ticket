@@ -41,6 +41,18 @@
             @error('usertype') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
         </div>
 
+            <!-- Destination -->
+            <div>
+                <label for="assigned_destinations">Destinations</label>
+                <select name="assigned_destinations[]" id="assigned_destinations" multiple>
+                    @foreach ($destinations as $destination)
+                        <option value="{{ $destination->id }}">{{ $destination->start_from }} → {{ $destination->destination_name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            
+            
+
         <!-- Password -->
         <div>
             <label for="password" class="block font-medium">Password</label>

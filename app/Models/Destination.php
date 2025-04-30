@@ -16,4 +16,9 @@ class Destination extends Model
         'tax',
         'service_fee',
     ];
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'destination_user');
+    }
+
 }

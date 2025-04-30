@@ -3,6 +3,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Destination;
+
 
 class Ticket extends Model
 {
@@ -26,6 +28,8 @@ class Ticket extends Model
     {
         return $this->belongsTo(Destination::class);
     }
+    
+
 
     // Relationship with User (creator)
     public function user()
