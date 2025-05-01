@@ -6,6 +6,9 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\DestinationController;
 use App\Http\Controllers\TicketerController;
 use App\Http\Controllers\Ticketer\TicketController;
+use App\Http\Controllers\Admin\DashboardReportsController;
+use App\Http\Controllers\Admin\PassengersReportController;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -24,7 +27,8 @@ Route::middleware([
 
 route::get('/home', [AdminController::class, 'index']);
 
-
+Route::view('/admin', 'admin.index')->name('admin.index');
+Route::get('/admin', [DashboardReportsController::class, 'index'])->name('admin.index');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/admin/dashboard', function () {
@@ -67,3 +71,17 @@ Route::get('/ticketer/scan', [TicketController::class, 'showScanForm'])->name('t
 Route::post('/ticketer/scan', [TicketController::class, 'processScan'])->name('ticketer.tickets.processScan');
 // web.php
 
+
+Route::get('/admin/passenger-report', [PassengersReportController::class, 'index'])->name('admin.passenger-report');
+Route::get('/admin/passenger-report/{id}', [PassengersReportController::class, 'show'])->name('admin.passenger-report.show');
+Route::delete('/admin/passenger-report/{id}', [PassengersReportController::class, 'destroy'])->name('admin.passenger-report.destroy');
+Route::get('/admin/passenger-report', [PassengersReportController::class, 'index'])->name('admin.passenger-report');
+
+
+Route::get('/admin', [DashboardReportsController::class, 'index'])->name('admin.index');
+
+
+
+
+Route::get('/admin/passenger-report/export', [PassengersReportController::class, 'export'])
+    ->name('admin.passenger.report.export');

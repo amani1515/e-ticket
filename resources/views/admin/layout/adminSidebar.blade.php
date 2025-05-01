@@ -1,5 +1,7 @@
 <div class="w-64 min-h-screen bg-yellow-900 text-white flex flex-col p-4">
-    <div class="text-2xl font-bold mb-6">Admin Panel</div>
+    <div class="text-2xl font-bold mb-6">
+        <a href="{{ route('admin.index') }}">Admin Panel</a>
+    </div>
 
     <div x-data="{ openUser: false, openReports: false }" class="space-y-2">
         <!-- User Menu -->
@@ -43,8 +45,10 @@
                 </svg>
             </button>
             <div x-show="openReports" x-cloak class="ml-4 mt-2 space-y-1">
-                <a href="#" class="block hover:text-yellow-300">Passenger Report</a>
-                <a href="#" class="block hover:text-yellow-300">Bus Report</a>
+                <a href="{{ route('admin.passenger-report') }}
+" class="block px-4 py-2  hover:text-yellow-300">
+                    Passenger Report
+                </a>                <a href="#" class="block hover:text-yellow-300">Bus Report</a>
             </div>
         </div>
     </div>
