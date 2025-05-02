@@ -13,10 +13,20 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\PassengersExport;
 use App\Exports\PassengerReportExport;
 
+use Illuminate\Support\Facades\Auth;
+
+
 class PassengersReportController extends Controller
 {
+
     public function index(Request $request)
     {
+
+        if(auth::id())
+        {
+         $usertype = Auth::user()->usertype;
+         if($usertype == 'admin')
+         {
         $query = Ticket::query()->with('destination');
 
         // Search by Ticket ID
@@ -60,19 +70,54 @@ class PassengersReportController extends Controller
         $destinations = Destination::all();
 
         return view('admin.reports.passengers', compact('tickets', 'destinations'));
+        }
+        else 
+        {
+           return view('errors.403');
+        }
+       
+       }
     }
 
     public function show($id)
     {
+        if(auth::id())
+        {
+         $usertype = Auth::user()->usertype;
+         if($usertype == 'admin')
+         {
         $ticket = Ticket::with('destination')->findOrFail($id);
         return view('admin.reports.passenger_show', compact('ticket'));
+    
+    }
+    else 
+    {
+       return view('errors.403');
+    }
+   
+   }
     }
 
     public function destroy($id)
     {
+
+        if(auth::id())
+        {
+         $usertype = Auth::user()->usertype;
+         if($usertype == 'admin')
+         {
         Ticket::findOrFail($id)->delete();
         return redirect()->route('admin.passenger-report')->with('success', 'Passenger record deleted.');
-    }
+    
+    
+    
+        }
+        else 
+        {
+        return view('errors.403');
+        }
+   
+   }}
 
  
 

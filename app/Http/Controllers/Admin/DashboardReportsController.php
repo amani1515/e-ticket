@@ -7,38 +7,57 @@ use App\Models\User;
 use App\Models\Ticket;
 use App\Models\Destination;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
+
 
 class DashboardReportsController extends Controller
 {
     public function index()
     {
-        $today = Carbon::today();
 
-        $passengersToday = Ticket::whereDate('created_at', $today)->count();
-        $totalUsers = User::count();
-        $totalDestinations = Destination::count();
+        if(auth::id())
+        {
+         $usertype = Auth::user()->usertype;
 
-        $todayTickets = Ticket::with('destination')->whereDate('created_at', $today)->get();
+         if($usertype == 'admin')
+         {
+ // 👇 Reporting logic moved into ticketer block
+                    $today = \Carbon\Carbon::today();
+                        
+                    $passengersToday = \App\Models\Ticket::whereDate('created_at', $today)->count();
+                    $totalUsers = \App\Models\User::count();
+                    $totalDestinations = \App\Models\Destination::count();
 
-        $taxTotal = $todayTickets->sum(fn($t) => $t->destination->tax);
-        $serviceFeeTotal = $todayTickets->sum(fn($t) => $t->destination->service_fee);
-        $tariffTotal = $todayTickets->sum(fn($t) => $t->destination->tariff);
+                    $todayTickets = \App\Models\Ticket::with('destination')->whereDate('created_at', $today)->get();
 
-        $totalRevenue = $taxTotal + $serviceFeeTotal + $tariffTotal;
+                    $taxTotal = $todayTickets->sum(fn($t) => $t->destination->tax ?? 0);
+                    $serviceFeeTotal = $todayTickets->sum(fn($t) => $t->destination->service_fee ?? 0);
+                    $tariffTotal = $todayTickets->sum(fn($t) => $t->destination->tariff ?? 0);
 
-        $grouped = $todayTickets->groupBy('destination.destination_name');
-        $destinationLabels = $grouped->keys();
-        $passengerCounts = $grouped->map->count();
+                    $totalRevenue = $taxTotal + $serviceFeeTotal + $tariffTotal;
 
-        return view('admin.index', compact(
-            'passengersToday',
-            'totalUsers',
-            'totalDestinations',
-            'taxTotal',
-            'serviceFeeTotal',
-            'totalRevenue',
-            'destinationLabels',
-            'passengerCounts'
-        ));
+                    $grouped = $todayTickets->groupBy('destination.destination_name');
+                    $destinationLabels = $grouped->keys();
+                    $passengerCounts = $grouped->map->count();
+
+                    return view('admin.index', compact(
+                        'passengersToday',
+                        'totalUsers',
+                        'totalDestinations',
+                        'taxTotal',
+                        'serviceFeeTotal',
+                        'totalRevenue',
+                        'destinationLabels',
+                        'passengerCounts'
+                    ));      
+         }
+
+         else 
+         {
+             return view('errors.403');
+         }
+         
+        }
+       
     }
 }
