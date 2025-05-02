@@ -103,4 +103,5 @@ Route::get('/admin/passenger-report/export', [PassengersReportController::class,
     });
     Route::get('/mahberat/schedules/card-view', [App\Http\Controllers\Mahberat\ScheduleController::class, 'cardView'])->name('schedules.card-view');
 
-    
+    Route::get('/ticketer/get-bus-info/{destination}', [App\Http\Controllers\Ticketer\TicketController::class, 'getBusInfo']);
+    Route::get('/get-bus-info/{destination_id}', [App\Http\Controllers\Ticketer\TicketController::class, 'getBusInfo']);

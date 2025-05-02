@@ -12,8 +12,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use App\Models\Bus;
 
-
-
 class TicketController extends Controller
 {
     // Show the create ticket form

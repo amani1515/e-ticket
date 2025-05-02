@@ -25,4 +25,6 @@ class TicketerController extends Controller
     {
         return view('ticketer.tickets.scan');
     }
+    
+
 }

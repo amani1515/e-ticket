@@ -39,22 +39,35 @@ class ScheduleController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'bus_id' => 'required|exists:buses,id',
-            'destination_id' => 'required|exists:destinations,id',
-        ]);
+{
+    $request->validate([
+        'bus_id' => 'required|exists:buses,id',
+        'destination_id' => 'required|exists:destinations,id',
+    ]);
 
-        Schedule::create([
-            'bus_id' => $validated['bus_id'],
-            'destination_id' => $validated['destination_id'],
-            'scheduled_by' => Auth::id(),
-            'scheduled_at' => now(),
-            'status' => 'queued',
-        ]);
+    // Check if the bus is already scheduled
+    $alreadyScheduled = Schedule::where('bus_id', $request->bus_id)
+        ->whereIn('status', ['queued', 'on loading'])
+        ->exists();
 
-        return redirect()->route('mahberat.schedule.index')->with('success', 'Bus successfully scheduled!');
+    if ($alreadyScheduled) {
+        return back()->withErrors(['bus_id' => 'This bus is already scheduled.']);
     }
+
+    // Create the schedule
+    Schedule::create([
+        'bus_id' => $request->bus_id,
+        'destination_id' => $request->destination_id,
+        'scheduled_by' => auth()->id(),
+        'scheduled_at' => now(),
+        'status' => 'queued',
+    ]);
+
+    return redirect()->route('mahberat.schedule.index')->with('success', 'Bus scheduled successfully.');
+}
+
+        // Prevent duplicate scheduling for the same destination
+      
 
     public function cardView()
 {
