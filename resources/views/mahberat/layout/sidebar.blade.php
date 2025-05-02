@@ -22,7 +22,7 @@
             </li>
             <li class="mb-2">
                 <button onclick="toggleMenu('report-submenu')" class="w-full text-left px-3 py-2 hover:bg-gray-700 rounded focus:outline-none">
-                    Report
+                    Reports
                 </button>
                 <ul id="report-submenu" class="ml-4 hidden">
                     <li>
