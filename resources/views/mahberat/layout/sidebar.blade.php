@@ -21,7 +21,17 @@
                 </ul>
             </li>
             <li class="mb-2">
-                <a href="#" class="hover:bg-gray-700 block px-3 py-2 rounded">Schedule</a>
+                <button onclick="toggleMenu('report-submenu')" class="w-full text-left px-3 py-2 hover:bg-gray-700 rounded focus:outline-none">
+                    Report
+                </button>
+                <ul id="report-submenu" class="ml-4 hidden">
+                    <li>
+                        <a href="#" class="hover:bg-gray-700 block px-3 py-2 rounded">All Buses</a>
+                    </li>
+                    <li>
+                        <a href="#" class="hover:bg-gray-700 block px-3 py-2 rounded">Add Bus</a>
+                    </li>
+                </ul>
             </li>
         </ul>
     </nav>
