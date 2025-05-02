@@ -8,6 +8,7 @@ use App\Http\Controllers\TicketerController;
 use App\Http\Controllers\Ticketer\TicketController;
 use App\Http\Controllers\Admin\DashboardReportsController;
 use App\Http\Controllers\Admin\PassengersReportController;
+use App\Http\Controllers\Mahberat\ScheduleController;
 
 
 Route::get('/', function () {
@@ -94,4 +95,12 @@ Route::get('/admin/passenger-report/export', [PassengersReportController::class,
         Route::delete('/bus/{bus}', [App\Http\Controllers\Mahberat\BusController::class, 'destroy'])->name('bus.destroy');
     });
     
+    Route::middleware(['auth'])->prefix('mahberat')->name('mahberat.')->group(function () {
+        Route::get('/schedule', [ScheduleController::class, 'index'])->name('schedule.index');
+        Route::get('/schedule/create', [ScheduleController::class, 'create'])->name('schedule.create');
+        Route::post('/schedule', [ScheduleController::class, 'store'])->name('schedule.store');
+
+    });
+    Route::get('/mahberat/schedules/card-view', [App\Http\Controllers\Mahberat\ScheduleController::class, 'cardView'])->name('schedules.card-view');
+
     
