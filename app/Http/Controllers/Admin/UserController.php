@@ -20,9 +20,14 @@ class UserController extends Controller
          $usertype = Auth::user()->usertype;
          if($usertype == 'admin')
          {
+            $users = User::all();
             return view('admin.users.index', compact('users'));
 
          }
+         else 
+            {
+                return view('errors.403');
+            }
 
         }
     }

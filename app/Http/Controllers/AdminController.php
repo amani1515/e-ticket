@@ -20,6 +20,10 @@ class AdminController extends Controller
          {
              return view('dashboard');
          }
+         else if($usertype == 'mahberat')
+         {
+             return view('mahberat.index');
+         }
        else if($usertype == 'admin')
          {
  // 👇 Reporting logic moved into ticketer block
@@ -56,6 +60,7 @@ class AdminController extends Controller
          {
              return view('ticketer.index');
          }
+
          else
          {
              return redirect()->back();

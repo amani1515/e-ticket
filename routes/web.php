@@ -30,11 +30,6 @@ route::get('/home', [AdminController::class, 'index']);
 Route::view('/admin', 'admin.index')->name('admin.index');
 Route::get('/admin', [DashboardReportsController::class, 'index'])->name('admin.index');
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/admin/dashboard', function () {
-        return view('admin.index');
-    })->name('admin.dashboard'); // ← This defines the route name
-});
 
   // admin routes for user function
 Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
@@ -85,3 +80,7 @@ Route::get('/admin', [DashboardReportsController::class, 'index'])->name('admin.
 
 Route::get('/admin/passenger-report/export', [PassengersReportController::class, 'export'])
     ->name('admin.passenger.report.export');
+
+
+    //mahberat
+    
