@@ -83,4 +83,8 @@ Route::get('/admin/passenger-report/export', [PassengersReportController::class,
 
 
     //mahberat
+    Route::middleware(['auth', 'verified'])->prefix('mahberat')->name('mahberat.')->group(function () {
+        Route::get('/bus/create', [App\Http\Controllers\Mahberat\BusController::class, 'create'])->name('bus.create');
+        Route::post('/bus/store', [App\Http\Controllers\Mahberat\BusController::class, 'store'])->name('bus.store');
+    });
     

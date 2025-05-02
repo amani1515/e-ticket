@@ -16,7 +16,7 @@
                         <a href="#" class="hover:bg-gray-700 block px-3 py-2 rounded">All Buses</a>
                     </li>
                     <li>
-                        <a href="#" class="hover:bg-gray-700 block px-3 py-2 rounded">Add Bus</a>
+                        <a href="{{ route('mahberat.bus.create') }}" class="hover:bg-gray-700 block px-3 py-2 rounded">Add Bus</a>
                     </li>
                 </ul>
             </li>
