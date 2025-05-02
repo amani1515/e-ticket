@@ -87,4 +87,11 @@ Route::get('/admin/passenger-report/export', [PassengersReportController::class,
         Route::get('/bus/create', [App\Http\Controllers\Mahberat\BusController::class, 'create'])->name('bus.create');
         Route::post('/bus/store', [App\Http\Controllers\Mahberat\BusController::class, 'store'])->name('bus.store');
     });
+    Route::middleware(['auth', 'verified'])->prefix('mahberat')->name('mahberat.')->group(function () {
+        Route::get('/buses', [App\Http\Controllers\Mahberat\BusController::class, 'index'])->name('bus.index');
+        Route::get('/bus/{bus}/edit', [App\Http\Controllers\Mahberat\BusController::class, 'edit'])->name('bus.edit');
+        Route::put('/bus/{bus}', [App\Http\Controllers\Mahberat\BusController::class, 'update'])->name('bus.update');
+        Route::delete('/bus/{bus}', [App\Http\Controllers\Mahberat\BusController::class, 'destroy'])->name('bus.destroy');
+    });
+    
     

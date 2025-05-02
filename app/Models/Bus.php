@@ -21,9 +21,20 @@ class Bus extends Model
         'motor_number',
         'color',
         'owner_id',
+        'registered_by',
         'file1',
         'file2',
         'file3',
     ];
-    
+
+
+    public function owner()
+{
+    return $this->belongsTo(User::class, 'owner_id');
+}
+
+    public function registeredBy()
+{
+    return $this->belongsTo(User::class, 'registered_by');
+}
 }

@@ -7,8 +7,17 @@ use Illuminate\Http\Request;
 use App\Models\Bus;
 use Illuminate\Support\Facades\Storage;
 
+use Illuminate\Support\Facades\Auth;
+
 class BusController extends Controller
 {
+    public function index()
+    {
+        $buses = Bus::with('owner')->where('registered_by', auth()->id())->get();
+        return view('mahberat.bus.index', compact('buses'));
+    }
+    
+
     public function create()
     {
         return view('mahberat.bus.create');
@@ -43,10 +52,52 @@ public function store(Request $request)
             $validated[$fileKey] = $path;
         }
     }
+    $validated['status'] = $validated['status'] ?? 'active';
+    $validated['registered_by'] = Auth::id(); // Store logged in user ID
 
     Bus::create($validated);
 
     return redirect()->back()->with('success', 'Bus added successfully.');
 }
 
+public function show($id)
+{
+    $bus = Bus::where('id', $id)->where('registered_by', auth()->id())->firstOrFail();
+    return view('mahberat.bus.show', compact('bus'));
+}
+
+public function edit($id)
+{
+    $bus = Bus::findOrFail($id);
+    return view('mahberat.bus.edit', compact('bus'));
+}
+public function destroy($id)
+{
+    $bus = Bus::where('id', $id)->where('registered_by', auth()->id())->firstOrFail();
+    $bus->delete();
+    return redirect()->route('mahberat.bus.index')->with('success', 'Bus deleted successfully.');
+}
+
+public function update(Request $request, $id)
+{
+    $validated = $request->validate([
+        'targa' => 'required',
+        'driver_name' => 'required',
+        'driver_phone' => 'required',
+        'redat_name' => 'required',
+        'level' => 'required',
+        'total_seats' => 'required|integer',
+        'status' => 'required',
+        'model_year' => 'required',
+        'model' => 'required',
+        'bolo_id' => 'required',
+        'motor_number' => 'required',
+        'color' => 'required',
+    ]);
+
+    $bus = Bus::findOrFail($id);
+    $bus->update($validated);
+
+    return redirect()->route('mahberat.bus.index')->with('success', 'Bus updated successfully!');
+}
 }

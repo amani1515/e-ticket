@@ -13,7 +13,7 @@
                 </button>
                 <ul id="bus-submenu" class="ml-4 hidden">
                     <li>
-                        <a href="#" class="hover:bg-gray-700 block px-3 py-2 rounded">All Buses</a>
+                        <a href="{{ route('mahberat.bus.index') }}" class="hover:bg-gray-700 block px-3 py-2 rounded">All Buses</a>
                     </li>
                     <li>
                         <a href="{{ route('mahberat.bus.create') }}" class="hover:bg-gray-700 block px-3 py-2 rounded">Add Bus</a>
