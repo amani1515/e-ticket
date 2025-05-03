@@ -9,6 +9,7 @@ use App\Http\Controllers\Ticketer\TicketController;
 use App\Http\Controllers\Admin\DashboardReportsController;
 use App\Http\Controllers\Admin\PassengersReportController;
 use App\Http\Controllers\Mahberat\ScheduleController;
+use App\Http\Controllers\Ticketer\CashReportController;
 
 
 Route::get('/', function () {
@@ -102,6 +103,17 @@ Route::get('/admin/passenger-report/export', [PassengersReportController::class,
 
     });
     Route::get('/mahberat/schedules/card-view', [App\Http\Controllers\Mahberat\ScheduleController::class, 'cardView'])->name('schedules.card-view');
+    Route::get('/ticketer/get-first-queued-bus/{destination}', [App\Http\Controllers\Ticketer\TicketController::class, 'getFirstQueuedBus']);
 
-    Route::get('/ticketer/get-bus-info/{destination}', [App\Http\Controllers\Ticketer\TicketController::class, 'getBusInfo']);
-    Route::get('/get-bus-info/{destination_id}', [App\Http\Controllers\Ticketer\TicketController::class, 'getBusInfo']);
+    
+    Route::get('/ticketer/tickets/report', [TicketController::class, 'reports'])->name('ticketer.tickets.report');
+
+    //routes for cash reports
+    Route::middleware(['auth', 'verified'])->prefix('ticketer')->name('ticketer.')->group(function () {
+        Route::get('/cash-report', [App\Http\Controllers\Ticketer\CashReportController::class, 'index'])->name('cash-report.index');
+        Route::post('/cash-report/submit', [App\Http\Controllers\Ticketer\CashReportController::class, 'submit'])->name('cash-report.submit');
+    });
+    Route::get('/admin/cash-reports', [CashReportController::class, 'adminIndex'])->name('admin.cash.reports');
+Route::post('/admin/cash-reports/{id}/mark-received', [CashReportController::class, 'markAsReceived'])->name('admin.cash.reports.receive');
+
+    

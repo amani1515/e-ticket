@@ -1,16 +1,14 @@
-<!-- resources/views/ticketer/index.blade.php -->
 @extends('ticketer.layout.app')
 
 @section('content')
-<div class="flex">
+<div class="flex min-h-screen">
     <!-- Sidebar -->
-    @include('ticketer.layout.ticketerSidebar')
+    <div class="w-64">
+        @include('ticketer.layout.ticketerSidebar')
+    </div>
 
     <!-- Main Content -->
     <div class="flex-1 bg-gray-100 p-6">
-        <!-- Header -->
-        @include('ticketer.layout.ticketerHeader')
-
         <!-- Dashboard Content -->
         <div class="mt-6">
             <h2 class="text-2xl font-semibold text-gray-700">Welcome to the Ticketer Dashboard</h2>
@@ -32,6 +30,11 @@
                     <h3 class="text-xl font-semibold text-gray-700">Scan Ticket</h3>
                     <p class="text-gray-600 mt-2">Scan a ticket to verify its status.</p>
                     <a href="{{ route('ticketer.tickets.scan') }}" class="text-yellow-500 hover:underline mt-4 block">Scan Ticket</a>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-lg">
+                    <h3 class="text-xl font-semibold text-gray-700">Cash report</h3>
+                    <p class="text-gray-600 mt-2">See all reports according to cash that colected on tickets </p>
+                    <a href="{{ route('ticketer.cash-report.index') }}" class="text-yellow-500 hover:underline mt-4 block">Scan Ticket</a>
                 </div>
             </div>
         </div>

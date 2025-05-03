@@ -9,6 +9,7 @@ use App\Models\Bus;
 use App\Models\Destination;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class ScheduleController extends Controller
 {
@@ -46,7 +47,7 @@ class ScheduleController extends Controller
     ]);
 
     // Check if the bus is already scheduled
-    
+
     $alreadyScheduled = Schedule::where('bus_id', $request->bus_id)
         ->whereIn('status', ['queued', 'on loading'])
         ->exists();

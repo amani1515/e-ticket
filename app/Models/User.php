@@ -76,5 +76,10 @@ public function destinations()
 }
 
 
+public function cashReports()
+{
+    return $this->hasMany(CashReport::class);
+}
+
 
 }

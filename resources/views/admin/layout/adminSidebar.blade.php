@@ -48,7 +48,10 @@
                 <a href="{{ route('admin.passenger-report') }}
 " class="block px-4 py-2  hover:text-yellow-300">
                     Passenger Report
-                </a>                <a href="#" class="block hover:text-yellow-300">Bus Report</a>
+                </a>               
+                 <a href="#" class="block hover:text-yellow-300">Bus Report</a>
+                 <a href="{{ route('admin.cash.reports') }}" class="block hover:text-yellow-300">Cash Report</a>
+
             </div>
         </div>
     </div>
