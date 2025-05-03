@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Destination;
+use Illuminate\Support\Facades\Auth;
 
 
 class DestinationController extends Controller
@@ -17,7 +18,19 @@ class DestinationController extends Controller
 
     public function create()
     {
-        return view('admin.destinations.create');
+
+        if(auth::id())
+        {
+         $usertype = Auth::user()->usertype;
+         if($usertype == 'admin')
+         {
+            return view('admin.destinations.create');
+         }
+         else 
+            {
+                return view('errors.403');
+            }
+        }
     }
 
     public function store(Request $request)

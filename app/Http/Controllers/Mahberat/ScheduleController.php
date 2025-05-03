@@ -46,6 +46,7 @@ class ScheduleController extends Controller
     ]);
 
     // Check if the bus is already scheduled
+    
     $alreadyScheduled = Schedule::where('bus_id', $request->bus_id)
         ->whereIn('status', ['queued', 'on loading'])
         ->exists();
