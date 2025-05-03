@@ -23,6 +23,7 @@ class DestinationController extends Controller
     public function store(Request $request)
     {
         // Validate input
+        // Validate input
         $request->validate([
             'destination_name' => 'required|string|max:255',
             'start_from' => 'required|string|max:255',
