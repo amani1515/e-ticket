@@ -21,6 +21,10 @@ public function users()
 {
     return $this->belongsToMany(User::class, 'destination_user', 'destination_id', 'user_id');
 }
+public function schedules()
+{
+    return $this->hasMany(\App\Models\Schedule::class);
+}
 
 
 }

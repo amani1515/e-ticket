@@ -36,7 +36,9 @@
                 <option value="ticketer">Ticketer</option>
                 <option value="traffic">Traffic</option>
                 <option value="mahberat">Mahberat</option>
-                <option value="balehabt">Balehabt</option>
+                <option value="owner">Balehabt</option>
+                <option value="owner">Owner</option>
+
             </select>
             @error('usertype') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
         </div>
