@@ -20,6 +20,7 @@ class AdminCashReportController extends Controller
                 case 'today':
                     $query->whereDate('report_date', Carbon::today());
                     break;
+                    
                 case 'yesterday':
                     $query->whereDate('report_date', Carbon::yesterday());
                     break;
