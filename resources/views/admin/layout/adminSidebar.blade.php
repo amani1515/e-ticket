@@ -51,7 +51,6 @@
                 </a>               
                  <a href="#" class="block hover:text-yellow-300">Bus Report</a>
                  <a href="{{ route('admin.cash.reports') }}" class="block hover:text-yellow-300">Cash Report</a>
-
             </div>
         </div>
     </div>

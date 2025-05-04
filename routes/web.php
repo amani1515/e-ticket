@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminCashReportController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Admin\UserController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\Admin\DashboardReportsController;
 use App\Http\Controllers\Admin\PassengersReportController;
 use App\Http\Controllers\Mahberat\ScheduleController;
 use App\Http\Controllers\Ticketer\CashReportController;
+
 
 
 Route::get('/', function () {
@@ -113,7 +115,7 @@ Route::get('/admin/passenger-report/export', [PassengersReportController::class,
         Route::get('/cash-report', [App\Http\Controllers\Ticketer\CashReportController::class, 'index'])->name('cash-report.index');
         Route::post('/cash-report/submit', [App\Http\Controllers\Ticketer\CashReportController::class, 'submit'])->name('cash-report.submit');
     });
-    Route::get('/admin/cash-reports', [CashReportController::class, 'adminIndex'])->name('admin.cash.reports');
-Route::post('/admin/cash-reports/{id}/mark-received', [CashReportController::class, 'markAsReceived'])->name('admin.cash.reports.receive');
 
-    
+    Route::get('/admin/cash-reports', [AdminCashReportController::class, 'index'])->name('admin.cash.reports');
+Route::post('/admin/cash-reports/{id}/mark-received', [AdminCashReportController::class, 'markAsReceived'])->name('admin.cash.reports.receive');
+
