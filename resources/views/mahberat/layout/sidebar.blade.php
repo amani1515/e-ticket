@@ -1,6 +1,6 @@
-<aside class="w-64 bg-gray-800 text-white h-screen fixed top-0 left-0">
-    <div class="p-4 text-lg font-bold border-b border-gray-700">
-        Mahberat Menu
+<div class="w-64 min-h-screen bg-gray-800 text-white flex flex-col p-4">
+    <div class="text-2xl font-bold mb-6">
+        <a href="/home">Mahberat Menu</a>
     </div>
     <nav class="p-4">
         <ul>
@@ -38,8 +38,8 @@
             </li>
         </ul>
     </nav>
-</aside>
-
+    
+</div>
 <!-- JS to toggle submenu -->
 <script>
     function toggleMenu(id) {
