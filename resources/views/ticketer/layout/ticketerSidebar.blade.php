@@ -4,7 +4,7 @@ Ticketer dashboard    </div>
     <nav class="p-4">
         <ul>
             <li class="mb-2">
-                <a href="#" class="hover:bg-gray-700 block px-3 py-2 rounded">Dashboard</a>
+                <a href="/home" class="hover:bg-gray-700 block px-3 py-2 rounded">Dashboard</a>
             </li>
             <li class="mb-2">
                 <button onclick="toggleMenu('ticket-submenu')" class="w-full text-left px-3 py-2 hover:bg-gray-700 rounded focus:outline-none">
@@ -12,10 +12,10 @@ Ticketer dashboard    </div>
                 </button>
                 <ul id="ticket-submenu" class="ml-4 hidden">
                     <li>
-                        <a href="{{ route('mahberat.bus.index') }}" class="hover:bg-gray-700 block px-3 py-2 rounded">create ticket</a>
+                        <a href="{{ route('ticketer.tickets.create') }}" class="hover:bg-gray-700 block px-3 py-2 rounded">create ticket</a>
                     </li>
                     <li>
-                        <a href="{{ route('mahberat.bus.create') }}" class="hover:bg-gray-700 block px-3 py-2 rounded"> Scan ticket</a>
+                        <a href="{{ route('ticketer.tickets.scan') }}" class="hover:bg-gray-700 block px-3 py-2 rounded"> Scan ticket</a>
                     </li>
                 </ul>
             </li>
@@ -25,13 +25,12 @@ Ticketer dashboard    </div>
                 </button>
                 <ul id="report-submenu" class="ml-4 hidden">
                     <li>
-                        <a href="{{ route('mahberat.schedule.index') }}" class="hover:bg-gray-700 block px-3 py-2 rounded">Ticket report</a>
+                        <a href="{{ route('ticketer.tickets.report') }}" class="hover:bg-gray-700 block px-3 py-2 rounded">Ticket report</a>
                     </li>
                     <li>
-                        <a href="{{ route('mahberat.schedule.create') }}" class="hover:bg-gray-700 block px-3 py-2 rounded">Cash report</a>
+                        <a href="{{ route('ticketer.cash-report.index') }}" class="hover:bg-gray-700 block px-3 py-2 rounded">Cash report</a>
                     </li>
-                    <li>
-                        <a href="{{ route('schedules.card-view') }}" class="hover:bg-gray-700 block px-3 py-2 rounded">cars report view</a>
+                   
                     </li>
                 </ul>
             </li>

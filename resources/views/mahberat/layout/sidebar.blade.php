@@ -5,7 +5,7 @@
     <nav class="p-4">
         <ul>
             <li class="mb-2">
-                <a href="#" class="hover:bg-gray-700 block px-3 py-2 rounded">Dashboard</a>
+                <a href="/home" class="hover:bg-gray-700 block px-3 py-2 rounded">Dashboard</a>
             </li>
             <li class="mb-2">
                 <button onclick="toggleMenu('bus-submenu')" class="w-full text-left px-3 py-2 hover:bg-gray-700 rounded focus:outline-none">

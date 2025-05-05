@@ -2,11 +2,6 @@
 
 @section('content')
 <div class="flex min-h-screen">
-    <!-- Sidebar -->
-    <div class="w-64">
-        @include('ticketer.layout.ticketerSidebar')
-    </div>
-
     <!-- Main Content -->
     <div class="flex-1 bg-gray-100 p-6">
         <h2 class="text-2xl font-semibold mb-6">Ticket Report</h2>

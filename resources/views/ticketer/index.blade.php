@@ -2,11 +2,6 @@
 
 @section('content')
 <div class="flex min-h-screen">
-    <!-- Sidebar -->
-    <div class="w-64">
-        @include('ticketer.layout.ticketerSidebar')
-    </div>
-
     <!-- Main Content -->
     <div class="flex-1 bg-gray-100 p-6">
         <!-- Dashboard Content -->
@@ -34,7 +29,7 @@
                 <div class="bg-white p-4 rounded-lg shadow-lg">
                     <h3 class="text-xl font-semibold text-gray-700">Cash report</h3>
                     <p class="text-gray-600 mt-2">See all reports according to cash that colected on tickets </p>
-                    <a href="{{ route('ticketer.cash-report.index') }}" class="text-yellow-500 hover:underline mt-4 block">Scan Ticket</a>
+                    <a href="{{ route('ticketer.cash-report.index') }}" class="text-yellow-500 hover:underline mt-4 block">Make Report</a>
                 </div>
             </div>
         </div>
