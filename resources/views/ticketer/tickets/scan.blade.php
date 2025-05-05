@@ -19,5 +19,19 @@
 
         <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Confirm Ticket</button>
     </form>
+
+    
 </div>
+@endsection
+@section('scripts')
+<script>
+    const input = document.querySelector('input[name="ticket_code"]');
+    input.focus();
+
+    input.addEventListener('input', function () {
+        if (this.value.length >= 14) { // Adjust length if needed
+            this.form.submit();
+        }
+    });
+</script>
 @endsection
