@@ -33,10 +33,8 @@
 
         <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Filter</button>
     </form>
-    <a href="{{ route('admin.passenger.report.export', request()->query()) }}" class="btn btn-success">Export to Excel</a>
-
-    
-     
+   
+    <a href="{{ route('admin.passenger.report.export', request()->all()) }}" class="btn btn-success">Export to Excel</a>
      
 
     @if($tickets->count())

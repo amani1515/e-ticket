@@ -10,7 +10,10 @@ use App\Http\Controllers\Ticketer\TicketController;
 use App\Http\Controllers\Admin\DashboardReportsController;
 use App\Http\Controllers\Admin\PassengersReportController;
 use App\Http\Controllers\Mahberat\ScheduleController;
-use App\Http\Controllers\Ticketer\CashReportController;
+use App\Http\Controllers\Admin\PassengerReportController;
+use App\Http\Controllers\Ticketer\CashReportController; 
+use App\Http\Controllers\Admin\BusController;
+use App\Http\Controllers\Admin\BusReportController;
 
 
 
@@ -116,6 +119,21 @@ Route::get('/admin/passenger-report/export', [PassengersReportController::class,
         Route::post('/cash-report/submit', [App\Http\Controllers\Ticketer\CashReportController::class, 'submit'])->name('cash-report.submit');
     });
 
+
+    // will be deleted   start here
     Route::get('/admin/cash-reports', [AdminCashReportController::class, 'index'])->name('admin.cash.reports');
 Route::post('/admin/cash-reports/{id}/mark-received', [AdminCashReportController::class, 'markAsReceived'])->name('admin.cash.reports.receive');
 
+
+Route::get('/admin/passenger-report/export', [PassengersReportController::class, 'export'])->name('admin.passenger.report.export');
+
+
+// up to here
+
+
+
+// Route for All Buses
+Route::get('/admin/buses', [BusController::class, 'index'])->name('admin.buses.index');
+
+// Route for Bus Report
+Route::get('/admin/bus-reports', [BusReportController::class, 'index'])->name('admin.bus.reports');

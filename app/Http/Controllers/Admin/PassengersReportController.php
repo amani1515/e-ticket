@@ -125,24 +125,51 @@ class PassengersReportController extends Controller
     
 
 
-public function export(Request $request)
-{
-    $tickets = Ticket::with('destination')->get(); // Add filters if needed
-
-    $summaries = [
-        'total_tariff' => $tickets->sum(fn($t) => $t->destination->tariff ?? 0),
-        'total_tax' => $tickets->sum(fn($t) => $t->destination->tax ?? 0),
-        'total_service_fee' => $tickets->sum(fn($t) => $t->destination->service_fee ?? 0),
-        'male' => $tickets->where('gender', 'male')->count(),
-        'female' => $tickets->where('gender', 'female')->count(),
-        'adult' => $tickets->where('age_status', 'adult')->count(),
-        'baby' => $tickets->where('age_status', 'baby')->count(),
-        'senior' => $tickets->where('age_status', 'senior')->count(),
-        'by_destination' => $tickets->groupBy('destination.destination_name')->map->count(),
-    ];
-
-    return Excel::download(new PassengerReportExport($tickets, $summaries), 'passenger_report.xlsx');
-}
+   
+   
+   public function export(Request $request)
+   {
+       $query = Ticket::with('destination');
+   
+       // Apply filters
+       if ($request->filled('search')) {
+           $query->where('id', $request->search);
+       }
+   
+       if ($request->filled('gender')) {
+           $query->where('gender', $request->gender);
+       }
+   
+       if ($request->filled('destination_id')) {
+           $query->where('destination_id', $request->destination_id);
+       }
+   
+       if ($request->filled('date_filter')) {
+           $now = now();
+           switch ($request->date_filter) {
+               case 'today':
+                   $query->whereDate('created_at', $now);
+                   break;
+               case 'yesterday':
+                   $query->whereDate('created_at', $now->subDay());
+                   break;
+               case 'this_week':
+                   $query->whereBetween('created_at', [$now->startOfWeek(), $now->endOfWeek()]);
+                   break;
+               case 'this_month':
+                   $query->whereMonth('created_at', $now->month);
+                   break;
+               case 'this_year':
+                   $query->whereYear('created_at', $now->year);
+                   break;
+           }
+       }
+   
+       $tickets = $query->get();
+   
+       // Export to Excel
+       return Excel::download(new PassengerReportExport($tickets), 'passenger_report.xlsx');
+   }
 
     
 }

@@ -1,9 +1,9 @@
 <?php
+// filepath: app/Exports/PassengerReportExport.php
 namespace App\Exports;
 
-use App\Models\Ticket;
-use Maatwebsite\Excel\Concerns\FromView;
 use Illuminate\Contracts\View\View;
+use Maatwebsite\Excel\Concerns\FromView;
 
 class PassengerReportExport implements FromView
 {
@@ -18,7 +18,7 @@ class PassengerReportExport implements FromView
 
     public function view(): View
     {
-        return view('exports.passenger_report', [
+        return view('admin.reports.passengers', [
             'tickets' => $this->tickets,
             'summaries' => $this->summaries,
         ]);

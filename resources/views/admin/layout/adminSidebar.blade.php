@@ -45,12 +45,12 @@
                 </svg>
             </button>
             <div x-show="openReports" x-cloak class="ml-4 mt-2 space-y-1">
-                <a href="{{ route('admin.passenger-report') }}
-" class="block px-4 py-2  hover:text-yellow-300">
+                <a href="{{ route('admin.passenger-report') }}" class="block px-4 py-2 hover:text-yellow-300">
                     Passenger Report
-                </a>               
-                 <a href="#" class="block hover:text-yellow-300">Bus Report</a>
-                 <a href="{{ route('admin.cash.reports') }}" class="block hover:text-yellow-300">Cash Report</a>
+                </a>
+                <a href="{{ route('admin.buses.index') }}" class="block hover:text-yellow-300">All Buses</a>
+                <a href="{{ route('admin.bus.reports') }}" class="block hover:text-yellow-300">Bus Report</a>
+                <a href="{{ route('admin.cash.reports') }}" class="block hover:text-yellow-300">Cash Report</a>
             </div>
         </div>
     </div>
