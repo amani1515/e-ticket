@@ -5,7 +5,7 @@
     <h2 class="text-2xl font-bold mb-4">All Cash Reports</h2>
 
     <!-- Filter Form -->
-    <form method="GET" action="{{ route('admin.cash.reports') }}" class="mb-6 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    <form method="GET" action="{{ route('admin.cash.reports') }}" id="filter-form" class="mb-6 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
         <div>
             <label for="date_filter" class="block text-sm font-medium text-gray-700">Date</label>
             <select name="date_filter" id="date_filter" class="w-full p-2 border rounded">
@@ -44,10 +44,6 @@
         <div>
             <label for="search" class="block text-sm font-medium text-gray-700">Search</label>
             <input type="text" name="search" id="search" value="{{ request('search') }}" class="w-full p-2 border rounded" placeholder="ID, Ticketer Name">
-        </div>
-
-        <div class="col-span-1 md:col-span-3 lg:col-span-4">
-            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Filter</button>
         </div>
     </form>
 
@@ -114,4 +110,18 @@
         {{ $reports->links() }} <!-- Pagination links -->
     </div>
 </div>
+
+<!-- JavaScript for Auto-Filtering -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const filterForm = document.getElementById('filter-form');
+        const inputs = filterForm.querySelectorAll('select, input');
+
+        inputs.forEach(input => {
+            input.addEventListener('change', function () {
+                filterForm.submit(); // Automatically submit the form when a filter is changed
+            });
+        });
+    });
+</script>
 @endsection
