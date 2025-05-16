@@ -39,15 +39,15 @@
             <div class="mb-4">
                 <label for="destination_id" class="block">Destination</label>
                 <select name="destination_id" id="destination_id" class="w-full p-2 border rounded" required>
-                    @foreach (auth()->user()->destinations as $destination)
-                        <option value="{{ $destination->id }}">{{ $destination->destination_name }}</option>
-                    @endforeach
-                </select>
+    @foreach (auth()->user()->destinations as $destination)
+        <option value="{{ $destination->id }}">{{ $destination->destination_name }}</option>
+    @endforeach
+</select>
             </div>
 
             <div class="mb-4">
                 <label for="bus_id" class="block">Bus ID / Targa No</label>
-                <input type="text" name="bus_id" id="bus_id" class="w-full p-2 border rounded" required>
+<input type="text" name="bus_id" id="bus_id" class="w-full p-2 border rounded" required>
             </div>
 
             <div class="mb-4">
@@ -68,4 +68,28 @@
         </form>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    function fetchFirstQueuedBus(destinationId) {
+        if (!destinationId) {
+            document.getElementById('bus_id').value = '';
+            return;
+        }
+        fetch('/ticketer/first-queued-bus/' + destinationId)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('bus_id').value = data.bus_id || '';
+            });
+    }
+
+    const destinationSelect = document.getElementById('destination_id');
+    destinationSelect.addEventListener('change', function() {
+        fetchFirstQueuedBus(this.value);
+    });
+
+    // Fetch on page load for the default selected destination
+    fetchFirstQueuedBus(destinationSelect.value);
+});
+</script>
 @endsection

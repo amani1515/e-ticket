@@ -12,6 +12,8 @@ class Ticket extends Model
 
     protected $fillable = [
         'passenger_name',
+        'gender', // <-- Make sure this is here!
+
         'age_status',
         'destination_id',
         'bus_id',

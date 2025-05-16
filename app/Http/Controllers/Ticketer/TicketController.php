@@ -57,6 +57,8 @@ class TicketController extends Controller
     {
         $request->validate([
             'passenger_name' => 'required|string|max:255',
+            'gender' => 'required|in:male,female', // <-- Add this line
+
             'age_status' => 'required|in:baby,adult,senior',
             'destination_id' => 'required|exists:destinations,id',
             'bus_id' => 'required|string|max:255',
@@ -67,6 +69,7 @@ class TicketController extends Controller
     
         $ticket = Ticket::create([
             'passenger_name' => $request->passenger_name,
+            'gender' => $request->gender, // <-- Add this
             'age_status' => $request->age_status,
             'destination_id' => $request->destination_id,
             'bus_id' => $request->bus_id,
@@ -237,6 +240,19 @@ public function reports(Request $request)
     $tickets = $query->with(['destination', 'bus'])->latest()->paginate(10);
 
     return view('ticketer.tickets.report', compact('tickets', 'destinations'));
+}
+
+public function firstQueuedBus($destinationId)
+{
+    $bus = \App\Models\Schedule::where('destination_id', $destinationId)
+        ->where('status', 'queued')
+        ->orderBy('scheduled_at')
+        ->with('bus')
+        ->first();
+
+    return response()->json([
+        'bus_id' => $bus?->bus?->targa ?? '',
+    ]);
 }
 
 }
