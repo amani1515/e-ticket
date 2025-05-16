@@ -53,58 +53,58 @@ class TicketController extends Controller
 }
 
     // Store the ticket data and generate a ticket code
-    public function store(Request $request)
-    {
-        $request->validate([
-            'passenger_name' => 'required|string|max:255',
-            'gender' => 'required|in:male,female', // <-- Add this line
 
-            'age_status' => 'required|in:baby,adult,senior',
-            'destination_id' => 'required|exists:destinations,id',
-            'bus_id' => 'required|string|max:255',
-            'departure_datetime' => 'required|date',
-        ]);
-    
-        $destination = Destination::findOrFail($request->destination_id);
-    
-        $ticket = Ticket::create([
-            'passenger_name' => $request->passenger_name,
-            'gender' => $request->gender, // <-- Add this
-            'age_status' => $request->age_status,
-            'destination_id' => $request->destination_id,
-            'bus_id' => $request->bus_id,
-            'departure_datetime' => $request->departure_datetime,
-            'ticket_code' => 'SE' . now()->format('Ymd') . strtoupper(uniqid()),
-            'creator_user_id' => auth()->id(),
-            'tax' => $destination->tax,
-            'service_fee' => $destination->service_fee,
-            'ticket_status' => 'created',
-        ]);
-    
-        // 👇 Paste here — AFTER ticket is created
-        $schedule = Schedule::where('bus_id', $request->bus_id)
-            ->where('destination_id', $request->destination_id)
-            ->whereIn('status', ['queued', 'on loading'])
-            ->first();
-    
-        if ($schedule) {
-            if ($schedule->status !== 'on loading') {
-                $schedule->status = 'on loading';
-                $schedule->save();
-            }
-    
-            $sold = Ticket::where('bus_id', $request->bus_id)
-                ->where('destination_id', $request->destination_id)
-                ->count();
-    
-            if ($sold >= $schedule->bus->total_seats) {
-                $schedule->status = 'departed';
-                $schedule->save();
-            }
-        }
-    
-        return redirect()->route('ticketer.tickets.receipt', $ticket->id);
+public function store(Request $request)
+{
+    $request->validate([
+        'passenger_name' => 'required|string|max:255',
+        'gender' => 'required|in:male,female',
+        'age_status' => 'required|in:baby,adult,senior',
+        'destination_id' => 'required|exists:destinations,id',
+        'bus_id' => 'required|string|max:255', // This is targa from the form!
+        'departure_datetime' => 'required|date',
+    ]);
+
+    $destination = Destination::findOrFail($request->destination_id);
+
+    // Find the bus by targa
+    $bus = Bus::where('targa', $request->bus_id)->first();
+    if (!$bus) {
+        return back()->withErrors(['bus_id' => 'Bus not found.']);
     }
+
+    $ticket = Ticket::create([
+        'passenger_name' => $request->passenger_name,
+        'gender' => $request->gender,
+        'age_status' => $request->age_status,
+        'destination_id' => $request->destination_id,
+        'bus_id' => $bus->id, // Save the bus primary key!
+        'departure_datetime' => $request->departure_datetime,
+        'ticket_code' => 'SE' . now()->format('Ymd') . strtoupper(uniqid()),
+        'creator_user_id' => auth()->id(),
+        'tax' => $destination->tax,
+        'service_fee' => $destination->service_fee,
+        'ticket_status' => 'created',
+    ]);
+
+    // Find the related schedule (status queued or on loading)
+    $schedule = Schedule::where('bus_id', $bus->id)
+        ->where('destination_id', $request->destination_id)
+        ->whereIn('status', ['queued', 'on loading'])
+        ->first();
+
+        if ($schedule) {
+            $schedule->boarding = $schedule->boarding + 1;
+            if ($schedule->boarding >= $schedule->capacity) {
+                $schedule->status = 'full';
+            } elseif ($schedule->status === 'queued') {
+                $schedule->status = 'on loading'; // <-- quotes!
+            }
+            $schedule->save();
+}
+
+    return redirect()->route('ticketer.tickets.receipt', $ticket->id);
+}
     
     
 
@@ -242,17 +242,17 @@ public function reports(Request $request)
     return view('ticketer.tickets.report', compact('tickets', 'destinations'));
 }
 
-public function firstQueuedBus($destinationId)
-{
-    $bus = \App\Models\Schedule::where('destination_id', $destinationId)
-        ->where('status', 'queued')
-        ->orderBy('scheduled_at')
-        ->with('bus')
-        ->first();
+        public function firstQueuedBus($destinationId)
+        {
+            $bus = \App\Models\Schedule::where('destination_id', $destinationId)
+                ->whereIn('status', ['queued', 'on loading'])
+                ->orderBy('scheduled_at')
+                ->with('bus')
+                ->first();
 
-    return response()->json([
-        'bus_id' => $bus?->bus?->targa ?? '',
-    ]);
-}
+            return response()->json([
+                'bus_id' => $bus?->bus?->targa ?? '',
+            ]);
+        }
 
 }

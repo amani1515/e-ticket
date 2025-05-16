@@ -14,7 +14,10 @@ class Schedule extends Model
         'scheduled_at',
         'status',
         'created_at',
+
         'updated_at',
+        'capacity',
+        'boarding',
         // add any other fields you are submitting
     ];
     public function bus()

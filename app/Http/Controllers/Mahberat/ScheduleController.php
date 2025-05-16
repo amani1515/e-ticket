@@ -39,6 +39,7 @@ class ScheduleController extends Controller
         return view('mahberat.schedule.create', compact('destinations', 'buses'));
     }
 
+
     public function store(Request $request)
 {
     $request->validate([
@@ -47,7 +48,6 @@ class ScheduleController extends Controller
     ]);
 
     // Check if the bus is already scheduled
-
     $alreadyScheduled = Schedule::where('bus_id', $request->bus_id)
         ->whereIn('status', ['queued', 'on loading'])
         ->exists();
@@ -56,13 +56,18 @@ class ScheduleController extends Controller
         return back()->withErrors(['bus_id' => 'This bus is already scheduled.']);
     }
 
-    // Create the schedule
+    // Fetch the bus to get its total_seats
+    $bus = Bus::findOrFail($request->bus_id);
+
+    // Create the schedule with capacity from bus
     Schedule::create([
         'bus_id' => $request->bus_id,
         'destination_id' => $request->destination_id,
         'scheduled_by' => auth()->id(),
         'scheduled_at' => now(),
         'status' => 'queued',
+        'capacity' => $bus->total_seats, // <-- Save capacity here
+        'boarding' => 0, // Optionally initialize boarding to 0
     ]);
 
     return redirect()->route('mahberat.schedule.index')->with('success', 'Bus scheduled successfully.');
