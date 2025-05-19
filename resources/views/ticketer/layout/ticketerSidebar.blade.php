@@ -1,4 +1,4 @@
-<div class="w-64 min-h-screen bg-gray-800 text-white flex flex-col p-4">
+<div class="w-128 min-h-screen bg-gray-800 text-white flex flex-col p-4">
     <div class="text-2xl font-bold mb-6">
         <a href="/home">Ticketer Dashboard</a>
     </div>
