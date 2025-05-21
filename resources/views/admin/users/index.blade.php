@@ -1,93 +1,99 @@
 @extends('admin.layout.app')
 
 @section('content')
-<h1 class="text-2xl font-bold mb-4">All Users</h1>
+<div class="min-h-screen bg-[#fdf6e3] p-4 sm:p-8">
+    <div class="max-w-7xl mx-auto">
+        <h2 class="text-3xl font-extrabold text-[#b58900] mb-6 animate-fade-in-down">👥 All Users</h2>
 
-@if (session('success'))
-    <div class="bg-green-100 text-green-800 px-4 py-2 rounded mb-4">
-        {{ session('success') }}
+        @if (session('success'))
+            <div class="bg-green-100 text-green-800 px-4 py-3 rounded-md shadow mb-6 animate-fade-in">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        <a href="{{ route('admin.users.create') }}"
+            class="inline-block mb-6 bg-[#d4af37] text-white px-6 py-2 rounded-xl shadow hover:bg-[#c19a29] transition-all duration-300 animate-fade-in">
+            ➕ Add New User
+        </a>
+
+        <div class="bg-white shadow-lg rounded-xl overflow-hidden animate-fade-in-up">
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-left text-sm">
+                    <thead class="bg-[#b58900] text-white">
+                        <tr>
+                            <th class="px-4 py-3">Name</th>
+                            <th class="px-4 py-3">Email</th>
+                            <th class="px-4 py-3">Phone</th>
+                            <th class="px-4 py-3">User Type</th>
+                            <th class="px-4 py-3">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-[#f6e8c0]">
+                        @foreach($users as $user)
+                        <tr class="hover:bg-[#fcf6dc] transition duration-200">
+                            <td class="px-4 py-4 text-gray-800">{{ $user->name }}</td>
+                            <td class="px-4 py-4 text-gray-600">{{ $user->email }}</td>
+                            <td class="px-4 py-4 text-gray-600">{{ $user->phone ?? '-' }}</td>
+                            <td class="px-4 py-4 capitalize text-gray-600">{{ $user->usertype }}</td>
+                            <td class="px-4 py-4">
+                                <div class="flex flex-col sm:flex-row gap-2">
+                                    <a href="{{ route('admin.users.show', $user->id) }}"
+                                        class="bg-[#6c63ff] hover:bg-[#574fd1] text-white px-3 py-1 rounded-md text-xs sm:text-sm transition duration-300 text-center">
+                                        View
+                                    </a>
+                                    <a href="{{ route('admin.users.edit', $user->id) }}"
+                                        class="bg-[#f4c542] hover:bg-[#e5b729] text-white px-3 py-1 rounded-md text-xs sm:text-sm transition duration-300 text-center">
+                                        Edit
+                                    </a>
+                                    <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST"
+                                        onsubmit="return confirm('Are you sure?');" class="inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                            class="bg-[#e63946] hover:bg-[#c92d3b] text-white px-3 py-1 rounded-md text-xs sm:text-sm transition duration-300 text-center">
+                                            Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-@endif
+</div>
 
-<a href="{{ route('admin.users.create') }}" class="mb-4 inline-block bg-green-600 text-white px-4 py-2 rounded">Add New User</a>
+{{-- Animation classes --}}
+@push('styles')
+<style>
+    @keyframes fade-in {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
 
-<table class="w-full bg-white shadow rounded">
-    <thead class="bg-yellow-800 text-white">
-        <tr>
-            <th class="px-4 py-2 text-left">Name</th>
-            <th class="px-4 py-2 text-left">Email</th>
-            <th class="px-4 py-2 text-left">Phone</th>
-            <th class="px-4 py-2 text-left">User Type</th>
-            <th class="px-4 py-2 text-left">Actions</th>
-        </tr>
-    </thead>
-    <tbody class="divide-y divide-gray-200">
-        @foreach($users as $user)
-        <tr>
-            <td class="px-4 py-2">{{ $user->name }}</td>
-            <td class="px-4 py-2">{{ $user->email }}</td>
-            <td class="px-4 py-2">{{ $user->phone ?? '-' }}</td>
-            <td class="px-4 py-2">{{ $user->usertype }}</td>
-            <td class="flex space-x-2">
-                <a href="{{ route('admin.users.show', $user->id) }}" class="bg-blue-500 text-white px-2 py-1 rounded">View</a>
-                <a href="{{ route('admin.users.edit', $user->id) }}" class="bg-yellow-500 text-white px-2 py-1 rounded">Edit</a>
-                <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Are you sure?');">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="bg-red-500 text-white px-2 py-1 rounded">Delete</button>
-                </form>
-            </td>
-            
-        </tr>
+    @keyframes fade-in-down {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
 
-        <!-- View Modal -->
-        <div x-data="{ viewModal_{{ $user->id }}: false }" x-show="viewModal_{{ $user->id }}" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div class="bg-white p-6 rounded w-96">
-                <h2 class="text-xl font-bold mb-4">User Details</h2>
-                <p><strong>Name:</strong> {{ $user->name }}</p>
-                <p><strong>Email:</strong> {{ $user->email }}</p>
-                <p><strong>Phone:</strong> {{ $user->phone ?? '-' }}</p>
-                <p><strong>User Type:</strong> {{ $user->usertype }}</p>
-                <button @click="viewModal_{{ $user->id }} = false" class="mt-4 bg-yellow-800 text-white px-4 py-2 rounded">Close</button>
-            </div>
-        </div>
+    @keyframes fade-in-up {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
 
-        <!-- Edit Modal -->
-        <div x-data="{ editModal_{{ $user->id }}: false }" x-show="editModal_{{ $user->id }}" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div class="bg-white p-6 rounded w-96">
-                <h2 class="text-xl font-bold mb-4">Edit User</h2>
-                <form action="{{ route('admin.users.update', $user->id) }}" method="POST">
-                    @csrf
-                    @method('PUT')
-                    <div class="mb-2">
-                        <label>Name</label>
-                        <input type="text" name="name" value="{{ $user->name }}" class="w-full border rounded px-2 py-1">
-                    </div>
-                    <div class="mb-2">
-                        <label>Email</label>
-                        <input type="email" name="email" value="{{ $user->email }}" class="w-full border rounded px-2 py-1">
-                    </div>
-                    <div class="mb-2">
-                        <label>Phone</label>
-                        <input type="text" name="phone" value="{{ $user->phone }}" class="w-full border rounded px-2 py-1">
-                    </div>
-                    <div class="mb-2">
-                        <label>User Type</label>
-                        <select name="usertype" class="w-full border rounded px-2 py-1">
-                            <option {{ $user->usertype === 'admin' ? 'selected' : '' }} value="admin">Admin</option>
-                            <option {{ $user->usertype === 'ticketer' ? 'selected' : '' }} value="ticketer">Ticketer</option>
-                            <option {{ $user->usertype === 'traffic' ? 'selected' : '' }} value="traffic">Traffic</option>
-                        </select>
-                    </div>
-                    <div class="flex justify-between mt-4">
-                        <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded">Update</button>
-                        <button @click="editModal_{{ $user->id }} = false" type="button" class="bg-gray-500 text-white px-4 py-2 rounded">Cancel</button>
-                    </div>
-                </form>
-            </div>
-        </div>
+    .animate-fade-in {
+        animation: fade-in 0.5s ease-in-out;
+    }
 
-        @endforeach
-    </tbody>
-</table>
+    .animate-fade-in-down {
+        animation: fade-in-down 0.5s ease-out;
+    }
+
+    .animate-fade-in-up {
+        animation: fade-in-up 0.6s ease-out;
+    }
+</style>
+@endpush
 @endsection
