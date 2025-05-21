@@ -54,7 +54,23 @@
             datasets: [{
                 label: 'Passengers',
                 data: {!! json_encode($passengerCounts) !!},
-                backgroundColor: '#3B82F6',
+                backgroundColor: {!! json_encode(
+    collect($destinationLabels)->map(function($label, $i) {
+        $colors = [
+            '#3B82F6', // blue
+            '#F59E42', // orange
+            '#10B981', // green
+            '#F43F5E', // pink/red
+            '#6366F1', // indigo
+            '#FBBF24', // yellow
+            '#06B6D4', // cyan
+            '#A21CAF', // purple
+            '#84CC16', // lime
+            '#E11D48', // rose
+        ];
+        return $colors[$i % count($colors)];
+    })
+) !!},
                 borderRadius: 6
             }]
         },
