@@ -5,25 +5,35 @@
     <div class="max-w-7xl mx-auto">
         <!-- Welcome Header -->
         <h2 class="text-3xl font-bold text-gray-800 mb-6">👋 Welcome, {{ Auth::user()->name }}</h2>
-<!-- Date Filter -->
-<form method="GET" class="mb-6 flex flex-col sm:flex-row sm:items-end gap-4">
-    <div>
-        <label for="start_date" class="block text-sm font-medium text-gray-700">Start Date</label>
-        <input type="date" name="start_date" id="start_date" value="{{ request('start_date') }}"
-            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-    </div>
-    <div>
-        <label for="end_date" class="block text-sm font-medium text-gray-700">End Date</label>
-        <input type="date" name="end_date" id="end_date" value="{{ request('end_date') }}"
-            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-    </div>
-    <div>
-        <button type="submit"
-            class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition">
-            Filter
-        </button>
-    </div>
-</form>
+
+        <!-- Quick Filter Buttons -->
+        <div class="flex flex-wrap gap-2 mb-4">
+            <button type="button" class="bg-blue-100 text-blue-700 px-3 py-1 rounded hover:bg-blue-200" onclick="setQuickRange('this_month')">This Month</button>
+            <button type="button" class="bg-blue-100 text-blue-700 px-3 py-1 rounded hover:bg-blue-200" onclick="setQuickRange('last_month')">Last Month</button>
+            <button type="button" class="bg-blue-100 text-blue-700 px-3 py-1 rounded hover:bg-blue-200" onclick="setQuickRange('last_3_months')">Last 3 Months</button>
+            <button type="button" class="bg-blue-100 text-blue-700 px-3 py-1 rounded hover:bg-blue-200" onclick="setQuickRange('this_week')">This Week</button>
+            <button type="button" class="bg-blue-100 text-blue-700 px-3 py-1 rounded hover:bg-blue-200" onclick="setQuickRange('this_year')">This Year</button>
+        </div>
+
+        <!-- Date Filter -->
+        <form method="GET" class="mb-6 flex flex-col sm:flex-row sm:items-end gap-4">
+            <div>
+                <label for="start_date" class="block text-sm font-medium text-gray-700">Start Date</label>
+                <input type="date" name="start_date" id="start_date" value="{{ request('start_date') }}"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+            </div>
+            <div>
+                <label for="end_date" class="block text-sm font-medium text-gray-700">End Date</label>
+                <input type="date" name="end_date" id="end_date" value="{{ request('end_date') }}"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+            </div>
+            <div>
+                <button type="submit"
+                    class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition">
+                    Filter
+                </button>
+            </div>
+        </form>
 
         <!-- Summary Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
@@ -115,5 +125,36 @@
             }
         }
     });
+
+    function setQuickRange(type) {
+        const today = new Date();
+        let start, end;
+
+        if (type === 'this_month') {
+            start = new Date(today.getFullYear(), today.getMonth(), 1);
+            end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+        } else if (type === 'last_month') {
+            start = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+            end = new Date(today.getFullYear(), today.getMonth(), 0);
+        } else if (type === 'last_3_months') {
+            start = new Date(today.getFullYear(), today.getMonth() - 2, 1);
+            end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+        } else if (type === 'this_week') {
+            const day = today.getDay() || 7;
+            start = new Date(today);
+            start.setDate(today.getDate() - day + 1);
+            end = new Date(today);
+        } else if (type === 'this_year') {
+            start = new Date(today.getFullYear(), 0, 1);
+            end = new Date(today.getFullYear(), 11, 31);
+        }
+
+        // Format as yyyy-mm-dd
+        function fmt(d) {
+            return d.toISOString().slice(0,10);
+        }
+        document.getElementById('start_date').value = fmt(start);
+        document.getElementById('end_date').value = fmt(end);
+    }
 </script>
 @endsection
