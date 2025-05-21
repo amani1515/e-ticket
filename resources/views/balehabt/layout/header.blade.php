@@ -8,7 +8,7 @@
     <div class="flex items-center space-x-4">
         <!-- User Info -->
         <div class="text-sm text-gray-700">
-            {{ Auth::user()->name ?? 'Guest' }}
+            {{ 'Hello: ' . Auth::user()->name ?? 'Guest' }}
         </div>
 
         <!-- Logout Button -->

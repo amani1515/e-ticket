@@ -1,51 +1,38 @@
 @extends('balehabt.layout.app')
 
 @section('content')
-<div class="flex min-h-screen">
+<div class="flex min-h-screen bg-gray-50">
     <!-- Main Content -->
-    <div class="flex-1 bg-gray-100 p-6">
-        <!-- Balehabt Dashboard Content -->
-        <div class="mt-6">
-            <h2 class="text-2xl font-semibold text-gray-700">Welcome to the Balehabt Dashboard</h2>
-            {{-- <p class="text-gray-600 mt-2">Here you can manage tickets, view reports, and manage cash flows.</p> --}}
+    <div class="flex-1 p-8">
+        <!-- Dashboard Header -->
+        <div class="mb-8">
+            <h2 class="text-3xl font-bold text-gray-800">👋 Welcome to Balehabt Dashboard</h2>
+            <p class="text-gray-600 mt-2 text-lg">Quick access to manage tickets, users, reports, and settings.</p>
+        </div>
 
-            <!-- Balehabt Dashboard Options -->
-            <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Ticket Management Card -->
-                <div class="bg-white p-4 rounded-lg shadow-lg">
-                    <h3 class="text-xl font-semibold text-gray-700">Manage Tickets</h3>
-                    <p class="text-gray-600 mt-2">View and manage the tickets in your system.</p>
-                    <a href="{#}" class="text-yellow-500 hover:underline mt-4 block">Manage Tickets</a>
-                </div>
+        <!-- Dashboard Options -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Card -->
+            @php
+                $cards = [
+                    ['title' => 'Manage Tickets', 'desc' => 'View and manage the tickets in your system.', 'url' => '#'],
+                    ['title' => 'Ticket Reports', 'desc' => 'Generate and view reports for all tickets.', 'url' => '#'],
+                    ['title' => 'Cash Reports', 'desc' => 'Generate cash reports for ticket collections.', 'url' => '#'],
+                    ['title' => 'User Management', 'desc' => 'Manage system users and assign roles.', 'url' => '#'],
+                    ['title' => 'Settings', 'desc' => 'Adjust system settings as needed.', 'url' => '#'],
+                ];
+            @endphp
 
-                <!-- Ticket Report Card -->
-                <div class="bg-white p-4 rounded-lg shadow-lg">
-                    <h3 class="text-xl font-semibold text-gray-700">Ticket Reports</h3>
-                    <p class="text-gray-600 mt-2">Generate and view reports for all tickets.</p>
-                    <a href="{#}" class="text-yellow-500 hover:underline mt-4 block">View Reports</a>
-                </div>
-
-                <!-- Cash Report Card -->
-                <div class="bg-white p-4 rounded-lg shadow-lg">
-                    <h3 class="text-xl font-semibold text-gray-700">Cash Reports</h3>
-                    <p class="text-gray-600 mt-2">Generate cash reports for ticket collections.</p>
-                    <a href="{#}" class="text-yellow-500 hover:underline mt-4 block">View Cash Report</a>
-                </div>
-
-                <!-- User Management Card -->
-                <div class="bg-white p-4 rounded-lg shadow-lg">
-                    <h3 class="text-xl font-semibold text-gray-700">User Management</h3>
-                    <p class="text-gray-600 mt-2">Manage system users and assign roles.</p>
-                    <a href="{#}" class="text-yellow-500 hover:underline mt-4 block">Manage Users</a>
-                </div>
-
-                <!-- Settings Card -->
-                <div class="bg-white p-4 rounded-lg shadow-lg">
-                    <h3 class="text-xl font-semibold text-gray-700">Settings</h3>
-                    <p class="text-gray-600 mt-2">Adjust system settings as needed.</p>
-                    <a href="{#}" class="text-yellow-500 hover:underline mt-4 block">Settings</a>
-                </div>
+            @foreach($cards as $card)
+            <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition duration-300 transform hover:-translate-y-1">
+                <h3 class="text-xl font-semibold text-gray-800">{{ $card['title'] }}</h3>
+                <p class="text-gray-600 mt-2">{{ $card['desc'] }}</p>
+                <a href="{{ $card['url'] }}"
+                   class="mt-4 inline-block text-yellow-600 font-medium hover:underline hover:text-yellow-700 transition">
+                   Go to {{ $card['title'] }}
+                </a>
             </div>
+            @endforeach
         </div>
     </div>
 </div>

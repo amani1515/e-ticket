@@ -57,9 +57,14 @@
             <h2 class="text-5xl font-extrabold mb-4 leading-tight drop-shadow-md">ዘመናዊ የህዝብ አውቶብስ ትኬት አስተዳደር</h2>
             <p class="text-xl mb-8 opacity-90">የአውቶቡስ ትኬቶችን፣ ሾፌሮችን እና መርሃ ግብሮችን ለማስተዳደር ቀላል፣ ፈጣን እና የተደራጀ መድረክ - ለውስጣዊ
                 ሰራተኞች አጠቃቀም የተሰራ።</p>
-            <a href="{{ route('login') }}"
-                class="bg-white text-yellow-700 font-bold px-8 py-3 rounded-full hover:bg-gray-100 shadow-lg transition transform hover:scale-105">አሁን
-                ጀምር</a>
+                
+{{-- <a href="{{ route('login') }}"
+   class="bg-white text-yellow-700 font-bold px-8 py-3 rounded-full shadow-lg transition-all duration-300 ease-in-out transform hover:bg-gray-100 hover:scale-110 hover:shadow-xl active:scale-95 focus:outline-none focus:ring-4 focus:ring-yellow-300 animate-bounce">
+   አሁን ጀምር
+</a> --}}
+     <a href="{{ route('login') }}"
+                class="inline-block bg-white text-yellow-700 px-8 py-3 rounded-lg text-lg font-semibold shadow hover:text-amber-500 transition animate-bounce">
+                አሁን ጀምር</a>       
         </div>
     </section>
 
