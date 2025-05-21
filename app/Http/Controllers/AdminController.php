@@ -27,6 +27,10 @@ class AdminController extends Controller
          {
              return view('balehabt.index');
          }
+         elseif($usertype == 'traffic')
+         {
+             return view('traffic.index');
+         }
        else if($usertype == 'admin')
          {
  // 👇 Reporting logic moved into ticketer block

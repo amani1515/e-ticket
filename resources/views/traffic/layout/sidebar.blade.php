@@ -1,40 +1,40 @@
 <div class="min-h-screen bg-gray-800 text-white flex flex-col p-4 w-64">
     <div class="text-2xl font-bold mb-6">
-        <a href="/balehabt/dashboard">Balehabt Dashboard</a>
+        <a href="/home">Traffic Dashboard</a>
     </div>
 
-    <div x-data="{ openCars: false, openOwners: false }" class="space-y-2">
-        <!-- Cars Menu -->
+    <div x-data="{ openViolations: false, openDrivers: false }" class="space-y-2">
+        <!-- Violations Menu -->
         <div>
-            <button @click="openCars = !openCars"
+            <button @click="openViolations = !openViolations"
                 class="w-full text-left font-semibold flex justify-between items-center">
-                Cars
-                <svg :class="{ 'rotate-180': openCars }"
+                Violations
+                <svg :class="{ 'rotate-180': openViolations }"
                     class="w-4 h-4 transform transition-transform" fill="none"
                     stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                 </svg>
             </button>
-            <div x-show="openCars" x-cloak class="ml-4 mt-2 space-y-1">
-                <a href="#" class="block hover:text-gray-300">Car List</a>
-                <a href="#" class="block hover:text-gray-300">Register Car</a>
+            <div x-show="openViolations" x-cloak class="ml-4 mt-2 space-y-1">
+                <a href="#" class="block hover:text-gray-300">View Violations</a>
+                <a href="#" class="block hover:text-gray-300">Report Violation</a>
             </div>
         </div>
 
-        <!-- Owners Menu -->
+        <!-- Drivers Menu -->
         <div>
-            <button @click="openOwners = !openOwners"
+            <button @click="openDrivers = !openDrivers"
                 class="w-full text-left font-semibold flex justify-between items-center">
-                Owners
-                <svg :class="{ 'rotate-180': openOwners }"
+                Drivers
+                <svg :class="{ 'rotate-180': openDrivers }"
                     class="w-4 h-4 transform transition-transform" fill="none"
                     stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                 </svg>
             </button>
-            <div x-show="openOwners" x-cloak class="ml-4 mt-2 space-y-1">
-                <a href="#" class="block hover:text-gray-300">Owner List</a>
-                <a href="#" class="block hover:text-gray-300">Register Owner</a>
+            <div x-show="openDrivers" x-cloak class="ml-4 mt-2 space-y-1">
+                <a href="#" class="block hover:text-gray-300">Driver List</a>
+                <a href="#" class="block hover:text-gray-300">Register Driver</a>
             </div>
         </div>
     </div>
