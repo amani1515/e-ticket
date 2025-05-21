@@ -47,8 +47,7 @@
 
             <div class="mb-4">
                 <label for="bus_id" class="block">Bus ID / Targa No</label>
-<input type="text" name="bus_id" id="bus_id" class="w-full p-2 border rounded" required>
-            </div>
+<input type="text" name="bus_id" id="bus_id" class="w-full p-2 border rounded" required readonly>            </div>
 
             <div class="mb-4">
                 <label for="departure_datetime" class="block">Departure Date and Time</label>
