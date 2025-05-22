@@ -43,5 +43,13 @@ public function tickets()
 {
     return $this->hasMany(\App\Models\Ticket::class);
 }
+public function paidBy()
+{
+    return $this->belongsTo(\App\Models\User::class, 'paid_by');
+}
 
+public function departedBy()
+{
+    return $this->belongsTo(\App\Models\User::class, 'departed_by');
+}
 }

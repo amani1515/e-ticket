@@ -24,6 +24,8 @@ public function pay($id)
 {
     $schedule = \App\Models\Schedule::findOrFail($id);
     $schedule->status = 'paid';
+    $schedule->paid_by = auth()->id();
+    $schedule->paid_at = now();
     $schedule->save();
 
     return redirect()->back()->with('success', 'Schedule marked as paid!');

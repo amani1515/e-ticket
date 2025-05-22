@@ -143,3 +143,9 @@ Route::get('/admin/buses', [BusController::class, 'index'])->name('admin.buses.i
 Route::get('/admin/bus-reports', [BusReportController::class, 'index'])->name('admin.bus.reports');
 
 Route::get('/bus-display', [PublicDisplayController::class, 'showAllSchedules']);
+
+
+//for hisab shum
+
+Route::get('/hisab-shum/paid-reports', [\App\Http\Controllers\HisabShum\PaidReportController::class, 'index'])->name('hisabShum.paidReports');
+Route::get('/hisab-shum/schedule/{schedule}/certificate', [\App\Http\Controllers\HisabShum\PaidReportController::class, 'certificate'])->name('hisabShum.certificate');
