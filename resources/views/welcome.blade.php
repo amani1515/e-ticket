@@ -32,8 +32,10 @@
             {{-- Navigation Links (Hidden on Mobile) --}}
             <nav class="hidden md:flex space-x-6 text-lg">
                 <a href="#home" class="hover:text-yellow-500 transition">ዋና ገጽ</a>
+                <a href="/bus-display" class="hover:text-yellow-500 transition">ወረፋ ምልከታ</a>
                 <a href="#features" class="hover:text-yellow-500 transition">ልዩ ልዩ</a>
                 <a href="#contact" class="hover:text-yellow-500 transition">ግንኙነት</a>
+                
                 <a href="{{ route('login') }}"
                     class="bg-gradient-to-r from-yellow-600 to-yellow-500 text-white px-5 py-2 rounded-full shadow hover:scale-105 transition transform duration-300">ግባ</a>
             </nav>
@@ -43,6 +45,7 @@
         <div x-show="open" x-cloak class="md:hidden bg-white shadow-lg">
             <nav class="flex flex-col space-y-4 p-4 text-lg">
                 <a href="#home" class="hover:text-yellow-500 transition">ዋና ገጽ</a>
+                <a href="/bus-display" class="hover:text-yellow-500 transition">ወረፋ ምልከታ</a>
                 <a href="#features" class="hover:text-yellow-500 transition">ልዩ ልዩ</a>
                 <a href="#contact" class="hover:text-yellow-500 transition">ግንኙነት</a>
                 <a href="{{ route('login') }}"

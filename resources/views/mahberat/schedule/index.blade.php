@@ -1,7 +1,7 @@
 @extends('mahberat.layout.app')
 
 @section('content')
-<div class="ml-64 px-6 py-6"> {{-- Adjust margin based on sidebar width --}}
+ <div class="min-h-screen bg-gradient-to-br from-yellow-600 via-yellow-600 to-yellow-600 p-8"> {{-- Adjust margin based on sidebar width --}}
     <h2 class="text-2xl font-semibold mb-4">Scheduled Buses</h2>
 
     @if(session('success'))

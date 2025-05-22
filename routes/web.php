@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\PassengerReportController;
 use App\Http\Controllers\Ticketer\CashReportController;
 use App\Http\Controllers\Admin\BusController;
 use App\Http\Controllers\Admin\BusReportController;
+use App\Http\Controllers\PublicDisplayController;
 
 
 
@@ -138,3 +139,5 @@ Route::get('/admin/buses', [BusController::class, 'index'])->name('admin.buses.i
 
 // Route for Bus Report
 Route::get('/admin/bus-reports', [BusReportController::class, 'index'])->name('admin.bus.reports');
+
+Route::get('/bus-display', [PublicDisplayController::class, 'showAllSchedules']);

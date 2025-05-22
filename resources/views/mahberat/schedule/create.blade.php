@@ -1,7 +1,7 @@
 @extends('mahberat.layout.app')
 
 @section('content')
-<div class="container max-w-xl mx-auto">
+ <div class="min-h-screen bg-gradient-to-br from-yellow-600 via-yellow-600 to-yellow-600 p-8"> {{-- Adjust margin based on sidebar width --}}
     <h2 class="text-2xl font-semibold mb-4">Schedule a New Bus</h2>
 
     @if($errors->any())

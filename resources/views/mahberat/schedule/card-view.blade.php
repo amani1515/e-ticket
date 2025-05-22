@@ -1,7 +1,7 @@
 @extends('mahberat.layout.app')
 
 @section('content')
-<div class="md:ml-64 px-2 py-6">
+<div class=" px-2 py-6">
     <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
         <svg class="w-7 h-7 text-yellow-500 animate-bounce" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2a4 4 0 014-4h2" />
