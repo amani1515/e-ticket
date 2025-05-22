@@ -9,6 +9,7 @@ use App\Models\Bus;
 use App\Models\Destination;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 
 class ScheduleController extends Controller
@@ -59,16 +60,21 @@ class ScheduleController extends Controller
     // Fetch the bus to get its total_seats
     $bus = Bus::findOrFail($request->bus_id);
 
+   // Generate unique schedule_uid
+    $scheduleUid = 'sevastopoltechs-' . strtoupper(Str::random(10));
+
     // Create the schedule with capacity from bus
-    Schedule::create([
-        'bus_id' => $request->bus_id,
-        'destination_id' => $request->destination_id,
-        'scheduled_by' => auth()->id(),
-        'scheduled_at' => now(),
-        'status' => 'queued',
-        'capacity' => $bus->total_seats, // <-- Save capacity here
-        'boarding' => 0, // Optionally initialize boarding to 0
-    ]);
+  Schedule::create([
+    'bus_id' => $request->bus_id,
+        'schedule_uid' => $scheduleUid, // <-- Add this line!
+    'destination_id' => $request->destination_id,
+    'scheduled_by' => auth()->id(),
+    'scheduled_at' => now(),
+    'status' => 'queued',
+    'capacity' => $bus->total_seats,
+    'boarding' => 0,
+]);
+    
 
     return redirect()->route('mahberat.schedule.index')->with('success', 'Bus scheduled successfully.');
 }

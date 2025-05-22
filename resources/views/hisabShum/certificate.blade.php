@@ -129,6 +129,15 @@
             <div>Approved by: ____________________</div>
 
         </div>
+        <div style="margin-top:60px; text-align:center;">
+    <div style="font-size:1.1em; margin-bottom:8px;">
+        Schedule ID: <strong>{{ $schedule->schedule_uid }}</strong>
+    </div>
+    <img 
+        src="https://barcode.tec-it.com/barcode.ashx?data={{ $schedule->schedule_uid }}&code=Code128&translate-esc=off" 
+        alt="Barcode for {{ $schedule->schedule_uid }}" 
+        style="margin:auto; display:block; max-width:300px; height:60px;"
+    >
         <button class="no-print" onclick="window.print()" style="margin-top:40px;padding:10px 30px;font-size:1em;">Print</button>
     </div>
 </body>

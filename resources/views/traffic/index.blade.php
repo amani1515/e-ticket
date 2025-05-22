@@ -6,7 +6,7 @@
     <div class="flex-1 bg-gray-100 p-6">
         <!-- Balehabt Dashboard Content -->
         <div class="mt-6">
-            <h2 class="text-2xl font-semibold text-gray-700">Welcome to the Balehabt Dashboard</h2>
+            <h2 class="text-2xl font-semibold text-gray-700">Welcome to the Traffic Dashboard</h2>
             {{-- <p class="text-gray-600 mt-2">Here you can manage tickets, view reports, and manage cash flows.</p> --}}
 
             <!-- Balehabt Dashboard Options -->

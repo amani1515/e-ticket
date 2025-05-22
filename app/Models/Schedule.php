@@ -9,6 +9,8 @@ class Schedule extends Model
     //
     protected $fillable = [
         'bus_id',
+            'schedule_uid',
+
         'destination_id',
         'scheduled_by',
         'scheduled_at',
