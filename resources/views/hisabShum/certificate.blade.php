@@ -125,6 +125,9 @@
         <div class="footer">
             <div>Date: {{ now()->format('Y-m-d') }}</div> <br>
             <div>Signature: ____________________</div>
+            <br><br>
+            <div>Approved by: ____________________</div>
+
         </div>
         <button class="no-print" onclick="window.print()" style="margin-top:40px;padding:10px 30px;font-size:1em;">Print</button>
     </div>

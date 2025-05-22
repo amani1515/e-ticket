@@ -11,8 +11,9 @@
                 </svg>
             </button>
             <div x-show="open" x-cloak class="ml-4 mt-1 space-y-1">
-                <a href="#" class="block py-2 px-4 rounded hover:bg-blue-600">All Reports</a>
-<a href="{{ route('hisabShum.paidReports') }}" class="block py-2 px-4 rounded hover:bg-blue-600">Paid Reports</a>            </div>
+                <a href="{{ route('hisabShum.allReports') }}" class="block py-2 px-4 rounded hover:bg-blue-600">All Reports</a>
+                <a href="{{ route('hisabShum.paidReports') }}" class="block py-2 px-4 rounded hover:bg-blue-600">Paid Reports</a>
+            </div>
         </div>
 
         <a href="#" class="block py-2 px-4 rounded hover:bg-blue-700">Settings</a>
