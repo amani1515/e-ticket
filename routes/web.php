@@ -75,6 +75,7 @@ Route::get('/ticketer/scan', [TicketController::class, 'showScanForm'])->name('t
 Route::post('/ticketer/scan', [TicketController::class, 'processScan'])->name('ticketer.tickets.processScan');
 Route::get('/ticketer/first-queued-bus/{destination}', [App\Http\Controllers\Ticketer\TicketController::class, 'firstQueuedBus']);
 Route::post('/ticketer/increment-boarding/{destinationId}', [App\Http\Controllers\Ticketer\TicketController::class, 'incrementBoardingForFirstQueuedBus']); // web.php
+Route::get('/ticketer/schedule-report', [\App\Http\Controllers\Ticketer\ScheduleController::class, 'report'])->name('ticketer.schedule.report');
 
 
 Route::get('/admin/passenger-report', [PassengersReportController::class, 'index'])->name('admin.passenger-report');

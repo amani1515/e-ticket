@@ -29,6 +29,7 @@
             <div x-show="openReports" x-cloak class="ml-4 mt-2 space-y-1">
                 <a href="{{ route('ticketer.tickets.report') }}" class="block hover:text-gray-300">Ticket Report</a>
                 <a href="{{ route('ticketer.cash-report.index') }}" class="block hover:text-gray-300">Cash Report</a>
+                <a href="{{ route('ticketer.schedule.report') }}" class="block hover:text-gray-300">Schedule Report</a>
             </div>
         </div>
     </div>

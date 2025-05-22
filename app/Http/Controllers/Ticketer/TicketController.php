@@ -94,6 +94,8 @@ public function store(Request $request)
         ->first();
 
         if ($schedule) {
+            $schedule->ticket_created_by = auth()->id(); // Set ticketer's user id
+
             $schedule->boarding = $schedule->boarding + 1;
             if ($schedule->boarding >= $schedule->capacity) {
                 $schedule->status = 'full';
