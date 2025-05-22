@@ -39,6 +39,9 @@ public function scheduledBy()
     return $this->belongsTo(User::class, 'scheduled_by');
 }
 
-
+public function tickets()
+{
+    return $this->hasMany(\App\Models\Ticket::class);
+}
 
 }

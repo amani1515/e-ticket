@@ -9,13 +9,13 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
- public function up()
+  public function up()
 {
     \DB::statement("ALTER TABLE schedules MODIFY COLUMN status ENUM('queued', 'on loading', 'full', 'departed', 'cancelled', 'paid') NOT NULL DEFAULT 'queued'");
 }
 
 public function down()
 {
-    \DB::statement("ALTER TABLE schedules MODIFY COLUMN status ENUM('queued', 'departed', 'cancelled') NOT NULL DEFAULT 'queued'");
+    \DB::statement("ALTER TABLE schedules MODIFY COLUMN status ENUM('queued', 'on loading', 'full', 'departed', 'cancelled') NOT NULL DEFAULT 'queued'");
 }
 };

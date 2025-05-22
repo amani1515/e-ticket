@@ -20,4 +20,12 @@ public function report()
 
     return view('ticketer.schedule.report', compact('schedules'));
 }
+public function pay($id)
+{
+    $schedule = \App\Models\Schedule::findOrFail($id);
+    $schedule->status = 'paid';
+    $schedule->save();
+
+    return redirect()->back()->with('success', 'Schedule marked as paid!');
+}
 }

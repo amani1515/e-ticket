@@ -72,26 +72,32 @@ public function store(Request $request)
     if (!$bus) {
         return back()->withErrors(['bus_id' => 'Bus not found.']);
     }
+    // Find the related schedule (status queued or on loading)
+$schedule = Schedule::where('bus_id', $bus->id)
+    ->where('destination_id', $request->destination_id)
+    ->whereIn('status', ['queued', 'on loading'])
+    ->first();
 
-    $ticket = Ticket::create([
-        'passenger_name' => $request->passenger_name,
-        'gender' => $request->gender,
-        'age_status' => $request->age_status,
-        'destination_id' => $request->destination_id,
-        'bus_id' => $bus->id, // Save the bus primary key!
-        'departure_datetime' => $request->departure_datetime,
-        'ticket_code' => 'SE' . now()->format('Ymd') . strtoupper(uniqid()),
-        'creator_user_id' => auth()->id(),
-        'tax' => $destination->tax,
-        'service_fee' => $destination->service_fee,
-        'ticket_status' => 'created',
-    ]);
+$ticket = Ticket::create([
+    'passenger_name' => $request->passenger_name,
+    'gender' => $request->gender,
+    'age_status' => $request->age_status,
+    'destination_id' => $request->destination_id,
+    'bus_id' => $bus->id,
+    'schedule_id' => $schedule ? $schedule->id : null, // <-- add this line
+    'departure_datetime' => $request->departure_datetime,
+    'ticket_code' => 'SE' . now()->format('Ymd') . strtoupper(uniqid()),
+    'creator_user_id' => auth()->id(),
+    'tax' => $destination->tax,
+    'service_fee' => $destination->service_fee,
+    'ticket_status' => 'created',
+]);
 
     // Find the related schedule (status queued or on loading)
-    $schedule = Schedule::where('bus_id', $bus->id)
-        ->where('destination_id', $request->destination_id)
-        ->whereIn('status', ['queued', 'on loading'])
-        ->first();
+    // $schedule = Schedule::where('bus_id', $bus->id)
+    //     ->where('destination_id', $request->destination_id)
+    //     ->whereIn('status', ['queued', 'on loading'])
+    //     ->first();
 
         if ($schedule) {
             $schedule->ticket_created_by = auth()->id(); // Set ticketer's user id

@@ -17,6 +17,8 @@ class Ticket extends Model
         'age_status',
         'destination_id',
         'bus_id',
+            'schedule_id', // <-- make sure this is here!
+
         'departure_datetime',
         'ticket_code',
         'ticket_status',
@@ -41,6 +43,11 @@ class Ticket extends Model
     public function bus()
 {
     return $this->belongsTo(Bus::class);
+}
+
+public function schedule()
+{
+    return $this->belongsTo(\App\Models\Schedule::class);
 }
 
 }
