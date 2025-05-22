@@ -29,6 +29,7 @@
                 <option value="admin" {{ $user->usertype == 'admin' ? 'selected' : '' }}>Admin</option>
                 <option value="ticketer" {{ $user->usertype == 'ticketer' ? 'selected' : '' }}>Ticketer</option>
                 <option value="traffic" {{ $user->usertype == 'traffic' ? 'selected' : '' }}>Traffic</option>
+                <option value="hisabshum" {{ $user->usertype == 'hisabshum' ? 'selected' : '' }}>hisabshum</option>
                 <option value="mahberat" {{ $user->usertype == 'mahberat' ? 'selected' : '' }}>Mahberat</option>
                 <option value="balehabt" {{ $user->usertype == 'balehabt' ? 'selected' : '' }}>Balehabt</option>
             </select>

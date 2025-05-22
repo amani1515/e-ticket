@@ -31,6 +31,10 @@ class AdminController extends Controller
          {
              return view('traffic.index');
          }
+         elseif($usertype == 'hisabshum')
+         {
+             return view('hisabShum.index');
+         }
        else if($usertype == 'admin')
        {
     $startDate = request('start_date');

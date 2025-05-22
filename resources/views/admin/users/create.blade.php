@@ -36,6 +36,7 @@
                 <option value="admin" {{ old('usertype') == 'admin' ? 'selected' : '' }}>Admin</option>
                 <option value="ticketer" {{ old('usertype') == 'ticketer' ? 'selected' : '' }}>Ticketer</option>
                 <option value="traffic" {{ old('usertype') == 'traffic' ? 'selected' : '' }}>Traffic</option>
+                <option value="hisabshum" {{ old('usertype') == 'hisabshum' ? 'selected' : '' }}>Hisabshum</option>
                 <option value="mahberat" {{ old('usertype') == 'mahberat' ? 'selected' : '' }}>Mahberat</option>
                 <option value="owner" {{ old('usertype') == 'owner' ? 'selected' : '' }}>Owner</option>
             </select>
