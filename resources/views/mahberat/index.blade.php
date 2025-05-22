@@ -15,7 +15,11 @@
                 <span class="text-blue-600">🚌</span>
                 <span>Total Buses</span>
             </h2>
-            <p class="text-3xl font-bold text-blue-700 mt-2">--</p>
+            <p class="text-3xl font-bold text-blue-700 mt-2">
+                {{ $total_buses = \App\Models\Bus::whereHas('registeredBy', function($q) {
+                    $q->where('id', Auth::id());
+                })->count() }}
+            </p>
         </div>
 
         <!-- Total Drivers -->
@@ -24,7 +28,9 @@
                 <span class="text-purple-600">🧑‍✈️</span>
                 <span>Total Drivers</span>
             </h2>
-            <p class="text-3xl font-bold text-purple-700 mt-2">--</p>
+            <p class="text-3xl font-bold text-purple-700 mt-2">
+                {{ $total_buses }}
+            </p>
         </div>
 
         <!-- Buses In Today -->
@@ -33,17 +39,14 @@
                 <span class="text-green-500">🟢</span>
                 <span>Buses In Today</span>
             </h2>
-            <p class="text-3xl font-bold text-green-600 mt-2">--</p>
+            <p class="text-3xl font-bold text-green-600 mt-2">
+                {{ \App\Models\Bus::whereHas('schedules', function($q) {
+                    $q->whereDate('created_at', now()->toDateString());
+                })->count() }}
+            </p>
         </div>
 
-        <!-- Buses Out Today -->
-        <div class="bg-white border border-gray-200 p-6 rounded-2xl shadow-sm hover:shadow-md transition transform hover:-translate-y-1">
-            <h2 class="text-lg font-semibold text-gray-600 flex items-center gap-2">
-                <span class="text-red-500">🔴</span>
-                <span>Buses Out Today</span>
-            </h2>
-            <p class="text-3xl font-bold text-red-600 mt-2">--</p>
-        </div>
+        
     </div>
 </div>
 @endsection

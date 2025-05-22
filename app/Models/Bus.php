@@ -37,4 +37,12 @@ class Bus extends Model
 {
     return $this->belongsTo(User::class, 'registered_by');
 }
+
+    public function destination()
+{
+    return $this->belongsTo(Destination::class, 'registered_by');
+}
+public function schedules() {
+    return $this->hasMany(Schedule::class, 'bus_id');
+}
 }

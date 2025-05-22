@@ -46,21 +46,6 @@
                     <li><a href="{{ route('schedules.card-view') }}" class="block px-4 py-2 rounded hover:bg-gray-700">Card View</a></li>
                 </ul>
             </li>
-
-            <!-- Future Nav Example -->
-            <li>
-                <button onclick="toggleMenu('users-submenu')" class="flex items-center justify-between w-full px-4 py-2 rounded-lg hover:bg-gray-800 transition focus:outline-none">
-                    <span class="flex gap-2 items-center">
-                        👤 <span>Users</span>
-                    </span>
-                    <svg class="w-4 h-4 transform transition-transform duration-200" id="icon-users-submenu" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                    </svg>
-                </button>
-                <ul id="users-submenu" class="ml-6 mt-2 space-y-1 hidden">
-                    <li><a href="#" class="block px-4 py-2 rounded hover:bg-gray-700">All Users</a></li>
-                    <li><a href="#" class="block px-4 py-2 rounded hover:bg-gray-700">Add User</a></li>
-                </ul>
             </li>
         </ul>
     </nav>
