@@ -28,6 +28,11 @@
 <body class="bg-gray-50 text-gray-800">
 
 <div class="container mx-auto px-2 py-8">
+    <div class="flex justify-center mt-4">
+    <button id="fullscreen-btn" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-6 rounded shadow-lg transition">
+        Full Screen
+    </button>
+</div>
     <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
         <svg class="w-7 h-7 text-yellow-500 animate-bounce" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2a4 4 0 014-4h2" />
@@ -162,6 +167,19 @@
         currentIndex = (currentIndex + cardsPerView) % destinations.length;
         renderCards();
     }, intervalMs);
+</script>
+
+<script>
+document.getElementById('fullscreen-btn').addEventListener('click', function() {
+    const elem = document.documentElement;
+    if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+    } else if (elem.webkitRequestFullscreen) { /* Safari */
+        elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) { /* IE11 */
+        elem.msRequestFullscreen();
+    }
+});
 </script>
 
 </body>
