@@ -33,6 +33,7 @@
                     <th class="px-6 py-3 text-left">Scheduled At</th>
                     <th class="px-6 py-3 text-left">Scheduled By</th>
                     <th class="px-6 py-3 text-left">Status</th>
+                    <th class="px-6 py-3 text-left">Remove</th> <!-- Add Remove column -->
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-200">
@@ -49,10 +50,19 @@
                                 {{ ucfirst($schedule->status) }}
                             </span>
                         </td>
+                        <td class="px-6 py-4">
+                            <form action="{{ route('mahberat.schedule.destroy', $schedule->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to remove this schedule?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-red-600 hover:text-red-800 font-bold px-3 py-1 rounded transition">
+                                    Remove
+                                </button>
+                            </form>
+                        </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="px-6 py-6 text-center text-gray-500">
+                        <td colspan="7" class="px-6 py-6 text-center text-gray-500">
                             No scheduled buses yet.
                         </td>
                     </tr>

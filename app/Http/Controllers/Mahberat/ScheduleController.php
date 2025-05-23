@@ -89,4 +89,12 @@ class ScheduleController extends Controller
 
     return view('mahberat.schedule.card-view', compact('destinations'));
 }
+
+public function destroy($id)
+{
+    $schedule = Schedule::findOrFail($id);
+    $schedule->delete();
+
+    return redirect()->route('mahberat.schedule.index')->with('success', 'Schedule removed successfully.');
+}
 }
