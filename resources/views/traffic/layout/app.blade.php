@@ -9,7 +9,7 @@
     <script src="//unpkg.com/alpinejs" defer></script>
 </head>
 
-<body class="bg-gray-100 text-gray-900">
+<body class="bg-gradient-to-br from-yellow-100 via-yellow-200 to-yellow-400 text-gray-900 min-h-screen">
     <div x-data="{ open: false }" class="flex h-screen overflow-hidden">
 
         {{-- Sidebar --}}
@@ -34,14 +34,14 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
                 </button>
-                <span class="text-lg font-semibold text-gray-800">Traffic System</span>
+                <span class="text-lg font-bold text-yellow-700 drop-shadow">Traffic System</span>
                 <div class="flex items-center space-x-4">
-                    <div class="text-sm text-gray-700">
+                    <div class="text-sm text-gray-700 font-semibold">
                         {{ Auth::user()->name ?? 'Guest' }}
                     </div>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" class="text-red-500 hover:text-red-700 font-medium">
+                        <button type="submit" class="text-red-500 hover:text-red-700 font-medium transition">
                             Logout
                         </button>
                     </form>
@@ -53,8 +53,10 @@
                 @include('traffic.layout.header')
             </div>
 
-            <main class="p-4 min-h-screen bg-yellow-600 text-white">
-                @yield('content')
+            <main class="p-2 sm:p-4 md:p-8 min-h-screen bg-gradient-to-br from-yellow-50 via-yellow-100 to-yellow-200 text-gray-900 rounded-t-3xl shadow-inner">
+                <div class="max-w-4xl mx-auto">
+                    @yield('content')
+                </div>
             </main>
         </div>
     </div>
