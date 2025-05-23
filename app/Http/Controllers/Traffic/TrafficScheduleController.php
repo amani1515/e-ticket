@@ -27,13 +27,14 @@ class TrafficScheduleController extends \App\Http\Controllers\Controller
 
     public function markWellgo($id)
     {
-        $schedule = \App\Models\Schedule::findOrFail($id);
+        $schedule = \App\Models\Schedule::with(['bus', 'destination'])->findOrFail($id);
         if ($schedule->status === 'departed') {
             $schedule->status = 'wellgo';
             $schedule->wellgo_at = now();
-            $schedule->traffic_name = auth()->user()->name ?? 'Unknown'; // or any user info you want
+            $schedule->traffic_name = auth()->user()->name ?? 'Unknown';
             $schedule->save();
         }
-        return redirect()->back()->with('success', 'Status changed to WellGo!');
+        // Return the same result view with the updated schedule
+        return view('traffic.schedule.result', compact('schedule'));
     }
 }
