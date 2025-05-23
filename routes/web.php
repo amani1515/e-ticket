@@ -153,3 +153,7 @@ Route::get('/hisab-shum/schedule/{schedule}/certificate', [\App\Http\Controllers
 Route::get('/hisab-shum/all-reports', [\App\Http\Controllers\HisabShum\AllReportController::class, 'index'])->name('hisabShum.allReports');
 Route::delete('/mahberat/schedule/{id}', [ScheduleController::class, 'destroy'])->name('mahberat.schedule.destroy');
 Route::post('/traffic/schedule-scan', [TrafficScheduleController::class, 'scan'])->name('traffic.schedule.scan');
+Route::post('/traffic/schedule/{schedule}/wellgo', [TrafficScheduleController::class, 'markWellgo'])->name('traffic.wellgo');
+Route::get('/traffic/schedule-scan', function () {
+    return view('traffic.schedule.result');
+})->name('traffic.schedule.scan.form');

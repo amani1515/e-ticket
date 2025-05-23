@@ -24,4 +24,14 @@ class TrafficScheduleController extends \App\Http\Controllers\Controller
 
         return view('traffic.schedule.result', compact('schedule'));
     }
+
+    public function markWellgo($id)
+    {
+        $schedule = \App\Models\Schedule::findOrFail($id);
+        if ($schedule->status === 'departed') {
+            $schedule->status = 'wellgo';
+            $schedule->save();
+        }
+        return redirect()->back()->with('success', 'Status changed to WellGo!');
+    }
 }
