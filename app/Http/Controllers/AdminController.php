@@ -23,10 +23,11 @@ class AdminController extends Controller
          else if($usertype == 'mahberat')
          {
              return view('mahberat.index');}
-         else if($usertype == 'balehabt')
-         {
-             return view('balehabt.index');
-         }
+
+         else if($usertype == 'balehabt') {
+    $buses = \App\Models\Bus::where('owner_id', Auth::id())->get();
+    return view('balehabt.index', compact('buses'));
+}
          elseif($usertype == 'traffic')
          {
              return view('traffic.index');
@@ -84,7 +85,7 @@ class AdminController extends Controller
          {
              return view('ticketer.index');
          }
-
+         
          else
          {
              return redirect()->back();

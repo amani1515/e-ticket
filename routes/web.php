@@ -19,6 +19,7 @@ use App\Http\Controllers\Traffic\TrafficScheduleController;
 
 
 
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -61,6 +62,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('destinations', DestinationController::class);
 });
 
+Route::get('/balehabt/dashboard', [\App\Http\Controllers\Balehabt\BusController::class, 'index'])->middleware('auth');
 
 
 
@@ -157,3 +159,4 @@ Route::post('/traffic/schedule/{schedule}/wellgo', [TrafficScheduleController::c
 Route::get('/traffic/schedule-scan', function () {
     return view('traffic.schedule.result');
 })->name('traffic.schedule.scan.form');
+
