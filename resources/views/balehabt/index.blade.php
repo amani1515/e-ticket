@@ -7,10 +7,9 @@
         <table class="min-w-full bg-white rounded-lg shadow">
             <thead>
                 <tr>
-                    <th class="px-4 py-2 text-left text-gray-700 font-semibold">ID</th>
+                   
                     <th class="px-4 py-2 text-left text-gray-700 font-semibold">Targa</th>
                     <th class="px-4 py-2 text-left text-gray-700 font-semibold">Driver Name</th>
-                    <th class="px-4 py-2 text-left text-gray-700 font-semibold">Model</th>
                     <th class="px-4 py-2 text-left text-gray-700 font-semibold">Color</th>
                     <th class="px-4 py-2 text-left text-gray-700 font-semibold">Schedules</th>
                 </tr>
@@ -18,38 +17,35 @@
             <tbody>
                 @forelse($buses as $bus)
                 <tr class="border-b hover:bg-blue-50 align-top">
-                    <td class="px-4 py-2">{{ $bus->id }}</td>
+                    
                     <td class="px-4 py-2">{{ $bus->targa }}</td>
                     <td class="px-4 py-2">{{ $bus->driver_name }}</td>
-                    <td class="px-4 py-2">{{ $bus->model }}</td>
                     <td class="px-4 py-2">{{ $bus->color }}</td>
                     <td class="px-4 py-2">
                         @if($bus->schedules->count())
-                            <div class="space-y-2">
+                            <div class="space-y-4">
                                 @foreach($bus->schedules->sortByDesc('id') as $schedule)
-                                    <div class="p-2 bg-gray-100 rounded mb-1">
-                                        <div><span class="font-semibold">ID:</span> <span class="text-blue-900">{{ $schedule->id }}</span></div>
-                                        <div><span class="font-semibold">Schedule UID:</span> <span class="text-blue-900">{{ $schedule->schedule_uid }}</span></div>
-                                      
-                                        <div><span class="font-semibold">Destination ID:</span> <span class="text-blue-900">{{ $schedule->destination_id }}</span></div>
-                                        <div><span class="font-semibold">Scheduled By:</span> <span class="text-blue-900">{{ $schedule->scheduled_by }}</span></div>
-                                        <div><span class="font-semibold">Ticket Created By:</span> <span class="text-blue-900">{{ $schedule->ticket_created_by }}</span></div>
-                                        <div><span class="font-semibold">Scheduled At:</span> <span class="text-blue-900">{{ $schedule->scheduled_at }}</span></div>
-                                        <div><span class="font-semibold">Status:</span> <span class="text-blue-900">{{ $schedule->status }}</span></div>
-                                        <div><span class="font-semibold">Paid At:</span> <span class="text-blue-900">{{ $schedule->paid_at }}</span></div>
-                                        <div><span class="font-semibold">Departed At:</span> <span class="text-blue-900">{{ $schedule->departed_at }}</span></div>
-                                        <div><span class="font-semibold">Wellgo At:</span> <span class="text-blue-900">{{ $schedule->wellgo_at }}</span></div>
-                                        <div><span class="font-semibold">Traffic Name:</span> <span class="text-blue-900">{{ $schedule->traffic_name }}</span></div>
-                                        @if($schedule->destination)
-                                            <div class="mt-2 p-2 bg-blue-50 rounded">
-                                                <div class="font-semibold text-blue-700">Destination Info:</div>
-                                                <div><span class="font-semibold">Name:</span> <span class="text-blue-900">{{ $schedule->destination->destination_name }}</span></div>
-                                                <div><span class="font-semibold">From:</span> <span class="text-blue-900">{{ $schedule->destination->start_from }}</span></div>
-                                                <div><span class="font-semibold">Tariff:</span> <span class="text-blue-900">{{ $schedule->destination->tariff }}</span></div>
-                                                <div><span class="font-semibold">Tax:</span> <span class="text-blue-900">{{ $schedule->destination->tax }}</span></div>
-                                                       </div>
-                                        @endif
-                                    </div>
+                                    <details class="group bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg shadow p-3 transition-all duration-200">
+                                        <summary class="cursor-pointer flex items-center justify-between font-semibold text-blue-800 text-lg group-open:text-blue-600">
+                                            <span>
+                                                <span class="mr-2">#{{$schedule->destination->start_from   }} To {{ $schedule->destination->destination_name  }}</span>
+                                                <span class="text-xl text-green-500">({{ $schedule->status }})</span>
+                                            </span>
+                                            <svg class="w-5 h-5 ml-2 transition-transform duration-200 group-open:rotate-90" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                                            </svg>
+                                        </summary>
+                                        <div class="mt-2 grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1 text-sm md:text-base">
+                                            <div><span class="font-semibold">Schedule UID:</span> <span class="text-blue-900">{{ $schedule->schedule_uid }}</span></div>
+                                            <div><span class="font-semibold">Scheduled At:</span> <span class="text-blue-900">{{ $schedule->scheduled_at }}</span></div>
+                                            <div><span class="font-semibold">Paid At:</span> <span class="text-blue-900">{{ $schedule->paid_at }}</span></div>
+                                            <div><span class="font-semibold">Departed At:</span> <span class="text-blue-900">{{ $schedule->departed_at }}</span></div>
+                                            <div><span class="font-semibold">Wellgo At:</span> <span class="text-blue-900">{{ $schedule->wellgo_at }}</span></div>
+                                            <div><span class="font-semibold">Tariff:</span> <span class="text-blue-900">{{ $schedule->destination->tariff }}</span></div>
+                                                  
+                                        </div>
+                                       
+                                    </details>
                                 @endforeach
                             </div>
                         @else
