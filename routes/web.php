@@ -15,6 +15,7 @@ use App\Http\Controllers\Ticketer\CashReportController;
 use App\Http\Controllers\Admin\BusController;
 use App\Http\Controllers\Admin\BusReportController;
 use App\Http\Controllers\PublicDisplayController;
+use App\Http\Controllers\Traffic\TrafficScheduleController;
 
 
 
@@ -151,3 +152,4 @@ Route::get('/hisab-shum/paid-reports', [\App\Http\Controllers\HisabShum\PaidRepo
 Route::get('/hisab-shum/schedule/{schedule}/certificate', [\App\Http\Controllers\HisabShum\PaidReportController::class, 'certificate'])->name('hisabShum.certificate');
 Route::get('/hisab-shum/all-reports', [\App\Http\Controllers\HisabShum\AllReportController::class, 'index'])->name('hisabShum.allReports');
 Route::delete('/mahberat/schedule/{id}', [ScheduleController::class, 'destroy'])->name('mahberat.schedule.destroy');
+Route::post('/traffic/schedule-scan', [TrafficScheduleController::class, 'scan'])->name('traffic.schedule.scan');
