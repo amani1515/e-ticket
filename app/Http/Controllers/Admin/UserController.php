@@ -64,15 +64,15 @@ public function store(Request $request)
      $usertype = Auth::user()->usertype;
      if($usertype == 'admin')
      {
-    $validatedData = $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|email|unique:users',
-        'phone' => 'required|string',
-        'usertype' => 'required|string',
-        'password' => 'required|string|confirmed',
-        'assigned_destinations' => 'nullable|array',
-        'assigned_destinations.*' => 'exists:destinations,id', // Validate that destination IDs exist
-    ]);
+$validatedData = $request->validate([
+    'name' => 'required|string|max:255|unique:users,name',
+    'email' => 'required|email|unique:users',
+    'phone' => 'required|string',
+    'usertype' => 'required|string',
+    'password' => 'required|string|confirmed',
+    'assigned_destinations' => 'nullable|array',
+    'assigned_destinations.*' => 'exists:destinations,id', // Validate that destination IDs exist
+]);
 
     // Create the user
     $user = User::create([

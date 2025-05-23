@@ -20,6 +20,8 @@ class Schedule extends Model
         'updated_at',
         'capacity',
         'boarding',
+        'wellgo_at',
+        'traffic_name',
         // add any other fields you are submitting
     ];
     public function bus()

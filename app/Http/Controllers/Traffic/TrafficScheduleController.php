@@ -30,6 +30,8 @@ class TrafficScheduleController extends \App\Http\Controllers\Controller
         $schedule = \App\Models\Schedule::findOrFail($id);
         if ($schedule->status === 'departed') {
             $schedule->status = 'wellgo';
+            $schedule->wellgo_at = now();
+            $schedule->traffic_name = auth()->user()->name ?? 'Unknown'; // or any user info you want
             $schedule->save();
         }
         return redirect()->back()->with('success', 'Status changed to WellGo!');
