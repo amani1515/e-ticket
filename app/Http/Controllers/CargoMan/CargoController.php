@@ -44,13 +44,27 @@ public function firstQueuedSchedule($destinationId)
         return response()->json([]);
     }
 }
+
+public function availableSchedules($destinationId)
+{
+    $schedules = \App\Models\Schedule::with('bus')
+        ->where('destination_id', $destinationId)
+        ->whereIn('status', ['queued', 'on loading'])
+        ->orderBy('departed_at', 'asc')
+        ->get()
+        ->filter(function ($schedule) {
+            return $schedule->cargo_capacity === null || ($schedule->cargo_used ?? 0) < $schedule->cargo_capacity;
+        })
+        ->values();
+
+    return response()->json($schedules);
+}
+
+
 public function store(Request $request)
 {
     $request->validate([
         'destination_id' => 'required|exists:destinations,id',
-        'schedule_id' => 'required|exists:schedules,id',
-        'bus_id' => 'required|exists:buses,id',
-        'distance' => 'required|numeric',
         'weight' => 'required|numeric|min:0.01',
         'fee_per_km' => 'required|numeric',
         'tax_percent' => 'required|numeric',
@@ -58,10 +72,33 @@ public function store(Request $request)
         'total_amount' => 'required|numeric',
     ]);
 
+    // Find all schedules for this destination with status queued or on loading
+    $schedules = \App\Models\Schedule::with('bus')
+        ->where('destination_id', $request->destination_id)
+        ->whereIn('status', ['queued', 'on loading'])
+        ->orderBy('departed_at', 'asc') // or your relevant field
+        ->get();
+
+    $selectedSchedule = null;
+    foreach ($schedules as $schedule) {
+        $newCargoUsed = ($schedule->cargo_used ?? 0) + $request->weight;
+        if ($schedule->cargo_capacity === null || $newCargoUsed <= $schedule->cargo_capacity) {
+            $selectedSchedule = $schedule;
+            break;
+        }
+    }
+
+    if (!$selectedSchedule) {
+        return back()->withInput()->withErrors([
+            'weight' => 'No bus is available for this destination with enough cargo capacity.'
+        ]);
+    }
+
+    // Create the cargo
     $cargo = \App\Models\Cargo::create([
         'cargo_uid'     => uniqid('CARGO-'),
-        'bus_id'        => $request->bus_id,
-        'schedule_id'   => $request->schedule_id,
+        'bus_id'        => $selectedSchedule->bus->id,
+        'schedule_id'   => $selectedSchedule->id,
         'destination_id'=> $request->destination_id,
         'measured_by'   => auth()->id(),
         'weight'        => $request->weight,
@@ -70,6 +107,10 @@ public function store(Request $request)
         'total_amount'  => $request->total_amount,
         'status'        => 'measured',
     ]);
+
+    // Update the schedule's cargo_used
+    $selectedSchedule->cargo_used = ($selectedSchedule->cargo_used ?? 0) + $request->weight;
+    $selectedSchedule->save();
 
     return redirect()->route('cargoMan.cargo.receipt', $cargo->id);
 }

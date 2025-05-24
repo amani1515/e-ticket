@@ -114,13 +114,14 @@
                 });
         }
 
-     function updateTotal() {
+function updateTotal() {
     const weight = parseFloat(weightInput.value) || 0;
+    const distance = parseFloat(distanceInput.value) || 0;
     const feePerKg = feePerKm; // feePerKm is actually fee per kg
     const tax = taxPercent;    // tax is a fixed amount, not a percent
     const service = serviceFee; // service fee is a fixed amount
 
-    let subtotal = (weight * feePerKg) + tax + service;
+    let subtotal = ((distance * feePerKg) * weight) + tax + service;
     totalAmountInput.value = subtotal.toFixed(2);
 }
         destinationSelect.addEventListener('change', function() {

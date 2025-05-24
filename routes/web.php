@@ -181,3 +181,4 @@ Route::post('/cargoman/cargo', [\App\Http\Controllers\CargoMan\CargoController::
 Route::get('/cargoman/cargo', [\App\Http\Controllers\CargoMan\CargoController::class, 'index'])->name('cargoMan.cargo.index');
 Route::get('/cargoman/first-queued-schedule/{destination}', [\App\Http\Controllers\CargoMan\CargoController::class, 'firstQueuedSchedule']);
 Route::get('/cargoman/cargo/{id}/receipt', [\App\Http\Controllers\CargoMan\CargoController::class, 'receipt'])->name('cargoMan.cargo.receipt');
+Route::get('/cargoman/available-schedules/{destination}', [\App\Http\Controllers\CargoMan\CargoController::class, 'availableSchedules']);
