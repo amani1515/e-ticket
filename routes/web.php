@@ -95,7 +95,8 @@ Route::get('/admin', [DashboardReportsController::class, 'index'])->name('admin.
 
 Route::get('/admin/passenger-report/export', [PassengersReportController::class, 'export'])
     ->name('admin.passenger.report.export');
-
+    
+Route::get('/admin/schedule-reports', [\App\Http\Controllers\Admin\ScheduleReportController::class, 'index'])->name('admin.schedule.reports');
 
 //mahberat
 Route::middleware(['auth', 'verified'])->prefix('mahberat')->name('mahberat.')->group(function () {
