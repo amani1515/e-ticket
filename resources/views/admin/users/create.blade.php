@@ -38,6 +38,7 @@
                 <option value="traffic" {{ old('usertype') == 'traffic' ? 'selected' : '' }}>Traffic</option>
                 <option value="hisabshum" {{ old('usertype') == 'hisabshum' ? 'selected' : '' }}>Hisabshum</option>
                 <option value="mahberat" {{ old('usertype') == 'mahberat' ? 'selected' : '' }}>Mahberat</option>
+                 <option value="cargoMan" {{ old('usertype') == 'cargoMan' ? 'selected' : '' }}>cargoMan</option>
                 <option value="balehabt" {{ old('usertype') == 'balehabt' ? 'selected' : '' }}>balehabt</option>
             </select>
             @error('usertype') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror

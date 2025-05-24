@@ -85,7 +85,10 @@ class AdminController extends Controller
          {
              return view('ticketer.index');
          }
-         
+         else if($usertype == 'cargoMan')
+         {
+             return view('cargoMan.index');
+         }
          else
          {
              return redirect()->back();

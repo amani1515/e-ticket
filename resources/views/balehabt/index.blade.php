@@ -10,8 +10,40 @@
     </div>
     <h2 class="text-2xl md:text-3xl font-bold text-blue-700 mb-6 text-center">My Buses (Today’s Schedules)</h2>
 
+    {{-- Filter Form --}}
+    <form id="filterForm" method="GET" class="mb-6 grid grid-cols-1 md:grid-cols-5 gap-4 bg-white p-4 rounded shadow">
+        <input type="date" name="date" value="{{ request('date', \Illuminate\Support\Carbon::today()->toDateString()) }}" class="border rounded px-3 py-2" placeholder="Date">
+        <input type="text" name="targa" value="{{ request('targa') }}" class="border rounded px-3 py-2" placeholder="Targa">
+        <input type="text" name="driver_name" value="{{ request('driver_name') }}" class="border rounded px-3 py-2" placeholder="Driver Name">
+        <input type="text" name="destination" value="{{ request('destination') }}" class="border rounded px-3 py-2" placeholder="Destination">
+        <select name="status" class="border rounded px-3 py-2">
+            <option value="">All Status</option>
+            @foreach(['queued','on loading','full','departed','cancelled','paid','wellgo'] as $status)
+                <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : '' }}>
+                    {{ ucfirst($status) }}
+                </option>
+            @endforeach
+        </select>
+        <button type="submit" class="md:col-span-4 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-4 py-2 rounded shadow">Filter</button>
+        <a href="/home" class="md:col-span-1 bg-gray-400 hover:bg-gray-600 text-white font-semibold px-4 py-2 rounded shadow text-center flex items-center justify-center">
+            Clear Filter
+        </a>
+    </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('filterForm');
+            form.querySelectorAll('input, select').forEach(function(input) {
+                input.addEventListener('change', function() {
+                    form.submit();
+                });
+            });
+        });
+    </script>
+
     @php
         $total_daily_cash_collected = 0;
+        $filterDate = request('date', \Illuminate\Support\Carbon::today()->toDateString());
     @endphp
 
     <div class="overflow-x-auto">
@@ -27,17 +59,24 @@
             <tbody>
                 @forelse($buses as $bus)
                     @php
-                        $todaySchedules = $bus->schedules->where('scheduled_at', '>=', \Illuminate\Support\Carbon::today()->toDateString())
-                                                        ->where('scheduled_at', '<', \Illuminate\Support\Carbon::tomorrow()->toDateString());
+                        $todaySchedules = $bus->schedules
+                            ->when($filterDate, fn($q) => $q->where('scheduled_at', '>=', $filterDate)->where('scheduled_at', '<', \Illuminate\Support\Carbon::parse($filterDate)->addDay()->toDateString()))
+                            ->when(request('status'), fn($q) => $q->where('status', request('status')))
+                            ->when(request('destination'), fn($q) => $q->filter(fn($s) => str_contains(strtolower(optional($s->destination)->destination_name), strtolower(request('destination')))))
+                            ->sortByDesc('id');
                     @endphp
-                    @if($todaySchedules->count())
+                    @if(
+                        (!request('targa') || str_contains(strtolower($bus->targa), strtolower(request('targa')))) &&
+                        (!request('driver_name') || str_contains(strtolower($bus->driver_name), strtolower(request('driver_name')))) &&
+                        $todaySchedules->count()
+                    )
                     <tr class="border-b hover:bg-blue-50 align-top">
                         <td class="px-4 py-2">{{ $bus->targa }}</td>
                         <td class="px-4 py-2">{{ $bus->driver_name }}</td>
                         <td class="px-4 py-2">{{ $bus->color }}</td>
                         <td class="px-4 py-2">
                             <div class="space-y-4">
-                                @foreach($todaySchedules->sortByDesc('id') as $schedule)
+                                @foreach($todaySchedules as $schedule)
                                     @php
                                         $tariff = $schedule->destination->tariff ?? 0;
                                         $total_cash_collected = $bus->total_seats * $tariff;
