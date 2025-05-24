@@ -80,6 +80,9 @@
                     <a href="{{ route('admin.schedule.reports') }}" class="block hover:text-yellow-500">Schedule Reports</a>
                 </div>
             </div>
+            <div>
+                <a href="{{ route('admin.cargo-settings.index') }}" class="block hover:text-yellow-500 font-semibold">Cargo Settings</a>
+            </div>
         </div>
     </div>
 </div>

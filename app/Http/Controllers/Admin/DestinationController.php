@@ -40,6 +40,8 @@ class DestinationController extends Controller
         $request->validate([
             'destination_name' => 'required|string|max:255',
             'start_from' => 'required|string|max:255',
+            'distance' => 'required|numeric',
+
             'tariff' => 'required|string|max:255',
             'tax' => 'required|numeric', // Validate as numeric
             'service_fee' => 'required|numeric', // Validate as numeric
@@ -49,6 +51,7 @@ class DestinationController extends Controller
         Destination::create([
             'destination_name' => $request->destination_name,
             'start_from' => $request->start_from,
+            'distance' => $request->distance,
             'tariff' => $request->tariff,
             'tax' => $request->tax,  // Save tax as a decimal
             'service_fee' => $request->service_fee,  // Save service fee as a decimal

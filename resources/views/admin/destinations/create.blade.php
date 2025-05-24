@@ -1,3 +1,4 @@
+<!-- filepath: resources/views/admin/destinations/create.blade.php -->
 @extends('admin.layout.app')
 
 @section('content')
@@ -23,6 +24,17 @@
             <input 
                 type="text" 
                 name="start_from" 
+                class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-yellow-500" 
+                required>
+        </div>
+
+        <!-- Distance -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Distance (km)</label>
+            <input 
+                type="number" 
+                step="0.01"
+                name="distance" 
                 class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-yellow-500" 
                 required>
         </div>

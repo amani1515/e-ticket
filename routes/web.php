@@ -95,7 +95,9 @@ Route::get('/admin', [DashboardReportsController::class, 'index'])->name('admin.
 
 Route::get('/admin/passenger-report/export', [PassengersReportController::class, 'export'])
     ->name('admin.passenger.report.export');
-    
+Route::resource('admin/cargo-settings', \App\Http\Controllers\Admin\CargoSettingsController::class)
+    ->only(['index', 'edit', 'update'])
+    ->names('admin.cargo-settings');
 Route::get('/admin/schedule-reports', [\App\Http\Controllers\Admin\ScheduleReportController::class, 'index'])->name('admin.schedule.reports');
 
 //mahberat
