@@ -51,6 +51,10 @@
                 <input type="number" id="total_seats" name="total_seats" placeholder="Total Seats" class="input-field">
             </div>
             <div class="flex flex-col gap-3">
+                <label for="cargo_capacity" class="font-semibold text-gray-700">Cargo Capacity (kg) <span class="text-red-500">*</span></label>
+                <input type="number" id="cargo_capacity" name="cargo_capacity" placeholder="Cargo Capacity in kg" required class="input-field" step="0.01" min="0">
+            </div>
+            <div class="flex flex-col gap-3">
                 <label for="status" class="font-semibold text-gray-700">Status</label>
                 <select id="status" name="status" class="input-field">
                     <option value="active" selected>Active</option>

@@ -32,6 +32,7 @@ public function store(Request $request)
         'redat_name' => 'required|string',
         'level' => 'required|in:level1,level2,level3',
         'total_seats' => 'required|integer',
+        'cargo_capacity' => 'required|numeric|min:0', // <-- Add this line
         'status' => 'nullable|in:active,maintenance,out of service',
         'model_year' => 'required|integer',
         'model' => 'required|string',
@@ -43,7 +44,6 @@ public function store(Request $request)
         'file2' => 'nullable|file',
         'file3' => 'nullable|file',
     ]);
-
 
     // Handle files if present
     foreach (['file1', 'file2', 'file3'] as $fileKey) {
