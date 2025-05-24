@@ -7,7 +7,13 @@
            class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded shadow transition">
              Go To Overall Bus Report
         </a>
-    </div> <h2 class="text-2xl md:text-3xl font-bold text-blue-700 mb-6 text-center">My Buses (Today’s Schedules)</h2>
+    </div>
+    <h2 class="text-2xl md:text-3xl font-bold text-blue-700 mb-6 text-center">My Buses (Today’s Schedules)</h2>
+
+    @php
+        $total_daily_cash_collected = 0;
+    @endphp
+
     <div class="overflow-x-auto">
         <table class="min-w-full bg-white rounded-lg shadow">
             <thead>
@@ -32,6 +38,11 @@
                         <td class="px-4 py-2">
                             <div class="space-y-4">
                                 @foreach($todaySchedules->sortByDesc('id') as $schedule)
+                                    @php
+                                        $tariff = $schedule->destination->tariff ?? 0;
+                                        $total_cash_collected = $bus->total_seats * $tariff;
+                                        $total_daily_cash_collected += $total_cash_collected;
+                                    @endphp
                                     <details class="group bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg shadow p-3 transition-all duration-200">
                                         <summary class="cursor-pointer flex items-center justify-between font-semibold text-blue-800 text-lg group-open:text-blue-600">
                                             <span>
@@ -51,8 +62,9 @@
                                             <div><span class="font-semibold">Paid At:</span> <span class="text-blue-900">{{ $schedule->paid_at }}</span></div>
                                             <div><span class="font-semibold">Departed At:</span> <span class="text-blue-900">{{ $schedule->departed_at }}</span></div>
                                             <div><span class="font-semibold">Wellgo At:</span> <span class="text-blue-900">{{ $schedule->wellgo_at }}</span></div>
-                                            <div><span class="font-semibold">Tariff:</span> <span class="text-blue-900">{{ $schedule->destination->tariff ?? '-' }}</span></div>
+                                            <div><span class="font-semibold">Tariff:</span> <span class="text-blue-900">{{ $tariff }}</span></div>
                                             <div><span class="font-semibold">Destination Name:</span> <span class="text-blue-900">{{ $schedule->destination->destination_name ?? '-' }}</span></div>
+                                            <div><span class="font-semibold text-green-700">Total Cash Collected:</span> <span class="text-green-900 font-bold">{{ number_format($total_cash_collected) }} ETB</span></div>
                                         </div>
                                     </details>
                                 @endforeach
@@ -67,6 +79,11 @@
                 @endforelse
             </tbody>
         </table>
+    </div>
+
+    <div class="mt-8 text-right">
+        <span class="text-xl font-bold text-blue-800">Total Daily Cash Collected: </span>
+        <span class="text-2xl font-extrabold text-green-700">{{ number_format($total_daily_cash_collected) }} ETB</span>
     </div>
 </div>
 @endsection
