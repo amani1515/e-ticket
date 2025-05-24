@@ -17,13 +17,6 @@ It allows bus operators, ticketers, and hisab shum (accounting) users to manage 
 - Role-based access for ticketer, hisab shum, and admin
 - Filterable and paginated reports by date, bus, destination, and user
 
-## Getting Started
-
-1. Clone the repository.
-2. Run `composer install` and `npm install`.
-3. Copy `.env.example` to `.env` and set your database credentials.
-4. Run `php artisan migrate` to set up the database.
-5. Run `php artisan serve` to start the development server.
 
 ## Usage
 
@@ -33,7 +26,6 @@ It allows bus operators, ticketers, and hisab shum (accounting) users to manage 
 
 ## License
 
-This project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
 
 ---
 
