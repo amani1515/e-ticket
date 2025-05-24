@@ -167,3 +167,17 @@ Route::get('/traffic/schedule-scan', function () {
 
 Route::get('/balehabt/overall-bus-report', [BusController::class, 'overallBusReport'])->name('balehabt.overallBusReport');
 
+
+
+
+// CargoMan Home
+Route::get('/cargoman', [\App\Http\Controllers\CargoMan\HomeController::class, 'index'])->name('cargoMan.home');
+
+// Measure Cargo (Create)
+Route::get('/cargoman/cargo/create', [\App\Http\Controllers\CargoMan\CargoController::class, 'create'])->name('cargoMan.cargo.create');
+Route::post('/cargoman/cargo', [\App\Http\Controllers\CargoMan\CargoController::class, 'store'])->name('cargoMan.cargo.store');
+
+// All Cargos (Index)
+Route::get('/cargoman/cargo', [\App\Http\Controllers\CargoMan\CargoController::class, 'index'])->name('cargoMan.cargo.index');
+Route::get('/cargoman/first-queued-schedule/{destination}', [\App\Http\Controllers\CargoMan\CargoController::class, 'firstQueuedSchedule']);
+Route::get('/cargoman/cargo/{id}/receipt', [\App\Http\Controllers\CargoMan\CargoController::class, 'receipt'])->name('cargoMan.cargo.receipt');
