@@ -16,8 +16,8 @@
                 </svg>
             </button>
             <div x-show="openCars" x-cloak class="ml-4 mt-2 space-y-1">
-                <a href="#" class="block hover:text-gray-300">Car List</a>
-                <a href="#" class="block hover:text-gray-300">Register Car</a>
+                <a href="{{ route('balehabt.overallBusReport') }}" class="block hover:text-gray-300">OverallBusReport</a>
+                <a href="/home" class="block hover:text-gray-300">Daily report</a>
             </div>
         </div>
 

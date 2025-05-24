@@ -15,4 +15,10 @@ class BusController extends Controller
         $buses = Bus::with(['schedules.destination'])->where('owner_id', Auth::id())->get();
         return view('balehabt.index', compact('buses'));
     }
+    
+    public function overallBusReport()
+    {
+        $buses = \App\Models\Bus::with(['schedules.destination'])->get();
+        return view('balehabt.overallBusReport', compact('buses'));
+    }
 }

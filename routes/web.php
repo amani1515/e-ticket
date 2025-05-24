@@ -16,7 +16,7 @@ use App\Http\Controllers\Admin\BusController;
 use App\Http\Controllers\Admin\BusReportController;
 use App\Http\Controllers\PublicDisplayController;
 use App\Http\Controllers\Traffic\TrafficScheduleController;
-
+// <-- Make sure this is present!
 
 
 
@@ -160,4 +160,8 @@ Route::post('/traffic/schedule/{schedule}/wellgo', [TrafficScheduleController::c
 Route::get('/traffic/schedule-scan', function () {
     return view('traffic.schedule.result');
 })->name('traffic.schedule.scan.form');
+
+
+
+Route::get('/balehabt/overall-bus-report', [BusController::class, 'overallBusReport'])->name('balehabt.overallBusReport');
 
