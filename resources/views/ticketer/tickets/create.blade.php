@@ -60,7 +60,12 @@
                     required
                 >
             </div>
-
+<div class="mb-4">
+    <label for="cargo_uid" class="block">Scan/Enter Cargo Ticket (optional)</label>
+    <input type="text" id="cargo_uid" class="w-full p-2 border rounded" placeholder="Scan or enter cargo ticket barcode">
+    <input type="hidden" name="cargo_id" id="cargo_id">
+    <div id="cargo-info" class="text-sm text-green-700 mt-2"></div>
+</div>
             <div class="mb-4">
                 <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded">Create Ticket</button>
             </div>
@@ -89,6 +94,29 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Fetch on page load for the default selected destination
     fetchFirstQueuedBus(destinationSelect.value);
+});
+
+
+document.getElementById('cargo_uid').addEventListener('change', function() {
+    const uid = this.value.trim();
+    const infoDiv = document.getElementById('cargo-info');
+    const cargoIdInput = document.getElementById('cargo_id');
+    if (!uid) {
+        infoDiv.textContent = '';
+        cargoIdInput.value = '';
+        return;
+    }
+    fetch('/ticketer/cargo-info/' + uid)
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.id) {
+                infoDiv.textContent = `Cargo found: ${data.cargo_uid}, Weight: ${data.weight} kg`;
+                cargoIdInput.value = data.id;
+            } else {
+                infoDiv.textContent = 'Cargo not found!';
+                cargoIdInput.value = '';
+            }
+        });
 });
 </script>
 @endsection

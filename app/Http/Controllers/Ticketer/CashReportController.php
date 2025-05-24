@@ -11,23 +11,33 @@ use Carbon\Carbon;
 class CashReportController extends Controller
 {
     
-    public function index()
-    {
-        $user = auth()->user();
-    
-        // Calculate total amount for unreported tickets
-        $totalAmount = Ticket::where('creator_user_id', $user->id)
-            ->where('reported', false)
-            ->join('destinations', 'tickets.destination_id', '=', 'destinations.id')
-            ->sum(\DB::raw('destinations.tax + destinations.service_fee'));
-    
-        $alreadySubmitted = CashReport::where('user_id', $user->id)
-            ->whereDate('report_date', Carbon::today())
-            ->exists();
-    
-        return view('ticketer.cash_report.index', compact('totalAmount', 'alreadySubmitted'));
+public function index()
+{
+    $user = auth()->user();
+
+    // Get all unreported tickets for this user, with cargo
+    $tickets = Ticket::with('cargo')
+        ->where('creator_user_id', $user->id)
+        ->where('reported', false)
+        ->join('destinations', 'tickets.destination_id', '=', 'destinations.id')
+        ->select('tickets.*', 'destinations.tax', 'destinations.service_fee')
+        ->get();
+
+    $totalAmount = 0;
+    foreach ($tickets as $ticket) {
+        $ticketTotal = $ticket->tax + $ticket->service_fee;
+        if ($ticket->cargo) {
+            $ticketTotal += ($ticket->cargo->tax ?? 0) + ($ticket->cargo->service_fee ?? 0);
+        }
+        $totalAmount += $ticketTotal;
     }
 
+    $alreadySubmitted = CashReport::where('user_id', $user->id)
+        ->whereDate('report_date', Carbon::today())
+        ->exists();
+
+    return view('ticketer.cash_report.index', compact('totalAmount', 'alreadySubmitted'));
+}
 
     public function submit(Request $request)
 {

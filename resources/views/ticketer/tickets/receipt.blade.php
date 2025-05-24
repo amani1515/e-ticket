@@ -1,3 +1,4 @@
+<!-- filepath: resources/views/ticketer/tickets/receipt.blade.php -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -48,6 +49,11 @@
             opacity: 0.8;
         }
 
+        @media print {
+            .buttons {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -64,12 +70,20 @@
     <p><strong>Departure:</strong> {{ $ticket->departure_datetime }}</p>
     <p><strong>Bus No:</strong> {{ $ticket->bus_id }}</p>
     <p><strong>Ticket Code:</strong> {{ $ticket->ticket_code }}</p>
-    <p><strong>Total Price:</strong> 
-        {{ 
-            $ticket->destination->tariff + $ticket->destination->tax + $ticket->destination->service_fee 
-        }} ETB
-    </p>
 
+@if($ticket->cargo)
+    <p><strong>Cargo Ticket:</strong> {{ $ticket->cargo->cargo_uid }}</p>
+    <p><strong>Cargo Weight:</strong> {{ $ticket->cargo->weight }} kg</p>
+    <p><strong>Cargo Fee:</strong> {{ number_format($ticket->cargo->total_amount, 2) }} ETB</p>
+@endif
+<p><strong>Total Price:</strong>
+    {{
+        $ticket->destination->tariff +
+        $ticket->destination->tax +
+        $ticket->destination->service_fee +
+        ($ticket->cargo ? $ticket->cargo->total_amount : 0)
+    }} ETB
+</p>
     <!-- Barcode -->
     <div class="center barcode">
         {!! DNS1D::getBarcodeHTML($ticket->ticket_code, 'C128', 1, 30) !!}

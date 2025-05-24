@@ -13,6 +13,7 @@ class Ticket extends Model
     protected $fillable = [
         'passenger_name',
         'gender', // <-- Make sure this is here!
+        'cargo_id', // <-- Add this line!
 
         'age_status',
         'destination_id',
@@ -49,5 +50,8 @@ public function schedule()
 {
     return $this->belongsTo(\App\Models\Schedule::class);
 }
-
+public function cargo()
+{
+    return $this->belongsTo(\App\Models\Cargo::class);
+}
 }

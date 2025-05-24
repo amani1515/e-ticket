@@ -79,6 +79,7 @@ $schedule = Schedule::where('bus_id', $bus->id)
     ->first();
 
 $ticket = Ticket::create([
+    'cargo_id' => $request->cargo_id, // <-- Save by cargo_id
     'passenger_name' => $request->passenger_name,
     'gender' => $request->gender,
     'age_status' => $request->age_status,
@@ -99,6 +100,11 @@ $ticket = Ticket::create([
     //     ->whereIn('status', ['queued', 'on loading'])
     //     ->first();
 
+    // Update cargo status to 'paid' if cargo is attached
+if ($request->cargo_id) {
+    \App\Models\Cargo::where('id', $request->cargo_id)->update(['status' => 'paid']);
+}
+
         if ($schedule) {
             $schedule->ticket_created_by = auth()->id(); // Set ticketer's user id
 
@@ -118,10 +124,10 @@ $ticket = Ticket::create([
 
     // Optional: Show the ticket receipt after it's created
     public function receipt($id)
-    {
-        $ticket = Ticket::with('destination')->findOrFail($id);
-        return view('ticketer.tickets.receipt', compact('ticket'));
-    }
+{
+    $ticket = Ticket::with(['destination', 'cargo'])->findOrFail($id);
+    return view('ticketer.tickets.receipt', compact('ticket'));
+}
 
 
     public function report()
@@ -262,5 +268,18 @@ public function reports(Request $request)
                 'bus_id' => $bus?->bus?->targa ?? '',
             ]);
         }
+
+        public function cargoInfo($uid)
+{
+    $cargo = \App\Models\Cargo::where('cargo_uid', $uid)->first();
+    if ($cargo) {
+        return response()->json([
+            'id' => $cargo->id,
+            'cargo_uid' => $cargo->cargo_uid,
+            'weight' => $cargo->weight,
+        ]);
+    }
+    return response()->json([]);
+}
 
 }

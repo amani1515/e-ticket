@@ -80,6 +80,7 @@ Route::get('/ticketer/first-queued-bus/{destination}', [App\Http\Controllers\Tic
 Route::post('/ticketer/increment-boarding/{destinationId}', [App\Http\Controllers\Ticketer\TicketController::class, 'incrementBoardingForFirstQueuedBus']); // web.php
 Route::get('/ticketer/schedule-report', [\App\Http\Controllers\Ticketer\ScheduleController::class, 'report'])->name('ticketer.schedule.report');
 Route::post('/ticketer/schedule/{schedule}/pay', [\App\Http\Controllers\Ticketer\ScheduleController::class, 'pay'])->name('ticketer.schedule.pay');
+Route::get('/ticketer/cargo-info/{uid}', [\App\Http\Controllers\Ticketer\TicketController::class, 'cargoInfo']);
 
 
 Route::get('/admin/passenger-report', [PassengersReportController::class, 'index'])->name('admin.passenger-report');
