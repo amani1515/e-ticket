@@ -71,8 +71,7 @@
 
         <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition duration-300 mt-8">
             <h4 class="text-xl font-semibold text-gray-700 mb-4">👫 Passengers by Gender (Today)</h4>
-            <canvas id="genderChart" height="4"></canvas>
-        </div>
+<canvas id="genderChart" style="width:200px; height:200px; max-width:200px; max-height:200px;"></canvas>        </div>
         <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition duration-300 mt-8">
             <h4 class="text-xl font-semibold text-gray-700 mb-4">🧑‍🦱 Passengers by Age Status (Today)</h4>
             <canvas id="ageStatusChart" height="80"></canvas>
