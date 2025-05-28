@@ -25,6 +25,9 @@ public function schedules()
 {
     return $this->hasMany(\App\Models\Schedule::class);
 }
-
+public function tickets()
+{
+    return $this->hasMany(\App\Models\Ticket::class);
+}
 
 }

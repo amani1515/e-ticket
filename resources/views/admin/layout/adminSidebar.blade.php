@@ -77,8 +77,7 @@
                     <a href="{{ route('admin.buses.index') }}" class="block hover:text-yellow-500">All Buses</a>
                     <a href="{{ route('admin.bus.reports') }}" class="block hover:text-yellow-500">Bus Report</a>
                     <a href="{{ route('admin.cash.reports') }}" class="block hover:text-yellow-500">Cash Report</a>
-                    <a href="" class="block hover:text-yellow-500">All report</a>
-
+                    <a href="{{ route('admin.total.reports') }}" class="block hover:text-yellow-500">Total Report</a>
                     <a href="{{ route('admin.schedule.reports') }}" class="block hover:text-yellow-500">Schedule Reports</a>
                 </div>
             </div>

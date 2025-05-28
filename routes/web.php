@@ -93,7 +93,7 @@ Route::get('/admin', [DashboardReportsController::class, 'index'])->name('admin.
 
 
 
-
+Route::get('/admin/total-reports', [\App\Http\Controllers\Admin\TotalReportController::class, 'index'])->name('admin.total.reports');
 Route::get('/admin/passenger-report/export', [PassengersReportController::class, 'export'])
     ->name('admin.passenger.report.export');
 Route::resource('admin/cargo-settings', \App\Http\Controllers\Admin\CargoSettingsController::class)
