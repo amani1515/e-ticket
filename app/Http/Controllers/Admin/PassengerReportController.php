@@ -58,4 +58,13 @@ class PassengerReportController extends Controller
     
         return view('admin.reports.passengers', compact('tickets', 'destinations'));
     }
+
+    public function printAll(Request $request)
+{
+    $query = Ticket::query();
+    // Apply filters as in your main report...
+    // $query->where(...);
+    $tickets = $query->with('destination')->get(); // No paginate()
+    return view('admin.reports.passengers_print', compact('tickets'));
+}
 }
