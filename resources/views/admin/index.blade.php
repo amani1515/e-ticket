@@ -7,16 +7,17 @@
         <h2 class="text-3xl font-bold text-gray-800 mb-6">👋 Welcome, {{ Auth::user()->name }}</h2>
 
         <!-- Quick Filter Buttons -->
-        <div class="flex flex-wrap gap-2 mb-4">
-            <button type="button" class="bg-blue-100 text-blue-700 px-3 py-1 rounded hover:bg-blue-200" onclick="setQuickRange('this_month')">This Month</button>
-            <button type="button" class="bg-blue-100 text-blue-700 px-3 py-1 rounded hover:bg-blue-200" onclick="setQuickRange('last_month')">Last Month</button>
-            <button type="button" class="bg-blue-100 text-blue-700 px-3 py-1 rounded hover:bg-blue-200" onclick="setQuickRange('last_3_months')">Last 3 Months</button>
-            <button type="button" class="bg-blue-100 text-blue-700 px-3 py-1 rounded hover:bg-blue-200" onclick="setQuickRange('this_week')">This Week</button>
-            <button type="button" class="bg-blue-100 text-blue-700 px-3 py-1 rounded hover:bg-blue-200" onclick="setQuickRange('this_year')">This Year</button>
-        </div>
+     <div class="flex flex-wrap gap-2 mb-4">
+    <button type="button" class="bg-blue-100 text-blue-700 px-3 py-1 rounded hover:bg-blue-200" onclick="setQuickRange('today')">Today</button>
+    <button type="button" class="bg-blue-100 text-blue-700 px-3 py-1 rounded hover:bg-blue-200" onclick="setQuickRange('this_month')">This Month</button>
+    <button type="button" class="bg-blue-100 text-blue-700 px-3 py-1 rounded hover:bg-blue-200" onclick="setQuickRange('last_month')">Last Month</button>
+    <button type="button" class="bg-blue-100 text-blue-700 px-3 py-1 rounded hover:bg-blue-200" onclick="setQuickRange('last_3_months')">Last 3 Months</button>
+    <button type="button" class="bg-blue-100 text-blue-700 px-3 py-1 rounded hover:bg-blue-200" onclick="setQuickRange('this_week')">This Week</button>
+    <button type="button" class="bg-blue-100 text-blue-700 px-3 py-1 rounded hover:bg-blue-200" onclick="setQuickRange('this_year')">This Year</button>
+</div>
 
         <!-- Date Filter -->
-        <form method="GET" class="mb-6 flex flex-col sm:flex-row sm:items-end gap-4">
+<form id="filterForm" method="GET" class="mb-6 flex flex-col sm:flex-row sm:items-end gap-4">
             <div>
                 <label for="start_date" class="block text-sm font-medium text-gray-700">Start Date</label>
                 <input type="date" name="start_date" id="start_date" value="{{ request('start_date') }}"
@@ -172,37 +173,41 @@
         }
     });
 
-    function setQuickRange(type) {
-        const today = new Date();
-        let start, end;
+  function setQuickRange(type) {
+    const today = new Date();
+    let start, end;
 
-        if (type === 'this_month') {
-            start = new Date(today.getFullYear(), today.getMonth(), 1);
-            end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-        } else if (type === 'last_month') {
-            start = new Date(today.getFullYear(), today.getMonth() - 1, 1);
-            end = new Date(today.getFullYear(), today.getMonth(), 0);
-        } else if (type === 'last_3_months') {
-            start = new Date(today.getFullYear(), today.getMonth() - 2, 1);
-            end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-        } else if (type === 'this_week') {
-            const day = today.getDay() || 7;
-            start = new Date(today);
-            start.setDate(today.getDate() - day + 1);
-            end = new Date(today);
-        } else if (type === 'this_year') {
-            start = new Date(today.getFullYear(), 0, 1);
-            end = new Date(today.getFullYear(), 11, 31);
-        }
-
-        // Format as yyyy-mm-dd
-        function fmt(d) {
-            return d.toISOString().slice(0,10);
-        }
-        document.getElementById('start_date').value = fmt(start);
-        document.getElementById('end_date').value = fmt(end);
+    if (type === 'today') {
+        start = end = today;
+    } else if (type === 'this_month') {
+        start = new Date(today.getFullYear(), today.getMonth(), 1);
+        end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    } else if (type === 'last_month') {
+        start = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+        end = new Date(today.getFullYear(), today.getMonth(), 0);
+    } else if (type === 'last_3_months') {
+        start = new Date(today.getFullYear(), today.getMonth() - 2, 1);
+        end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    } else if (type === 'this_week') {
+        const day = today.getDay() || 7;
+        start = new Date(today);
+        start.setDate(today.getDate() - day + 1);
+        end = new Date(today);
+    } else if (type === 'this_year') {
+        start = new Date(today.getFullYear(), 0, 1);
+        end = new Date(today.getFullYear(), 11, 31);
     }
 
+    // Format as yyyy-mm-dd
+    function fmt(d) {
+        return d.toISOString().slice(0,10);
+    }
+    document.getElementById('start_date').value = fmt(start);
+    document.getElementById('end_date').value = fmt(end);
+
+    // Automatically submit the form
+    document.getElementById('filterForm').submit();
+}
     // Passengers by Age Status
   
     

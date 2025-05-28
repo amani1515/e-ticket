@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Auth;
 
 class DashboardReportsController extends Controller
 {
+
+    
 public function index()
 {
     if (Auth::id()) {
@@ -51,6 +53,7 @@ $genderCounts = [
             $ageStatusCounts = $ageStatuses->map(function ($status) use ($today) {
                 return \App\Models\Ticket::whereDate('created_at', $today)->where('age_status', $status)->count();
             })->toArray();
+            
 
 return view('admin.index', compact(
     'passengersToday',
