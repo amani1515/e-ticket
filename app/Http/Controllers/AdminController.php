@@ -36,8 +36,8 @@ class AdminController extends Controller
          {
              return view('hisabShum.index');
          }
-       else if($usertype == 'admin')
-       {
+else if($usertype == 'admin')
+{
     $startDate = request('start_date');
     $endDate = request('end_date');
 
@@ -68,6 +68,20 @@ class AdminController extends Controller
     $destinationLabels = $grouped->keys();
     $passengerCounts = $grouped->map->count();
 
+    // Passengers by gender
+    $genderLabels = ['Male', 'Female'];
+    $genderCounts = [
+        $tickets->where('gender', 'male')->count(),
+        $tickets->where('gender', 'female')->count(),
+    ];
+
+    // Passengers by age status
+    $ageStatuses = $tickets->pluck('age_status')->unique()->values();
+    $ageStatusLabels = $ageStatuses->toArray();
+    $ageStatusCounts = $ageStatuses->map(function ($status) use ($tickets) {
+        return $tickets->where('age_status', $status)->count();
+    })->toArray();
+
     return view('admin.index', compact(
         'passengersToday',
         'totalUsers',
@@ -78,7 +92,11 @@ class AdminController extends Controller
         'destinationLabels',
         'passengerCounts',
         'startDate',
-        'endDate'
+        'endDate',
+        'genderLabels',
+        'genderCounts',
+        'ageStatusLabels',
+        'ageStatusCounts'
     ));
 }
          else if($usertype == 'ticketer')

@@ -68,6 +68,15 @@
             <h4 class="text-xl font-semibold text-gray-700 mb-4">📊 Passengers by Destination (Today)</h4>
             <canvas id="passengerChart" height="100"></canvas>
         </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition duration-300 mt-8">
+            <h4 class="text-xl font-semibold text-gray-700 mb-4">👫 Passengers by Gender (Today)</h4>
+            <canvas id="genderChart" height="4"></canvas>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition duration-300 mt-8">
+            <h4 class="text-xl font-semibold text-gray-700 mb-4">🧑‍🦱 Passengers by Age Status (Today)</h4>
+            <canvas id="ageStatusChart" height="80"></canvas>
+        </div>
     </div>
 </div>
 @endsection
@@ -126,6 +135,44 @@
         }
     });
 
+    const genderCtx = document.getElementById('genderChart').getContext('2d');
+    new Chart(genderCtx, {
+        type: 'doughnut',
+        data: {
+            labels: {!! json_encode($genderLabels) !!},
+            datasets: [{
+                data: {!! json_encode($genderCounts) !!},
+                backgroundColor: ['#3B82F6', '#F43F5E'],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            plugins: { legend: { position: 'bottom' } }
+        }
+    });
+
+    // Passengers by Age Status
+    const ageStatusCtx = document.getElementById('ageStatusChart').getContext('2d');
+    new Chart(ageStatusCtx, {
+        type: 'bar',
+        data: {
+            labels: {!! json_encode($ageStatusLabels) !!},
+            datasets: [{
+                label: 'Passengers',
+                data: {!! json_encode($ageStatusCounts) !!},
+                backgroundColor: '#10B981',
+                borderRadius: 6
+            }]
+        },
+        options: {
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { beginAtZero: true, ticks: { color: '#4B5563' } },
+                x: { ticks: { color: '#4B5563' } }
+            }
+        }
+    });
+
     function setQuickRange(type) {
         const today = new Date();
         let start, end;
@@ -156,5 +203,9 @@
         document.getElementById('start_date').value = fmt(start);
         document.getElementById('end_date').value = fmt(end);
     }
+
+    // Passengers by Age Status
+  
+    
 </script>
 @endsection
