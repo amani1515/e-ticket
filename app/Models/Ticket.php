@@ -54,4 +54,7 @@ public function cargo()
 {
     return $this->belongsTo(\App\Models\Cargo::class);
 }
+public function creator() {
+    return $this->belongsTo(\App\Models\User::class, 'creator_user_id');
+}
 }
