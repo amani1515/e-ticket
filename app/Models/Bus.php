@@ -7,25 +7,28 @@ use Illuminate\Database\Eloquent\Model;
 class Bus extends Model
 {
     //
-    protected $fillable = [
-        'targa',
-        'driver_name',
-        'driver_phone',
-        'redat_name',
-        'level',
-        'total_seats',
-        'status',
-        'model_year',
-        'model',
-        'bolo_id',
-        'motor_number',
-        'color',
-        'owner_id',
-        'registered_by',
-        'file1',
-        'file2',
-        'file3',
-    ];
+
+protected $fillable = [
+    'targa',
+    'driver_name',
+    'driver_phone',
+    'redat_name',
+    'level',
+    'total_seats',
+    'cargo_capacity',
+    'status',
+    'model_year',
+    'model',
+    'bolo_id',
+    'motor_number',
+    'color',
+    'owner_id',
+    'registered_by',
+    'file1',
+    'file2',
+    'file3',
+    'unique_bus_id',
+];
 
 
     public function owner()

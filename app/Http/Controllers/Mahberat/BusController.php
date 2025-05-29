@@ -32,7 +32,7 @@ public function store(Request $request)
         'redat_name' => 'required|string',
         'level' => 'required|in:level1,level2,level3',
         'total_seats' => 'required|integer',
-        'cargo_capacity' => 'required|numeric|min:0', // <-- Add this line
+        'cargo_capacity' => 'required|numeric|min:0',
         'status' => 'nullable|in:active,maintenance,out of service',
         'model_year' => 'required|integer',
         'model' => 'required|string',
@@ -53,7 +53,14 @@ public function store(Request $request)
         }
     }
     $validated['status'] = $validated['status'] ?? 'active';
-    $validated['registered_by'] = Auth::id(); // Store logged in user ID
+    $validated['registered_by'] = Auth::id();
+
+    // Generate unique bus id: SEV+year+date+random10+29
+    $date = now()->format('Ymd');
+    $random = strtoupper(substr(bin2hex(random_bytes(5)), 0, 10));
+    $uniqueBusId = 'SEV' . now()->year . $date . $random . '29';
+
+    $validated['unique_bus_id'] = $uniqueBusId;
 
     Bus::create($validated);
 

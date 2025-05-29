@@ -86,7 +86,7 @@
                 <label for="owner_id" class="font-semibold text-gray-700">Owner</label>
                 <select id="owner_id" name="owner_id" class="input-field">
                     <option value="">Select Owner</option>
-                    @foreach (App\Models\User::where('usertype', 'owner')->get() as $owner)
+                    @foreach (App\Models\User::where('usertype', 'balehabt')->get() as $owner)
                         <option value="{{ $owner->id }}">{{ $owner->name }}</option>
                     @endforeach
                 </select>
