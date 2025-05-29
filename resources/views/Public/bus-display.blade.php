@@ -130,25 +130,25 @@
                         schedulesHtml += `
                         <li class="bg-gray-100 rounded px-5 py-3 flex flex-col md:flex-row justify-between group hover:bg-yellow-50 transition text-lg">
                             <div class="flex flex-col md:flex-row gap-2 md:items-center">
-                                <span class="font-semibold text-gray-900">Targa:</span>
+                                <span class="font-semibold text-gray-900">ታርጋ:</span>
                                 <span>${schedule.bus?.targa ?? 'N/A'}</span>
                                 <span class="text-base text-gray-400">${schedule.created_at_human ?? ''}</span>
                             </div>
                             <div class="flex items-center gap-3 mt-2 md:mt-0">
                                 ${
                                     schedule.status === 'queued'
-                                    ? `<span class="bg-yellow-200 text-yellow-900 px-3 py-1 rounded-full text-base font-bold animate-pulse">Queued</span>`
-                                    : `<span class="bg-green-200 text-green-900 px-3 py-1 rounded-full text-base font-bold animate-bounce">On Loading</span>`
+                                    ? `<span class="bg-yellow-200 text-yellow-900 px-3 py-1 rounded-full text-base font-bold animate-pulse">ተረኛተረኛ</span>`
+                                    : `<span class="bg-green-200 text-green-900 px-3 py-1 rounded-full text-base font-bold animate-bounce">በመጫን ላይ</span>`
                                 }
                             </div>
                         </li>`;
                     }
                 });
                 if (!schedulesHtml) {
-                    schedulesHtml = `<li class="text-gray-400 italic text-lg">No queued buses.</li>`;
+                    schedulesHtml = `<li class="text-gray-400 italic text-lg">ተረኛ ተሽከርካሪ የለም።</li>`;
                 }
             } else {
-                schedulesHtml = `<li class="text-gray-400 italic text-lg">No queued buses.</li>`;
+                schedulesHtml = `<li class="text-gray-400 italic text-lg">ተረኛ ተሽከርካሪ የለም።</li>`;
             }
 
             // Card HTML (larger size)
@@ -182,7 +182,7 @@
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M8 17l4 4 4-4m0-5V3" />
                         </svg>
-                        ተረኛ ተሽከርካሪዎችተሽከርካሪዎች: ${dest.schedules ? dest.schedules.filter(s => ['queued', 'on loading'].includes(s.status)).length : 0}
+                        ተረኛ ተሽከርካሪዎች: ${dest.schedules ? dest.schedules.filter(s => ['queued', 'on loading'].includes(s.status)).length : 0}
                     </span>
                 </p>
                 <ul class="space-y-3">
