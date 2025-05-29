@@ -92,7 +92,7 @@ Route::get('/admin/passenger-report/print-all', [PassengerReportController::clas
 Route::get('/admin', [DashboardReportsController::class, 'index'])->name('admin.index');
 
 
-
+Route::get('/admin/buses/banner/{id}', [BusController::class, 'banner'])->name('admin.buses.banner');
 Route::get('/admin/total-reports', [\App\Http\Controllers\Admin\TotalReportController::class, 'index'])->name('admin.total.reports');
 Route::get('/admin/passenger-report/export', [PassengersReportController::class, 'export'])
     ->name('admin.passenger.report.export');
