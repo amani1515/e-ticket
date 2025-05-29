@@ -1,3 +1,4 @@
+<!-- filepath: d:\My comany\e-ticket\resources\views\Public\bus-display.blade.php -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,23 +24,38 @@
             animation: bus-move 6s linear infinite;
             position: absolute;
         }
+        /* Progress bar styling */
+        .progress-bar-bg {
+            width: 40vw;
+            max-width: 600px;
+            height: 1.25rem;
+            background-color: #FEF3C7;
+            border-radius: 9999px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background-color: #F59E42;
+            transition: width 0.2s;
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
 
 <div class="container mx-auto px-2 py-8">
     <div class="flex justify-center mt-4">
-    <button id="fullscreen-btn" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-6 rounded shadow-lg transition">
-        Full Screen
-    </button>
-</div>
+        <button id="fullscreen-btn" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-6 rounded shadow-lg transition">
+            Full Screen
+        </button>
+    </div>
     <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
         <svg class="w-7 h-7 text-yellow-500 animate-bounce" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2a4 4 0 014-4h2" />
             <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h.01" />
             <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h.01" />
         </svg>
-        Schedule Queues by Destination
+        የተሽከርካሪ ተራ መከታተያ
     </h2>
 
     @php
@@ -50,9 +66,14 @@
     <div id="card-rotator" class="grid grid-cols-1 md:grid-cols-2 gap-10">
         {{-- Cards will be injected here --}}
     </div>
-    <!-- Pagination Indicator -->
-    <div class="flex justify-center mt-10">
-        <span id="page-indicator" class="text-xl font-bold text-yellow-800 bg-yellow-200 px-6 py-3 rounded-full shadow-lg tracking-wide"></span>
+    <!-- Progress Bar Indicator with Page Number -->
+    <div class="flex justify-center items-center mt-10 gap-4">
+        <span id="page-indicator" class="text-lg font-bold text-yellow-800 bg-yellow-200 px-4 py-1 rounded-full shadow tracking-wide"></span>
+        <div class="flex-1 flex justify-end">
+            <div class="progress-bar-bg">
+                <div id="progress-bar" class="progress-bar-fill" style="width:0%"></div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -65,6 +86,33 @@
     const cardsPerView = 4; // 2x2 grid
     const totalPages = Math.ceil(destinations.length / cardsPerView);
     const intervalMs = 15000; // 15 seconds
+
+    // Progress bar logic
+    let progress = 0;
+    let progressTimer = null;
+    const progressBar = document.getElementById('progress-bar');
+    const progressIntervalMs = 100; // update every 100ms
+    const steps = intervalMs / progressIntervalMs;
+    const pageIndicator = document.getElementById('page-indicator');
+
+    function animateProgressBar() {
+        progress = 0;
+        progressBar.style.width = '0%';
+        if (progressTimer) clearInterval(progressTimer);
+        const progressStep = 100 / steps;
+        progressTimer = setInterval(() => {
+            progress += progressStep;
+            if (progress >= 100) {
+                progressBar.style.width = '100%';
+                clearInterval(progressTimer);
+                currentIndex = (currentIndex + cardsPerView) % destinations.length;
+                renderCards();
+                animateProgressBar(); // restart for next page
+            } else {
+                progressBar.style.width = `${progress}%`;
+            }
+        }, progressIntervalMs);
+    }
 
     function renderCards() {
         const container = document.getElementById('card-rotator');
@@ -134,7 +182,7 @@
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M8 17l4 4 4-4m0-5V3" />
                         </svg>
-                        Total Queued Buses: ${dest.schedules ? dest.schedules.filter(s => ['queued', 'on loading'].includes(s.status)).length : 0}
+                        ተረኛ ተሽከርካሪዎችተሽከርካሪዎች: ${dest.schedules ? dest.schedules.filter(s => ['queued', 'on loading'].includes(s.status)).length : 0}
                     </span>
                 </p>
                 <ul class="space-y-3">
@@ -143,9 +191,7 @@
             </div>
             `;
         }
-
         // Update page indicator
-        const pageIndicator = document.getElementById('page-indicator');
         const currentPage = Math.floor(currentIndex / cardsPerView) + 1;
         pageIndicator.textContent = `${currentPage} of ${totalPages}`;
     }
@@ -163,10 +209,14 @@
     }
 
     renderCards();
-    setInterval(() => {
+    animateProgressBar();
+
+    // When cards change, reset progress bar
+    function nextPage() {
         currentIndex = (currentIndex + cardsPerView) % destinations.length;
         renderCards();
-    }, intervalMs);
+        animateProgressBar();
+    }
 </script>
 
 <script>

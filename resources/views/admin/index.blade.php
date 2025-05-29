@@ -207,7 +207,7 @@
 
     // Automatically submit the form
     document.getElementById('filterForm').submit();
-}
+}.
     // Passengers by Age Status
   
     
