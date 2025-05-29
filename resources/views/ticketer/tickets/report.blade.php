@@ -5,6 +5,12 @@
     <!-- Main Content -->
     <div class="flex-1 bg-gray-100 p-6">
         <h2 class="text-2xl font-semibold mb-6">Ticket Report</h2>
+        @if(session('success'))
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                {{ session('success') }}
+            </div>
+        @endif
+
 
         <!-- Filter Form -->
         <form method="GET" action="{{ route('ticketer.tickets.report') }}" class="mb-6 flex space-x-4">
