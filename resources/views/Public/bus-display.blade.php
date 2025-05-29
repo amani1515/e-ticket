@@ -137,7 +137,7 @@
                             <div class="flex items-center gap-3 mt-2 md:mt-0">
                                 ${
                                     schedule.status === 'queued'
-                                    ? `<span class="bg-yellow-200 text-yellow-900 px-3 py-1 rounded-full text-base font-bold animate-pulse">ተረኛተረኛ</span>`
+                                    ? `<span class="bg-yellow-200 text-yellow-900 px-3 py-1 rounded-full text-base font-bold animate-pulse">ተረኛ</span>`
                                     : `<span class="bg-green-200 text-green-900 px-3 py-1 rounded-full text-base font-bold animate-bounce">በመጫን ላይ</span>`
                                 }
                             </div>

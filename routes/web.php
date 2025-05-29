@@ -81,6 +81,7 @@ Route::post('/ticketer/increment-boarding/{destinationId}', [App\Http\Controller
 Route::get('/ticketer/schedule-report', [\App\Http\Controllers\Ticketer\ScheduleController::class, 'report'])->name('ticketer.schedule.report');
 Route::post('/ticketer/schedule/{schedule}/pay', [\App\Http\Controllers\Ticketer\ScheduleController::class, 'pay'])->name('ticketer.schedule.pay');
 Route::get('/ticketer/cargo-info/{uid}', [\App\Http\Controllers\Ticketer\TicketController::class, 'cargoInfo']);
+Route::put('/ticketer/tickets/{ticket}/update-name', [TicketController::class, 'updateName'])->name('ticketer.tickets.updateName');
 
 
 Route::get('/admin/passenger-report', [PassengersReportController::class, 'index'])->name('admin.passenger-report');

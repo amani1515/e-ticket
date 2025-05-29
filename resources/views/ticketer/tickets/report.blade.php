@@ -64,6 +64,7 @@
                             <th class="border px-4 py-2">Departure</th>
                             <th class="border px-4 py-2">Status</th>
                             <th class="border px-4 py-2">Code</th>
+                            <th class="border px-4 py-2">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -87,6 +88,23 @@
                                     @endif
                                 </td>
                                 <td class="border px-4 py-2">{{ $ticket->ticket_code }}</td>
+                                <td class="border px-4 py-2">
+                                <!-- Toggle Edit Button -->
+                                <button onclick="toggleEditForm({{ $ticket->id }})" class="bg-yellow-400 text-white px-2 py-1 rounded text-sm">Edit</button>
+
+                                <!-- Print Button -->
+                                <a href="{{ route('ticketer.tickets.receipt', $ticket->id) }}" target="_blank" class="bg-blue-500 text-white px-2 py-1 rounded text-sm ml-1">Print</a>
+
+                                <!-- Edit Form (Hidden by default) -->
+                                <form id="edit-form-{{ $ticket->id }}" action="{{ route('ticketer.tickets.updateName', $ticket->id) }}" method="POST" class="mt-2 hidden">
+                                    @csrf
+                                    @method('PUT')
+                                    <input type="text" name="passenger_name" value="{{ $ticket->passenger_name }}" class="border p-1 text-sm rounded w-full mb-1">
+                                    <button type="submit" class="bg-green-500 text-white px-2 py-1 rounded text-sm w-full">Save</button>
+                                </form>
+                            </td>
+
+                            
                             </tr>
                         @endforeach
                     </tbody>
@@ -98,4 +116,11 @@
         @endif
     </div>
 </div>
+<script>
+    function toggleEditForm(ticketId) {
+        const form = document.getElementById(`edit-form-${ticketId}`);
+        form.classList.toggle('hidden');
+    }
+</script>
+
 @endsection

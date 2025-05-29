@@ -12,7 +12,7 @@
     <!-- html2canvas for PNG download -->
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <style>
-        body { background: #ffffff; }
+        body { background: #fef9c3; }
         .banner-main {
             background: #fffbe8;
             border: 4px dashed #fbbf24;

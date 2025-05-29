@@ -282,4 +282,17 @@ public function reports(Request $request)
     return response()->json([]);
 }
 
+
+public function updateName(Request $request, Ticket $ticket)
+{
+    $request->validate([
+        'passenger_name' => 'required|string|max:255',
+    ]);
+
+    $ticket->passenger_name = $request->passenger_name;
+    $ticket->save();
+
+    return redirect()->back()->with('success', 'Passenger name updated successfully.');
+}
+
 }

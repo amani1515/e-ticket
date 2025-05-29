@@ -72,6 +72,8 @@ class ScheduleController extends Controller
     'scheduled_at' => now(),
     'status' => 'queued',
     'capacity' => $bus->total_seats,
+    'cargo_capacity' => $bus->cargo_capacity,
+
     'boarding' => 0,
 ]);
     

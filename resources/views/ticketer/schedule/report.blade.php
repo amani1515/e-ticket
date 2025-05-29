@@ -31,19 +31,26 @@
         <td class="border px-4 py-2">{{ ucfirst($schedule->status) }}</td>
         <td class="border px-4 py-2">{{ $schedule->capacity }}</td>
         <td class="border px-4 py-2">{{ $schedule->boarding }}</td>
-       <td class="border px-4 py-2">
-    {{ \App\Models\Ticket::where('bus_id', $schedule->bus_id)
-        ->where('destination_id', $schedule->destination_id)
-        ->where('schedule_id', $schedule->id)
-        ->where('ticket_status', 'confirmed')
-        ->count() }}
+ <td class="border px-4 py-2">
+    <span class="bg-green-500 text-white text-sm font-semibold px-3 py-1 rounded-full shadow-md">
+        {{ \App\Models\Ticket::where('bus_id', $schedule->bus_id)
+            ->where('destination_id', $schedule->destination_id)
+            ->where('schedule_id', $schedule->id)
+            ->where('ticket_status', 'confirmed')
+            ->count() }}
+    </span>
 </td>
-        <td class="border px-4 py-2">
-            {{ \App\Models\Ticket::where('bus_id', $schedule->bus_id)
-                ->where('destination_id', $schedule->destination_id)
-                ->whereIn('ticket_status', ['waiting_scan', 'created'])
-                ->count() }}
-        </td>
+
+
+       <td class="border px-4 py-2">
+    <span class="bg-red-500 text-white text-sm font-semibold px-3 py-1 rounded-full shadow-md">
+        {{ \App\Models\Ticket::where('bus_id', $schedule->bus_id)
+            ->where('destination_id', $schedule->destination_id)
+            ->whereIn('ticket_status', ['waiting_scan', 'created'])
+            ->count() }}
+    </span>
+</td>
+
         <td class="border px-4 py-2">
             {{ $schedule->tickets()->sum('service_fee') }}
         </td>
