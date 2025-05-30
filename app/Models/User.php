@@ -30,6 +30,7 @@ class User extends Authenticatable
         'email',
         'phone',
         'password',
+        'mahberat_id', 
         'usertype'
     ];
 
@@ -79,6 +80,10 @@ public function destinations()
 public function cashReports()
 {
     return $this->hasMany(CashReport::class);
+}
+public function mahberat()
+{
+    return $this->belongsTo(Mahberat::class);
 }
 
 

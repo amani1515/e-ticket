@@ -34,7 +34,7 @@
             <select name="usertype" id="usertype" class="w-full px-4 py-2 border rounded" required>
                 <option value="">Select User Type</option>
                 <option value="admin" {{ old('usertype') == 'admin' ? 'selected' : '' }}>Admin</option>
-                <option value="ticketer" {{ old('usertype') == 'ticketer' ? 'selected' : '' }}>Ticketer</option>
+                <option value="ticketer" {{ old('usertype') == 'ticketer' ? 'selected' : '' }}>Ticket agent</option>
                 <option value="traffic" {{ old('usertype') == 'traffic' ? 'selected' : '' }}>Traffic</option>
                 <option value="hisabshum" {{ old('usertype') == 'hisabshum' ? 'selected' : '' }}>Hisabshum</option>
                 <option value="mahberat" {{ old('usertype') == 'mahberat' ? 'selected' : '' }}>Mahberat</option>
@@ -59,6 +59,18 @@
             <small class="text-gray-500">Hold Ctrl (Windows) or Cmd (Mac) to select multiple.</small>
             @error('assigned_destinations') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
         </div>
+<!-- Mahberat Select -->
+<div>
+    <label for="mahberat_id" class="block font-medium">Assign to Mahberat</label>
+    <select name="mahberat_id" id="mahberat_id" class="w-full px-4 py-2 border rounded">
+        <option value="">None</option>
+        @foreach ($mahberats as $m)
+            <option value="{{ $m->id }}" {{ old('mahberat_id') == $m->id ? 'selected' : '' }}>
+                {{ $m->name }}
+            </option>
+        @endforeach
+    </select>
+</div>
 
         <!-- Password -->
         <div>

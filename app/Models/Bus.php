@@ -27,7 +27,9 @@ protected $fillable = [
     'file1',
     'file2',
     'file3',
+    'mahberat_id',   // <- Add this!
     'unique_bus_id',
+    
 ];
 
 
@@ -48,4 +50,9 @@ protected $fillable = [
 public function schedules() {
     return $this->hasMany(Schedule::class, 'bus_id');
 }
+public function mahberat()
+{
+    return $this->belongsTo(Mahberat::class);
+}
+
 }

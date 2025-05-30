@@ -92,11 +92,11 @@
                 </select>
             </div>
             <div class="flex flex-col gap-3">
-                <label for="file1" class="font-semibold text-gray-700">File 1</label>
+                <label for="file1" class="font-semibold text-gray-700">File 1 /libre/</label> 
                 <input type="file" id="file1" name="file1" class="input-field">
             </div>
             <div class="flex flex-col gap-3">
-                <label for="file2" class="font-semibold text-gray-700">File 2</label>
+                <label for="file2" class="font-semibold text-gray-700">File 2/3ኛ ወገን/ </label>
                 <input type="file" id="file2" name="file2" class="input-field">
             </div>
             <div class="flex flex-col gap-3">

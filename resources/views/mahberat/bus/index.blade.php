@@ -23,6 +23,7 @@
                 <tr>
                     <th class="px-6 py-3 text-left">Targa</th>
                     <th class="px-6 py-3 text-left">Driver</th>
+                    
                     <th class="px-6 py-3 text-left">Level</th>
                     <th class="px-6 py-3 text-left">Status</th>
                     <th class="px-6 py-3 text-left">Model</th>

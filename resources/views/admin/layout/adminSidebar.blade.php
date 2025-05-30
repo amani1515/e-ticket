@@ -63,6 +63,20 @@
                     <a href="{{ route('admin.destinations.create') }}" class="block hover:text-yellow-500">Add New Destination</a>
                 </div>
             </div>
+                      <!-- Destination -->
+            <div>
+                <button @click="openDestination = !openDestination" class="flex justify-between items-center w-full font-semibold hover:text-yellow-500">
+                    Mahberat
+                    <svg :class="{ 'rotate-180': openDestination }" class="w-4 h-4 transform transition-transform">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" stroke="currentColor" fill="none" stroke-width="2"/>
+                    </svg>
+                </button>
+              <div x-show="openDestination" x-cloak class="ml-4 mt-2 space-y-1 text-sm">
+                <a href="{{ route('admin.mahberats.index') }}" class="block hover:text-yellow-500">Mahberats</a>
+                <a href="{{ route('admin.mahberats.create') }}" class="block hover:text-yellow-500">Add New Mahber</a>
+              </div>
+
+            </div>
 
             <!-- Reports -->
             <div>

@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\BusReportController;
 use App\Http\Controllers\PublicDisplayController;
 use App\Http\Controllers\Traffic\TrafficScheduleController;
 // <-- Make sure this is present!
+use App\Http\Controllers\Admin\MahberatController;
 
 
 
@@ -92,6 +93,13 @@ Route::get('/admin/passenger-report/print-all', [PassengerReportController::clas
 
 Route::get('/admin', [DashboardReportsController::class, 'index'])->name('admin.index');
 
+
+Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::resource('mahberats', MahberatController::class)->only(['index', 'create', 'store']);
+});
+Route::get('/admin/mahberats', [MahberatController::class, 'index'])->name('admin.mahberats.index');
+Route::get('/admin/mahberats/create', [MahberatController::class, 'create'])->name('admin.mahberats.create');
+Route::post('/admin/mahberats', [MahberatController::class, 'store'])->name('admin.mahberats.store');
 
 Route::get('/admin/buses/banner/{id}', [BusController::class, 'banner'])->name('admin.buses.banner');
 Route::get('/admin/total-reports', [\App\Http\Controllers\Admin\TotalReportController::class, 'index'])->name('admin.total.reports');
