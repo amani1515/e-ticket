@@ -23,7 +23,8 @@
                 <tr>
                     <th class="px-6 py-3 text-left">Targa</th>
                     <th class="px-6 py-3 text-left">Driver</th>
-                    
+                    <th class="px-6 py-3 text-left">Driver phone</th>
+
                     <th class="px-6 py-3 text-left">Level</th>
                     <th class="px-6 py-3 text-left">Status</th>
                     <th class="px-6 py-3 text-left">Model</th>
@@ -35,6 +36,8 @@
                     <tr class="hover:bg-gray-50 transition duration-150">
                         <td class="px-6 py-4 font-medium">{{ $bus->targa }}</td>
                         <td class="px-6 py-4">{{ $bus->driver_name }}</td>
+                        <td class="px-6 py-4">{{ $bus->driver_phone }}</td>
+
                         <td class="px-6 py-4 capitalize">{{ $bus->level }}</td>
                         <td class="px-6 py-4">
                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
