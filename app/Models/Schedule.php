@@ -16,7 +16,7 @@ class Schedule extends Model
         'scheduled_at',
         'status',
         'created_at',
-
+        'mahberat_id',  // Make sure this is here
         'updated_at',
         'capacity',
         'boarding',
@@ -51,6 +51,11 @@ public function paidBy()
 {
     return $this->belongsTo(\App\Models\User::class, 'paid_by');
 }
+public function mahberat()
+{
+    return $this->belongsTo(Mahberat::class);
+}
+
 
 public function departedBy()
 {
