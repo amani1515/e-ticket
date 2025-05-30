@@ -32,6 +32,12 @@ class AdminController extends Controller
          {
              return view('traffic.index');
          }
+
+elseif($usertype == 'headoffice')
+         {
+             return view('headOffice.index');
+         }
+
          elseif($usertype == 'hisabshum')
          {
              return view('hisabShum.index');
