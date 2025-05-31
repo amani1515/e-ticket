@@ -16,6 +16,11 @@ class PassengerReportController extends Controller
     
     public function index(Request $request)
     {
+        // Allow both admin and headoffice to view
+        if (!auth()->check() || !in_array(auth()->user()->usertype, ['admin', 'headoffice'])) {
+            return view('errors.403');
+        }
+
         $destinations = Destination::all(); // Fetch all destinations
         $filters = $request->all();
     
@@ -60,11 +65,16 @@ class PassengerReportController extends Controller
     }
 
     public function printAll(Request $request)
-{
-    $query = Ticket::query();
-    // Apply filters as in your main report...
-    // $query->where(...);
-    $tickets = $query->with('destination')->get(); // No paginate()
-    return view('admin.reports.passengers_print', compact('tickets'));
-}
+    {
+        // Allow both admin and headoffice to view
+        if (!auth()->check() || !in_array(auth()->user()->usertype, ['admin', 'headoffice'])) {
+            return view('errors.403');
+        }
+
+        $query = Ticket::query();
+        // Apply filters as in your main report...
+        // $query->where(...);
+        $tickets = $query->with('destination')->get(); // No paginate()
+        return view('admin.reports.passengers_print', compact('tickets'));
+    }
 }

@@ -1,7 +1,7 @@
 <!-- filepath: d:\My comany\e-ticket\resources\views\admin\layout\adminHeader.blade.php -->
 <header class="bg-yellow-500 text-gray-900 shadow p-4 flex justify-between items-center z-30 pl-16 md:pl-4">
     <h1 class="text-lg font-semibold">
-        <a href="{{ route('admin.index') }}">Admin Dashboard</a>
+        <a href="/home">{{ Auth::user()->usertype ?? 'User' }}</a>
     </h1>
     <div class="flex items-center gap-4">
         <!-- User Dropdown -->

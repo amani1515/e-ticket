@@ -9,6 +9,11 @@ class TotalReportController extends Controller
 {
 public function index(Request $request)
 {
+    // Allow both admin and headoffice to view
+    if (!auth()->check() || !in_array(auth()->user()->usertype, ['admin', 'headoffice'])) {
+        return view('errors.403');
+    }
+
     $from = $request->input('from_date');
     $to = $request->input('to_date');
 
