@@ -44,14 +44,14 @@
                         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M8 17l4 4 4-4m0-5V3" />
                         </svg>
-                        Total Queued Buses: {{ $groupedSchedules->count() }}
+                         ተረኛ ተሽከርካሪ ብዛትብዛት: {{ $groupedSchedules->count() }}
                     </span>
                 </p>
                 <ul class="space-y-2">
                     @forelse ($groupedSchedules as $schedule)
                         <li class="flex flex-col sm:flex-row sm:items-center justify-between bg-gray-50 rounded px-3 py-2 hover:bg-yellow-50 transition group">
                             <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                                <span class="font-semibold text-gray-800">Targa:</span>
+                                <span class="font-semibold text-gray-800">ታርጋ:</span>
                                 <span class="text-gray-700">{{ $schedule->bus->targa ?? 'N/A' }}</span>
                                 <span class="text-xs text-gray-400">{{ $schedule->created_at->diffForHumans() }}</span>
                             </div>
@@ -59,12 +59,12 @@
                                 @if($schedule->status === 'queued')
                                     <span title="Queued" class="inline-flex items-center px-2 py-1 bg-yellow-200 text-yellow-800 rounded-full text-xs font-bold animate-pulse shadow">
                                         <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><circle cx="10" cy="10" r="10"/></svg>
-                                        <span class="hidden sm:inline">Queued</span>
+                                        <span class="hidden sm:inline">ተረኛ</span>
                                     </span>
                                 @elseif($schedule->status === 'on loading')
                                     <span title="On Loading" class="inline-flex items-center px-2 py-1 bg-green-200 text-green-800 rounded-full text-xs font-bold animate-bounce shadow">
                                         <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><rect width="20" height="20" rx="5"/></svg>
-                                        <span class="hidden sm:inline">On Loading</span>
+                                        <span class="hidden sm:inline">በመጫን ላይ</span>
                                     </span>
                                 @else
                                     <span class="inline-flex items-center px-2 py-1 bg-gray-200 text-gray-700 rounded-full text-xs font-bold">
