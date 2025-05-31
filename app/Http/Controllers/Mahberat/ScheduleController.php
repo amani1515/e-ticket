@@ -86,17 +86,21 @@ public function create()
         return redirect()->route('mahberat.schedule.index')->with('success', 'Bus scheduled successfully.');
     }
 
-    public function cardView()
-    {
-        $user = Auth::user();
+public function cardView()
+{
+    $user = Auth::user();
+    $mahberatId = $user->mahberat_id;
 
-        // Load destinations with schedules and buses (only for user's mahberat)
-        $destinations = $user->destinations()->with(['schedules' => function ($query) use ($user) {
-            $query->where('mahberat_id', $user->mahberat_id)->with('bus');
-        }])->get();
+    // Get schedules belonging to this mahberat, grouped by destination
+    $schedules = \App\Models\Schedule::with(['bus', 'destination'])
+        ->where('mahberat_id', $mahberatId)
+        ->whereIn('status', ['queued', 'on loading'])
+        ->get()
+        ->groupBy('destination_id');
 
-        return view('mahberat.schedule.card-view', compact('destinations'));
-    }
+    return view('mahberat.schedule.card-view', compact('schedules'));
+}
+
 
     public function destroy($id)
     {
