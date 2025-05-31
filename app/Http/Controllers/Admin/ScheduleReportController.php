@@ -8,6 +8,11 @@ class ScheduleReportController extends Controller
 {
 public function index(\Illuminate\Http\Request $request)
 {
+    // Allow both admin and headoffice to view
+    if (!auth()->check() || !in_array(auth()->user()->usertype, ['admin', 'headoffice'])) {
+        return view('errors.403');
+    }
+
     $query = \App\Models\Schedule::with(['bus', 'destination', 'scheduledBy', 'paidBy', 'departedBy']);
 
     // Search by ID, UID, Bus ID

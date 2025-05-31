@@ -18,6 +18,7 @@ use App\Http\Controllers\PublicDisplayController;
 use App\Http\Controllers\Traffic\TrafficScheduleController;
 // <-- Make sure this is present!
 use App\Http\Controllers\Admin\MahberatController;
+use App\Http\Controllers\HeadOfficeAdminReadOnlyController;
 
 
 
@@ -192,3 +193,9 @@ Route::get('/cargoman/cargo', [\App\Http\Controllers\CargoMan\CargoController::c
 Route::get('/cargoman/first-queued-schedule/{destination}', [\App\Http\Controllers\CargoMan\CargoController::class, 'firstQueuedSchedule']);
 Route::get('/cargoman/cargo/{id}/receipt', [\App\Http\Controllers\CargoMan\CargoController::class, 'receipt'])->name('cargoMan.cargo.receipt');
 Route::get('/cargoman/available-schedules/{destination}', [\App\Http\Controllers\CargoMan\CargoController::class, 'availableSchedules']);
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/headoffice', [HeadOfficeAdminReadOnlyController::class, 'dashboard'])
+        ->name('headoffice.dashboard');
+    // Add more routes for other admin pages as needed, all pointing to headOffice views
+});
