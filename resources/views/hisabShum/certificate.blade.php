@@ -90,12 +90,25 @@
         .info-table th {
             background: #f0f0f0;
         }
+        .scheduleno{
+            text-align: right;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
     <div class="certificate">
         <div class="logo-section">
-            <div>
+         
+             <div class="org-info">
+                <div><strong>በአማራ ብሔራዊ ክልላዊ መንግስት መንገድና ትራንስፖርት ቢሮ </strong></div>
+                <div>e-Ticket System</div>
+                <div>www.transport.com</div>
+                <div>Tel: +251-123-456-789</div>
+            </div>
+               <div>
                 <img src="{{ asset('logo.png') }}" alt="Sevastopol technologies" class="logo">
             </div>
             <div class="org-info">
@@ -105,44 +118,79 @@
                 <div>Tel: +251-956-407-670</div>
             </div>
         </div>
-        <div class="title">Departed Certificate</div>
+        <div class="title">የመውጫ ደረሰኝ </div>
+        <div class="scheduleno"> ደረሰኝ ቁጥር         {{ $schedule->id }} </div>
         <table class="info-table">
+                <tr>
+                <th>ሙሉ ስምስም</th>
+                <td>{{ $schedule->bus->driver_name ?? '-' }}</td>
+            </tr>
             <tr>
-                <th>Bus Targa</th>
+                <th>የሰሌዳ ቁጥር</th>
                 <td>{{ $schedule->bus->targa ?? '-' }}</td>
             </tr>
-            <tr>
-                <th>From</th>
-                <td>{{ $schedule->from ?? ($schedule->bus->from ?? '-') }}</td>
+              <tr>
+                <th>የተሽ/ደረጃ </th>
+                <td>{{ $schedule->bus->level ?? '-' }}</td>
             </tr>
             <tr>
-                <th>To</th>
+                <th>የመነሻ ቦታ </th>
+                <td>{{ $schedule->destination->start_from ?? '-' }}</td>
+            </tr>
+            <tr>
+                <th>የመድረሻ ቦታ </th>
                 <td>{{ $schedule->destination->destination_name ?? '-' }}</td>
             </tr>
             <tr>
-                <th>Capacity</th>
+                <th>የመጫን አቅም </th>
                 <td>{{ $schedule->capacity ?? '-' }}</td>
             </tr>
+            @php
+                $maleCount = \App\Models\Ticket::where('schedule_id', $schedule->id)->where('gender', 'male')->count();
+                $femaleCount = \App\Models\Ticket::where('schedule_id', $schedule->id)->where('gender', 'female')->count();
+                $totalCount = $maleCount + $femaleCount;
+            @endphp
+
             <tr>
-                <th>Boarding</th>
-                <td>{{ $schedule->boarding ?? '-' }}</td>
+                <th>የጫነው ሰው ብዛት</th>
+                <td>
+                 <strong>ወንድ፡ </strong>    {{ $maleCount }} <br>
+                    <strong>ሴት፡ </strong> {{ $femaleCount }} <br>
+                    <strong>ጠቅላላ፡ </strong> {{ $totalCount }}
+                </td>
+            </tr>
+
+            <tr>
+                <th>የጫነው መጠን /kg/ኪ.ግኪ.ግ </th>
+                <td>{{ $schedule->cargo_used ?? '-' }} ኪ.ግ </td>
             </tr>
             <tr>
-                <th>Status</th>
+                <th>ያለበት ሁኔታ </th>
                 <td>{{ ucfirst($schedule->status) }}</td>
             </tr>
             <tr>
-                <th>Scheduled At</th>
+                <th>መጫን የጀመረበት </th>
                 <td>{{ $schedule->scheduled_at }}</td>
             </tr>
             <tr>
-                <th>Departed By</th>
+                <th>መውጫውን የሰጠው</th>
                 <td>{{ $schedule->departedBy->name ?? '-' }}</td>
             </tr>
             <tr>
-                <th>Departed At</th>
+                <th>የመነሻ ሰዓት/ቀን</th>
                 <td>{{ $schedule->departed_at ?? '-' }}</td>
             </tr>
+            <tr>
+    <th>የተከፈለ ብር </th>
+    <td>
+        {{ 
+            \DB::table('departure_fees')
+                ->where('level', $schedule->bus->level)
+                ->value('fee') ?? '0.00' 
+        }} ብር
+    </td>
+</tr>
+
         </table>
         <div>
             This is to certify that the above bus schedule has been marked as <strong>departed</strong>.
@@ -154,9 +202,9 @@
             <div>Approved by: ____________________</div>
         </div>
         <div style="margin-top:30px; text-align:center;">
-            <div style="font-size:1em; margin-bottom:6px;">
+            {{-- <div style="font-size:1em; margin-bottom:6px;">
                 Schedule ID: <strong>{{ $schedule->schedule_uid }}</strong>
-            </div>
+            </div> --}}
             <img 
                 src="https://barcode.tec-it.com/barcode.ashx?data={{ $schedule->schedule_uid }}&code=Code128&translate-esc=off" 
                 alt="Barcode for {{ $schedule->schedule_uid }}" 
