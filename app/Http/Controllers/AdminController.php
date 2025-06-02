@@ -165,6 +165,10 @@ elseif($usertype == 'headoffice')
             {
                 return view('cargoMan.index');
             }
+             else if($usertype == 'hisabshum')
+            {
+                return view('hisabshum.index');
+            }
             else
             {
                 return redirect()->back();
