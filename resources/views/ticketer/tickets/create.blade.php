@@ -22,9 +22,11 @@
             <div class="mb-4">
                 <label for="age_status" class="block">Age Status</label>
                 <select name="age_status" id="age_status" class="w-full p-2 border rounded" required>
-                    <option value="adult">Adult</option>
-                    <option value="baby">Baby</option>
-                    <option value="senior">Senior</option>
+                    <option value="adult">ወጣት</option>
+                    <option value="baby">ህጻን </option>
+                    <option value="middle_aged">ጎልማሳ</option>
+                    <option value="senior">ሽማግሌ </option>
+
                 </select>
             </div>
 

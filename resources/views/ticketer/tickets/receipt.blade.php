@@ -109,28 +109,41 @@
 
         <div class="center">
             <img src="{{ asset('logo.png') }}" alt="SEBUS Logo" class="logo">
-            <h3>SEBUS TICKET</h3>
+            <h3>E-TICKET</h3>
             <div class="divider"></div>
         </div>
 
-        <p><strong style="font-size: 1.3em;">Bus targa:</strong> {{ $ticket->bus->targa ?? $ticket->bus_id }}</p>
-        <p><strong>Name:</strong> {{ $ticket->passenger_name }}</p>
-        <p><strong>Gender:</strong> {{ ucfirst($ticket->gender) }}</p>
-        <p><strong>Age Status:</strong> {{ ucfirst($ticket->age_status) }}</p>
-        <p><strong>From:</strong> {{ $ticket->destination->start_from }}</p>
-        <p><strong>To:</strong> {{ $ticket->destination->destination_name }}</p>
-        <p><strong>Departed Date:</strong> {{ \Carbon\Carbon::parse($ticket->departure_datetime)->format('Y-m-d') }}</p>
-        <p><strong>Departed Time:</strong> {{ \Carbon\Carbon::parse($ticket->departure_datetime)->format('H:i') }}</p>
-        <p><strong>Ticket Code:</strong> {{ $ticket->id }}</p>
-        <p><strong>Departed By:</strong> {{ $ticket->creator ? $ticket->creator->name : 'N/A' }}</p>
+        <p><strong style="font-size: 1.3em;">ሰሌዳ ቁጥር:</strong> {{ $ticket->bus->targa ?? $ticket->bus_id }}</p>
+        <p><strong>የተጓዥ ስምስም:</strong> {{ $ticket->passenger_name }}</p>
+        <p><strong>ጾታ:</strong> {{ ucfirst($ticket->gender) }}</p>
+@php
+    $ageStatusAmharic = [
+        'baby' => 'ህጻን',
+        'adult' => 'ወጣት',
+        'middle_aged' => 'ጎልማሳ',
+        'senior' => 'ሽማግሌ',
+    ];
+@endphp
 
+<p><strong>የእድሜ ሁኔታ :</strong> {{ $ageStatusAmharic[$ticket->age_status] ?? $ticket->age_status }}</p>
+        <p><strong>መነሻ :</strong> {{ $ticket->destination->start_from }}</p>
+        <p><strong>መድረሻ :</strong> {{ $ticket->destination->destination_name }}</p>
+        <p><strong>የመነሻ ቀን :</strong> {{ \Carbon\Carbon::parse($ticket->departure_datetime)->format('Y-m-d') }}</p>
+        <p><strong>የመሳፈሪያ ሰዓት :</strong> {{ \Carbon\Carbon::parse($ticket->departure_datetime)->format('H:i') }}</p>
+        <p><strong>የትኬት መለያ ቁጥር :</strong> {{ $ticket->id }}</p>
+        <p><strong>ትኬት ዎኪል:</strong> {{ $ticket->creator ? $ticket->creator->name : 'N/A' }}</p>
+        <p><strong>ታሪፍ :</strong> {{ $ticket->destination->tariff }}</p>
+        <p><strong>ታክስ :</strong> {{ $ticket->destination->tax }}</p>
+        <p><strong>አገልግሎት ክፍያ :</strong> {{ $ticket->destination->service_fee }}</p>
+
+        {{-- Display cargo information if available --}}
         @if($ticket->cargo)
-            <p><strong>Cargo Ticket:</strong> {{ $ticket->cargo->cargo_uid }}</p>
-            <p><strong>Cargo Weight:</strong> {{ $ticket->cargo->weight }} kg</p>
-            <p><strong>Cargo Fee:</strong> {{ number_format($ticket->cargo->total_amount, 2) }} ETB</p>
+            {{-- <p><strong>Cargo Ticket:</strong> {{ $ticket->cargo->cargo_uid }}</p> --}}
+            <p><strong>የእቃ ክብደት :</strong> {{ $ticket->cargo->weight }} kg</p>
+            <p><strong>የእቃ ክፍያ:</strong> {{ number_format($ticket->cargo->total_amount, 2) }} ETB</p>
         @endif
 
-        <p><strong>Total Price:</strong>
+        <p><strong>አጠቃላይ ክፍያ :</strong>
             {{
                 $ticket->destination->tariff +
                 $ticket->destination->tax +
