@@ -14,6 +14,7 @@ protected $fillable = [
     'driver_phone',
     'redat_name',
     'level',
+    'sub_level',
     'total_seats',
     'cargo_capacity',
     'status',

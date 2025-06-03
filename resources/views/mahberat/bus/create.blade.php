@@ -47,6 +47,15 @@
                 </select>
             </div>
             <div class="flex flex-col gap-3">
+                <label for="sub-level" class="font-semibold text-gray-700">Sub-Level <span class="text-red-500">*</span></label>
+                <select id="sub-level" name="sub-level" required class="input-field">
+                    <option value="">Select sub-level</option>
+                    <option value="high">High</option>
+                    <option value="mid">Mid</option>
+                    <option value="low">Low</option>
+                </select>
+            </div>
+            <div class="flex flex-col gap-3">
                 <label for="total_seats" class="font-semibold text-gray-700">Total Seats</label>
                 <input type="number" id="total_seats" name="total_seats" placeholder="Total Seats" class="input-field">
             </div>

@@ -26,6 +26,7 @@
                     <th class="px-6 py-3 text-left">Driver phone</th>
 
                     <th class="px-6 py-3 text-left">Level</th>
+                    <th class="px-6 py-3 text-left">Sub-Level</th>
                     <th class="px-6 py-3 text-left">Status</th>
                     <th class="px-6 py-3 text-left">Model</th>
                     <th class="px-6 py-3 text-left">Actions</th>
@@ -39,6 +40,7 @@
                         <td class="px-6 py-4">{{ $bus->driver_phone }}</td>
 
                         <td class="px-6 py-4 capitalize">{{ $bus->level }}</td>
+                        <td class="px-6 py-4 capitalize">{{ $bus->sub_level }}</td>
                         <td class="px-6 py-4">
                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
                                 {{ $bus->status === 'active' ? 'bg-green-100 text-green-800' : ($bus->status === 'maintenance' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">

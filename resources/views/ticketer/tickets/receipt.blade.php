@@ -114,7 +114,7 @@
         </div>
 
         <p><strong style="font-size: 1.3em;">ሰሌዳ ቁጥር:</strong> {{ $ticket->bus->targa ?? $ticket->bus_id }}</p>
-        <p><strong>የተጓዥ ስምስም:</strong> {{ $ticket->passenger_name }}</p>
+        <p><strong>የተጓዥ ስም:</strong> {{ $ticket->passenger_name }}</p>
         <p><strong>ጾታ:</strong> {{ ucfirst($ticket->gender) }}</p>
 @php
     $ageStatusAmharic = [
@@ -131,7 +131,7 @@
         <p><strong>የመነሻ ቀን :</strong> {{ \Carbon\Carbon::parse($ticket->departure_datetime)->format('Y-m-d') }}</p>
         <p><strong>የመሳፈሪያ ሰዓት :</strong> {{ \Carbon\Carbon::parse($ticket->departure_datetime)->format('H:i') }}</p>
         <p><strong>የትኬት መለያ ቁጥር :</strong> {{ $ticket->id }}</p>
-        <p><strong>ትኬት ዎኪል:</strong> {{ $ticket->creator ? $ticket->creator->name : 'N/A' }}</p>
+        <p><strong>ትኬት ወኪል:</strong> {{ $ticket->creator ? $ticket->creator->name : 'N/A' }}</p>
         <p><strong>ታሪፍ :</strong> {{ $ticket->destination->tariff }}</p>
         <p><strong>ታክስ :</strong> {{ $ticket->destination->tax }}</p>
         <p><strong>አገልግሎት ክፍያ :</strong> {{ $ticket->destination->service_fee }}</p>
