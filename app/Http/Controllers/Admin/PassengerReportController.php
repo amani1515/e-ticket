@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\Controllers\Admin;
 
-use App\Exports\PassengersExport;
+
 use App\Models\Ticket;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;

@@ -89,9 +89,9 @@ Route::get('/ticketer/tickets/export', [App\Http\Controllers\Ticketer\TicketCont
     ->name('ticketer.tickets.export');
 
 Route::get('/admin/passenger-report', [PassengersReportController::class, 'index'])->name('admin.passenger-report');
+Route::get('/admin/passenger-report/export', [PassengersReportController::class, 'export'])->name('admin.passenger.report.export');
 Route::get('/admin/passenger-report/{id}', [PassengersReportController::class, 'show'])->name('admin.passenger-report.show');
 Route::delete('/admin/passenger-report/{id}', [PassengersReportController::class, 'destroy'])->name('admin.passenger-report.destroy');
-Route::get('/admin/passenger-report', [PassengersReportController::class, 'index'])->name('admin.passenger-report');
 Route::get('/admin/passenger-report/print-all', [PassengerReportController::class, 'printAll'])->name('admin.passenger.report.print-all');
 
 Route::get('/admin', [DashboardReportsController::class, 'index'])->name('admin.index');
@@ -106,8 +106,7 @@ Route::post('/admin/mahberats', [MahberatController::class, 'store'])->name('adm
 
 Route::get('/admin/buses/banner/{id}', [BusController::class, 'banner'])->name('admin.buses.banner');
 Route::get('/admin/total-reports', [\App\Http\Controllers\Admin\TotalReportController::class, 'index'])->name('admin.total.reports');
-Route::get('/admin/passenger-report/export', [PassengersReportController::class, 'export'])
-    ->name('admin.passenger.report.export');
+
 Route::resource('admin/cargo-settings', \App\Http\Controllers\Admin\CargoSettingsController::class)
     ->only(['index', 'edit', 'update'])
     ->names('admin.cargo-settings');
@@ -148,7 +147,7 @@ Route::get('/admin/cash-reports', [AdminCashReportController::class, 'index'])->
 Route::post('/admin/cash-reports/{id}/mark-received', [AdminCashReportController::class, 'markAsReceived'])->name('admin.cash.reports.receive');
 
 
-Route::get('/admin/passenger-report/export', [PassengersReportController::class, 'export'])->name('admin.passenger.report.export');
+
 
 
 // up to here

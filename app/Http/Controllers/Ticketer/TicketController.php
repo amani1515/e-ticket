@@ -145,10 +145,12 @@ public function showScanForm()
 {
     return view('ticketer.tickets.scan');
 }
- public function export()
+ public function export(Request $request)
     {
-        return Excel::download(new TicketsExport, 'tickets_report.xlsx');
+        $filters = $request->all();
+        return Excel::download(new TicketsExport($filters), 'tickets_report.xlsx');
     }
+
 public function processScan(Request $request)
 {
     $request->validate([
