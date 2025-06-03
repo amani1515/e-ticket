@@ -19,6 +19,7 @@ use App\Http\Controllers\Traffic\TrafficScheduleController;
 // <-- Make sure this is present!
 use App\Http\Controllers\Admin\MahberatController;
 use App\Http\Controllers\HeadOfficeAdminReadOnlyController;
+use App\Http\Controllers\CargoMan\CargoController;
 
 
 
@@ -106,10 +107,13 @@ Route::post('/admin/mahberats', [MahberatController::class, 'store'])->name('adm
 
 Route::get('/admin/buses/banner/{id}', [BusController::class, 'banner'])->name('admin.buses.banner');
 Route::get('/admin/total-reports', [\App\Http\Controllers\Admin\TotalReportController::class, 'index'])->name('admin.total.reports');
-
+Route::get('/admin/passenger-report/export', [PassengersReportController::class, 'export'])
+    ->name('admin.passenger.report.export');
 Route::resource('admin/cargo-settings', \App\Http\Controllers\Admin\CargoSettingsController::class)
     ->only(['index', 'edit', 'update'])
     ->names('admin.cargo-settings');
+Route::post('/admin/cargo-settings/departure-fee', [\App\Http\Controllers\Admin\CargoSettingsController::class, 'updateDepartureFee'])->name('admin.cargo-settings.departure-fee');
+
 Route::get('/admin/schedule-reports', [\App\Http\Controllers\Admin\ScheduleReportController::class, 'index'])->name('admin.schedule.reports');
 
 //mahberat
@@ -164,6 +168,9 @@ Route::get('/bus-display', [PublicDisplayController::class, 'showAllSchedules'])
 
 
 //for hisab shum
+Route::get('/hisab-shum/pay/{schedule}', [\App\Http\Controllers\HisabShum\PaymentController::class, 'initiate'])->name('hisabShum.pay.schedule');
+Route::get('/hisab-shum/payment/callback', [\App\Http\Controllers\HisabShum\PaymentController::class, 'handleCallback'])->name('hisabShum.payment.callback');
+
 
 Route::get('/hisab-shum/paid-reports', [\App\Http\Controllers\HisabShum\PaidReportController::class, 'index'])->name('hisabShum.paidReports');
 Route::get('/hisab-shum/schedule/{schedule}/certificate', [\App\Http\Controllers\HisabShum\PaidReportController::class, 'certificate'])->name('hisabShum.certificate');

@@ -61,7 +61,7 @@ public function store(Request $request)
     $request->validate([
         'passenger_name' => 'required|string|max:255',
         'gender' => 'required|in:male,female',
-        'age_status' => 'required|in:baby,adult,senior',
+        'age_status' => 'required|in:baby,adult,senior,middle_aged',
         'destination_id' => 'required|exists:destinations,id',
         'bus_id' => 'required|string|max:255', // This is targa from the form!
         'departure_datetime' => 'required|date',

@@ -17,4 +17,9 @@ class Mahberat extends Model
     {
         return $this->belongsToMany(Destination::class, 'destination_mahberat');
     }
+    public function schedules()
+{
+    return $this->hasMany(Schedule::class);
+}
+
 }

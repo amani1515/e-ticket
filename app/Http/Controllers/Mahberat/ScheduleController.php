@@ -8,95 +8,108 @@ use App\Models\Schedule;
 use App\Models\Bus;
 use App\Models\Destination;
 use Illuminate\Support\Facades\Auth;
-use App\Models\User;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Hash;
 
 class ScheduleController extends Controller
 {
     public function index()
     {
-        // Show all scheduled buses ordered by created time (FIFO)
+        $mahberatId = auth()->user()->mahberat_id;
+
+        // Show only schedules for this Mahberat
         $schedules = Schedule::with(['bus', 'destination', 'scheduledBy'])
+            ->where('mahberat_id', $mahberatId)
             ->orderBy('created_at', 'asc')
             ->get();
-            
 
         return view('mahberat.schedule.index', compact('schedules'));
     }
 
-    public function create()
-    {
-        $user = auth()->user();
-    
-        // Fetch all destinations assigned to the current user
-        $destinations = $user->destinations; // Assuming the relationship is already defined
-    
-        // Fetch buses registered by the user and with status 'active'
-        $buses = Bus::where('registered_by', $user->id)
-                    ->where('status', 'active')
-                    ->get();
-    
-        return view('mahberat.schedule.create', compact('destinations', 'buses'));
-    }
+public function create()
+{
+    $user = auth()->user();
+
+    // Get Mahberat model
+    $mahberat = $user->mahberat;
+
+    // Get destinations through the Mahberat relationship
+    $destinations = $mahberat->destinations()->get();
+
+    // Get active buses for this Mahberat
+    $buses = Bus::where('mahberat_id', $mahberat->id)
+                ->where('status', 'active')
+                ->get();
+
+    return view('mahberat.schedule.create', compact('destinations', 'buses'));
+}
+
 
 
     public function store(Request $request)
-{
-    $request->validate([
-        'bus_id' => 'required|exists:buses,id',
-        'destination_id' => 'required|exists:destinations,id',
-    ]);
+    {
+        $request->validate([
+            'bus_id' => 'required|exists:buses,id',
+            'destination_id' => 'required|exists:destinations,id',
+        ]);
 
-    // Check if the bus is already scheduled
-    $alreadyScheduled = Schedule::where('bus_id', $request->bus_id)
-        ->whereIn('status', ['queued', 'on loading'])
-        ->exists();
+        $user = auth()->user();
+        $mahberatId = $user->mahberat_id;
 
-    if ($alreadyScheduled) {
-        return back()->withErrors(['bus_id' => 'This bus is already scheduled.']);
+        // Check if the bus is already scheduled
+        $alreadyScheduled = Schedule::where('bus_id', $request->bus_id)
+            ->whereIn('status', ['queued', 'on loading'])
+            ->exists();
+
+        if ($alreadyScheduled) {
+            return back()->withErrors(['bus_id' => 'This bus is already scheduled.']);
+        }
+
+        $bus = Bus::findOrFail($request->bus_id);
+
+        // Generate unique schedule UID
+        $scheduleUid = 'sevastopoltechs-' . strtoupper(Str::random(10));
+
+        // Create the schedule
+        Schedule::create([
+            'schedule_uid' => $scheduleUid,
+            'bus_id' => $bus->id,
+            'destination_id' => $request->destination_id,
+            'scheduled_by' => $user->id,
+            'mahberat_id' => $mahberatId, // ✅ Save Mahberat ID
+            'scheduled_at' => now(),
+            'status' => 'queued',
+            'capacity' => $bus->total_seats,
+            'cargo_capacity' => $bus->cargo_capacity,
+            'boarding' => 0,
+        ]);
+
+        return redirect()->route('mahberat.schedule.index')->with('success', 'Bus scheduled successfully.');
     }
 
-    // Fetch the bus to get its total_seats
-    $bus = Bus::findOrFail($request->bus_id);
-
-   // Generate unique schedule_uid
-    $scheduleUid = 'sevastopoltechs-' . strtoupper(Str::random(10));
-
-    // Create the schedule with capacity from bus
-  Schedule::create([
-    'bus_id' => $request->bus_id,
-        'schedule_uid' => $scheduleUid, // <-- Add this line!
-    'destination_id' => $request->destination_id,
-    'scheduled_by' => auth()->id(),
-    'scheduled_at' => now(),
-    'status' => 'queued',
-    'capacity' => $bus->total_seats,
-    'cargo_capacity' => $bus->cargo_capacity,
-
-    'boarding' => 0,
-]);
-    
-
-    return redirect()->route('mahberat.schedule.index')->with('success', 'Bus scheduled successfully.');
-}
-
-        // Prevent duplicate scheduling for the same destination
-      
-
-    public function cardView()
+public function cardView()
 {
     $user = Auth::user();
-    $destinations = $user->destinations()->with(['schedules.bus'])->get();
+    $mahberatId = $user->mahberat_id;
 
-    return view('mahberat.schedule.card-view', compact('destinations'));
+    // Get schedules belonging to this mahberat, grouped by destination
+    $schedules = \App\Models\Schedule::with(['bus', 'destination'])
+        ->where('mahberat_id', $mahberatId)
+        ->whereIn('status', ['queued', 'on loading'])
+        ->get()
+        ->groupBy('destination_id');
+
+    return view('mahberat.schedule.card-view', compact('schedules'));
 }
 
-public function destroy($id)
-{
-    $schedule = Schedule::findOrFail($id);
-    $schedule->delete();
 
-    return redirect()->route('mahberat.schedule.index')->with('success', 'Schedule removed successfully.');
-}
+    public function destroy($id)
+    {
+        $schedule = Schedule::where('id', $id)
+            ->where('mahberat_id', auth()->user()->mahberat_id)
+            ->firstOrFail();
+
+        $schedule->delete();
+
+        return redirect()->route('mahberat.schedule.index')->with('success', 'Schedule removed successfully.');
+    }
 }

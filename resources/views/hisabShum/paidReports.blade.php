@@ -8,6 +8,7 @@
         <thead>
             <tr>
                 <th class="px-4 py-2">Bus Targa</th>
+                <th class="px-4 py-2">Bus Level</th>
                 <th class="px-4 py-2">Destination</th>
                 <th class="px-4 py-2">Status</th>
                 <th class="px-4 py-2">Scheduled At</th>
@@ -18,20 +19,26 @@
             @forelse($schedules as $schedule)
                 <tr>
                     <td class="border px-4 py-2">{{ $schedule->bus->targa ?? '-' }}</td>
+                    <td class="border px-4 py-2">{{ $schedule->bus->level ?? '-' }}</td>
                     <td class="border px-4 py-2">{{ $schedule->destination->destination_name ?? '-' }}</td>
                     <td class="border px-4 py-2">{{ ucfirst($schedule->status) }}</td>
                     <td class="border px-4 py-2">{{ $schedule->scheduled_at }}</td>
-                  <td class="border px-4 py-2">
+                    <td class="border px-4 py-2 space-x-2">
                         <a href="{{ route('hisabShum.certificate', $schedule->id) }}"
-                        class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
-                        target="_blank">
-                            Give Departed Certificate
+                           class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded"
+                           target="_blank">
+                            Certificate
                         </a>
+                        <a href="{{ route('hisabShum.pay.schedule', $schedule->id) }}"
+   class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded">
+   Pay
+</a>
+
                     </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="5" class="text-center py-4">No paid schedules found.</td>
+                    <td colspan="6" class="text-center py-4">No paid schedules found.</td>
                 </tr>
             @endforelse
         </tbody>
