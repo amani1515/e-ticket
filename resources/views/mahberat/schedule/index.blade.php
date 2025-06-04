@@ -2,16 +2,37 @@
 
 @section('content')
 
-{{-- SweetAlert Success Message --}}
+
 @if(session('success'))
+    <div id="success-animation" class="fixed inset-0 flex items-center justify-center z-50">
+        <div class="bg-green-100 border border-green-400 text-green-800 px-8 py-6 rounded-xl shadow-2xl flex flex-col items-center animate-fade-in-up">
+            <svg class="w-16 h-16 mb-4 text-green-500 animate-bounce" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"/>
+            </svg>
+            <div class="text-2xl font-bold mb-2">Successfully Added!</div>
+            <div class="text-lg">{{ session('success') }}</div>
+        </div>
+    </div>
+
     <script>
-        Swal.fire({
-            icon: 'success',
-            title: 'Success',
-            text: '{{ session('success') }}',
-            confirmButtonText: 'OK'
-        });
+        setTimeout(() => {
+            document.getElementById('success-animation').style.display = 'none';
+        }, 2000);
     </script>
+
+    <style>
+        .animate-fade-in-up {
+            animation: fadeInUp 0.5s, fadeOut 0.5s 1.5s forwards;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+        @keyframes fadeOut {
+            to { opacity: 0; }
+        }
+    </style>
 @endif
 
 <div class="container mx-auto px-4 py-8 animate-fade-in">

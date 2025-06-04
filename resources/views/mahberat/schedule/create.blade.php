@@ -53,15 +53,15 @@
         @csrf
 
         <!-- Select Bus -->
-        <div>
-            <label for="bus_id" class="block font-semibold text-gray-700 mb-1">Select Bus</label>
-            <select name="bus_id" id="bus_id" class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
-                <option value="">-- Choose Bus --</option>
-                @foreach($buses as $bus)
-                    <option value="{{ $bus->id }}">{{ $bus->targa }}</option>
-                @endforeach
-            </select>
-        </div>
+<!-- Replace dropdown with input -->
+<div>
+    <label for="unique_bus_id" class="block font-semibold text-gray-700 mb-1">Scan or Enter Bus Code</label>
+<input type="password" name="unique_bus_id" id="unique_bus_id"
+       class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+       placeholder="Scan Bus Code" required>
+
+</div>
+
 
         <!-- Select Destination -->
         <div>
@@ -76,7 +76,7 @@
 
         <!-- Submit Button -->
         <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded shadow transition">
-            ✅ Schedule Bus
+        Schedule Bus
         </button>
     </form>
 </div>

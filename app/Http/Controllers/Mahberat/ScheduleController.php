@@ -45,46 +45,59 @@ public function create()
 
 
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'bus_id' => 'required|exists:buses,id',
-            'destination_id' => 'required|exists:destinations,id',
-        ]);
 
-        $user = auth()->user();
-        $mahberatId = $user->mahberat_id;
 
-        // Check if the bus is already scheduled
-        $alreadyScheduled = Schedule::where('bus_id', $request->bus_id)
-            ->whereIn('status', ['queued', 'on loading'])
-            ->exists();
+public function store(Request $request)
+{
+    $request->validate([
+        'unique_bus_id' => 'required|string',
+        'destination_id' => 'required|exists:destinations,id',
+    ]);
 
-        if ($alreadyScheduled) {
-            return back()->withErrors(['bus_id' => 'This bus is already scheduled.']);
-        }
+    $user = auth()->user();
+    $mahberatId = $user->mahberat_id;
 
-        $bus = Bus::findOrFail($request->bus_id);
+    // Normalize: remove any slashes or spaces
+    $cleanUniqueId = trim($request->unique_bus_id, "/ ");
 
-        // Generate unique schedule UID
-        $scheduleUid = 'sevastopoltechs-' . strtoupper(Str::random(10));
+    // Lookup the bus using unique_bus_id
+    $bus = Bus::where('unique_bus_id', $cleanUniqueId)
+        ->where('mahberat_id', $mahberatId) // extra security
+        ->first();
 
-        // Create the schedule
-        Schedule::create([
-            'schedule_uid' => $scheduleUid,
-            'bus_id' => $bus->id,
-            'destination_id' => $request->destination_id,
-            'scheduled_by' => $user->id,
-            'mahberat_id' => $mahberatId, // ✅ Save Mahberat ID
-            'scheduled_at' => now(),
-            'status' => 'queued',
-            'capacity' => $bus->total_seats,
-            'cargo_capacity' => $bus->cargo_capacity,
-            'boarding' => 0,
-        ]);
-
-        return redirect()->route('mahberat.schedule.index')->with('success', 'Bus scheduled successfully.');
+    if (!$bus) {
+        return back()->withErrors(['unique_bus_id' => 'Bus not found for your Mahberat.']);
     }
+
+    // Check if the bus is already scheduled
+    $alreadyScheduled = Schedule::where('bus_id', $bus->id)
+        ->whereIn('status', ['queued', 'on loading'])
+        ->exists();
+
+    if ($alreadyScheduled) {
+        return back()->withErrors(['unique_bus_id' => 'This bus is already scheduled.']);
+    }
+
+    // Generate unique schedule UID
+    $scheduleUid = 'sevastopoltechs-' . strtoupper(Str::random(10));
+
+    // Create the schedule
+    Schedule::create([
+        'schedule_uid' => $scheduleUid,
+        'bus_id' => $bus->id,
+        'destination_id' => $request->destination_id,
+        'scheduled_by' => $user->id,
+        'mahberat_id' => $mahberatId,
+        'scheduled_at' => now(),
+        'status' => 'queued',
+        'capacity' => $bus->total_seats,
+        'cargo_capacity' => $bus->cargo_capacity,
+        'boarding' => 0,
+    ]);
+
+    return redirect()->route('mahberat.schedule.index')->with('success', 'Bus scheduled successfully.');
+}
+
 
 public function cardView()
 {
