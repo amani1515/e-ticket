@@ -23,9 +23,9 @@
                 <label for="age_status" class="block">Age Status</label>
                 <select name="age_status" id="age_status" class="w-full p-2 border rounded" required>
                     <option value="adult">ወጣት</option>
-                    <option value="baby">ህጻን </option>
+                    <option value="baby">ታዳጊ  </option>
                     <option value="middle_aged">ጎልማሳ</option>
-                    <option value="senior">ሽማግሌ </option>
+                    <option value="senior">አዛውንት </option>
 
                 </select>
             </div>
@@ -76,6 +76,18 @@
     <input type="hidden" name="cargo_id" id="cargo_id">
     <div id="cargo-info" class="text-sm text-green-700 mt-2"></div>
 </div>
+<!-- Optional phone number -->
+<div class="mb-4">
+    <label for="phone_no" class="block">Phone Number </label>
+    <input type="text" name="phone_no" id="phone_no" class="w-full p-2 border rounded" placeholder="09XXXXXXXX">
+</div>
+
+<!-- Optional Fayda ID -->
+<div class="mb-4">
+    <label for="fayda_id" class="block">Fayda ID </label>
+    <input type="text" name="fayda_id" id="fayda_id" class="w-full p-2 border rounded" placeholder="Fayda ID">
+</div>
+
             <div class="mb-4">
                 <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded">Create Ticket</button>
             </div>

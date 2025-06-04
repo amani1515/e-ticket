@@ -104,8 +104,8 @@
          
              <div class="org-info">
                 <div><strong>በአማራ ብሔራዊ ክልላዊ መንግስት መንገድና ትራንስፖርት ቢሮ </strong></div>
-                <div>e-Ticket System</div>
-                <div>www.transport.com</div>
+                <div>ምዕራብ ጎጃም ዞን ፍኖተ ሰላም መነኻሪያ</div>
+                <div>www.fnoteselambustation.com</div>
                 <div>Tel: +251-123-456-789</div>
             </div>
                <div>
@@ -119,10 +119,13 @@
             </div>
         </div>
         <div class="title">የመውጫ ደረሰኝ </div>
-        <div class="scheduleno"> ደረሰኝ ቁጥር         {{ $schedule->id }} </div>
+        <div class="scheduleno"> ደረሰኝ ቁጥር         {{ $schedule->id }} <br>
+                      <div>ቀን: {{ now()->format('Y-m-d') }}</div> <br>
+
+        </div>
         <table class="info-table">
                 <tr>
-                <th>ሙሉ ስምስም</th>
+                <th>ሙሉ ስም</th>
                 <td>{{ $schedule->bus->driver_name ?? '-' }}</td>
             </tr>
             <tr>
@@ -193,13 +196,12 @@
 
         </table>
         <div>
-            This is to certify that the above bus schedule has been marked as <strong>departed</strong>.
+            {{-- This is to certify that the above bus schedule has been marked as <strong>departed</strong>. --}}
         </div>
         <div class="footer">
-            <div>Date: {{ now()->format('Y-m-d') }}</div> <br>
-            <div>Signature: ____________________</div>
+            <div>ፊርማ : ____________________</div>
             <br><br>
-            <div>Approved by: ____________________</div>
+            <div>ያረጋገጠው ባለሙያ: ____________________</div>
         </div>
         <div style="margin-top:30px; text-align:center;">
             {{-- <div style="font-size:1em; margin-bottom:6px;">

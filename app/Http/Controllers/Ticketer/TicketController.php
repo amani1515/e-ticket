@@ -97,6 +97,8 @@ $ticket = Ticket::create([
     'service_fee' => $destination->service_fee,
     'ticket_status' => 'created',
     'disability_status' => $request->disability_status,
+    'phone_no' => $request->phone_no, // <-- Add this line if you have a phone number field
+    'fayda_id' => $request->fayda_id, // <-- Add this line if you have a fayda_id field
 
 ]);
 

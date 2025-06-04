@@ -26,6 +26,8 @@ class Ticket extends Model
         'creator_user_id',
         'tax',
         'service_fee',
+        'fayda_id',
+        'phone_no', // <-- Add this line if you have a phone number field
         'disability_status', // <-- Add this line if you have a disability status field
     ];
 

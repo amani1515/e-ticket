@@ -170,39 +170,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // ✅ 4. Passengers by Disability Status
-// Passengers by Disability Status
-const disabilityCtx = document.getElementById('disabilityChart').getContext('2d');
-new Chart(disabilityCtx, {
-    type: 'bar',
-    data: {
-        labels: {!! json_encode($disabilityLabels) !!},
-        datasets: [{
-            label: 'Passengers',
-            data: {!! json_encode($disabilityCounts) !!},
-            backgroundColor: {!! json_encode(
-                collect($disabilityLabels)->map(function($label, $i) {
-                    $colors = [
-                        '#3B82F6', '#F59E42', '#10B981', '#F43F5E',
-                        '#6366F1', '#FBBF24', '#06B6D4', '#A21CAF',
-                        '#84CC16', '#E11D48'
-                    ];
-                    return $colors[$i % count($colors)];
-                })
-            ) !!},
-            borderRadius: 6
-        }]
-    },
-    options: {
-        plugins: { legend: { display: false } },
-        scales: {
-            y: { beginAtZero: true, ticks: { color: '#4B5563' } },
-            x: { ticks: { color: '#4B5563' } }
-        }
-    }
-});
-
-
 
     // Quick Filter Button Handler
     window.setQuickRange = function(type) {

@@ -116,6 +116,8 @@
         <p><strong style="font-size: 1.3em;">ሰሌዳ ቁጥር:</strong> {{ $ticket->bus->targa ?? $ticket->bus_id }}</p>
         <p><strong>የተጓዥ ስም:</strong> {{ $ticket->passenger_name }}</p>
         <p><strong>ጾታ:</strong> {{ ucfirst($ticket->gender) }}</p>
+        <p><strong>ፋይዳ ቁጥር:</strong> {{ $ticket->fayda_id }}</p>
+        <p><strong>የተጓዥ ስልክ:</strong> {{ $ticket->phone_no }}</p>
 @php
     $ageStatusAmharic = [
         'baby' => 'ህጻን',
@@ -161,11 +163,11 @@
         <div class="center divider"></div>
 
         <div class="center">
-            <p>Thank you for choosing SEBus</p>
+            <p>ስለመረጡን እናመሰግናለን</p>
         </div>
 
         <div class="footer-info">
-            For additional information or to report a service issue, please call: <strong>0956407670</strong>
+            ለተጨማሪ መረጃ ወይም የአገልግሎት ጉድለት ለማመልከት እባኮትን ይደውሉ: <strong>0956407670</strong>
         </div>
 
     </div>
