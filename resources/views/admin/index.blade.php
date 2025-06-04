@@ -79,6 +79,10 @@
             <h4 class="text-xl font-semibold text-gray-700 mb-4">🧑‍🦱 Passengers by Age Status (Today)</h4>
             <canvas id="ageStatusChart" height="80"></canvas>
         </div>
+         <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition duration-300 mt-8">
+            <h4 class="text-xl font-semibold text-gray-700 mb-4">Passengers by disability status (Today)</h4>
+            <canvas id="disabilityChart" width="400" height="200"></canvas>
+        </div>
     </div>
 </div>
 @endsection
@@ -87,7 +91,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Passengers by Destination
+    // 1. Passengers by Destination
     const ctx = document.getElementById('passengerChart').getContext('2d');
     new Chart(ctx, {
         type: 'bar',
@@ -98,18 +102,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 data: {!! json_encode($passengerCounts) !!},
                 backgroundColor: {!! json_encode(
                     collect($destinationLabels)->map(function($label, $i) {
-                        $colors = [
-                            '#3B82F6', // blue
-                            '#F59E42', // orange
-                            '#10B981', // green
-                            '#F43F5E', // pink/red
-                            '#6366F1', // indigo
-                            '#FBBF24', // yellow
-                            '#06B6D4', // cyan
-                            '#A21CAF', // purple
-                            '#84CC16', // lime
-                            '#E11D48', // rose
-                        ];
+                        $colors = ['#3B82F6', '#F59E42', '#10B981', '#F43F5E', '#6366F1', '#FBBF24', '#06B6D4', '#A21CAF', '#84CC16', '#E11D48'];
                         return $colors[$i % count($colors)];
                     })
                 ) !!},
@@ -122,18 +115,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 legend: { display: false }
             },
             scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: { color: '#4B5563' }
-                },
-                x: {
-                    ticks: { color: '#4B5563' }
-                }
+                y: { beginAtZero: true, ticks: { color: '#4B5563' } },
+                x: { ticks: { color: '#4B5563' } }
             }
         }
     });
 
-    // Passengers by Gender
+    // 2. Passengers by Gender
     const genderCtx = document.getElementById('genderChart').getContext('2d');
     new Chart(genderCtx, {
         type: 'doughnut',
@@ -150,16 +138,26 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Passengers by Age Status
+    // ✅ 3. Passengers by Age Status (custom colors per status)
+    const ageColors = {
+        'baby': '#FBBF24',         // yellow
+        'adult': '#3B82F6',        // blue
+        'middle_aged': '#06B6D4',  // cyan
+        'senior': '#A21CAF'        // purple
+    };
+    const ageStatusLabels = {!! json_encode($ageStatusLabels) !!};
+    const ageStatusCounts = {!! json_encode($ageStatusCounts) !!};
+    const ageStatusColors = ageStatusLabels.map(label => ageColors[label] || '#999');
+
     const ageStatusCtx = document.getElementById('ageStatusChart').getContext('2d');
     new Chart(ageStatusCtx, {
         type: 'bar',
         data: {
-            labels: {!! json_encode($ageStatusLabels) !!},
+            labels: ageStatusLabels,
             datasets: [{
                 label: 'Passengers',
-                data: {!! json_encode($ageStatusCounts) !!},
-                backgroundColor: '#10B981',
+                data: ageStatusCounts,
+                backgroundColor: ageStatusColors,
                 borderRadius: 6
             }]
         },
@@ -171,6 +169,40 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
+
+    // ✅ 4. Passengers by Disability Status
+// Passengers by Disability Status
+const disabilityCtx = document.getElementById('disabilityChart').getContext('2d');
+new Chart(disabilityCtx, {
+    type: 'bar',
+    data: {
+        labels: {!! json_encode($disabilityLabels) !!},
+        datasets: [{
+            label: 'Passengers',
+            data: {!! json_encode($disabilityCounts) !!},
+            backgroundColor: {!! json_encode(
+                collect($disabilityLabels)->map(function($label, $i) {
+                    $colors = [
+                        '#3B82F6', '#F59E42', '#10B981', '#F43F5E',
+                        '#6366F1', '#FBBF24', '#06B6D4', '#A21CAF',
+                        '#84CC16', '#E11D48'
+                    ];
+                    return $colors[$i % count($colors)];
+                })
+            ) !!},
+            borderRadius: 6
+        }]
+    },
+    options: {
+        plugins: { legend: { display: false } },
+        scales: {
+            y: { beginAtZero: true, ticks: { color: '#4B5563' } },
+            x: { ticks: { color: '#4B5563' } }
+        }
+    }
+});
+
+
 
     // Quick Filter Button Handler
     window.setQuickRange = function(type) {

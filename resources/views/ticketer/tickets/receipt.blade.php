@@ -126,6 +126,8 @@
 @endphp
 
 <p><strong>የእድሜ ሁኔታ :</strong> {{ $ageStatusAmharic[$ticket->age_status] ?? $ticket->age_status }}</p>
+        <p><strong>  disability status :</strong>  {{ $ticket->disability_status }}</p>
+
         <p><strong>መነሻ :</strong> {{ $ticket->destination->start_from }}</p>
         <p><strong>መድረሻ :</strong> {{ $ticket->destination->destination_name }}</p>
         <p><strong>የመነሻ ቀን :</strong> {{ \Carbon\Carbon::parse($ticket->departure_datetime)->format('Y-m-d') }}</p>

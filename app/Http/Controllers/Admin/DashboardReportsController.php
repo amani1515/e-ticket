@@ -55,6 +55,15 @@ $genderCounts = [
             })->toArray();
             
 
+            //passengersnby disability status
+            // Passengers by disability status
+$disabilityStatuses = \App\Models\Ticket::whereDate('created_at', $today)->pluck('disability_status')->unique()->values();
+$disabilityLabels = $disabilityStatuses->toArray();
+$disabilityCounts = $disabilityStatuses->map(function ($status) use ($today) {
+    return \App\Models\Ticket::whereDate('created_at', $today)->where('disability_status', $status)->count();
+})->toArray();
+
+
 return view('admin.index', compact(
     'passengersToday',
     'totalUsers',
@@ -67,7 +76,9 @@ return view('admin.index', compact(
     'genderLabels',
     'genderCounts',
     'ageStatusLabels',
-    'ageStatusCounts'
+    'ageStatusCounts',
+     'disabilityLabels',
+    'disabilityCounts' 
 ));
         } else {
             return view('errors.403');

@@ -37,6 +37,14 @@
                     <option value="female">Female</option>
                 </select>
             </div>
+            <label for="disability_status">Disability Status:</label>
+                <select name="disability_status" required>
+                    <option value="None">None</option>
+                    <option value="Blind / Visual Impairment">Blind / Visual Impairment</option>
+                    <option value="Deaf / Hard of Hearing">Deaf / Hard of Hearing</option>
+                    <option value="Speech Impairment">Speech Impairment</option>
+                </select>
+
 
             <div class="mb-4">
                 <label for="destination_id" class="block">Destination</label>

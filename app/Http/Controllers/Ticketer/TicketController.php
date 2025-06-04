@@ -63,6 +63,8 @@ public function store(Request $request)
         'destination_id' => 'required|exists:destinations,id',
         'bus_id' => 'required|string|max:255', // This is targa from the form!
         'departure_datetime' => 'required|date',
+        'disability_status' => 'required|in:None,Blind / Visual Impairment,Deaf / Hard of Hearing,Speech Impairment',
+
     ]);
 
     $destination = Destination::findOrFail($request->destination_id);
@@ -92,6 +94,8 @@ $ticket = Ticket::create([
     'tax' => $destination->tax,
     'service_fee' => $destination->service_fee,
     'ticket_status' => 'created',
+    'disability_status' => $request->disability_status,
+
 ]);
 
     // Find the related schedule (status queued or on loading)

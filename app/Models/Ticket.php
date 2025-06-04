@@ -26,6 +26,7 @@ class Ticket extends Model
         'creator_user_id',
         'tax',
         'service_fee',
+        'disability_status', // <-- Add this line if you have a disability status field
     ];
 
     // Relationship with Destination
