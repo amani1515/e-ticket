@@ -21,6 +21,10 @@ use App\Http\Controllers\Admin\MahberatController;
 use App\Http\Controllers\HeadOfficeAdminReadOnlyController;
 use App\Http\Controllers\CargoMan\CargoController;
 
+use App\Http\Controllers\HisabShum\PaidReportController;
+use App\Http\Controllers\Admin\TransactionController;
+
+
 
 
 Route::get('/', function () {
@@ -115,6 +119,10 @@ Route::resource('admin/cargo-settings', \App\Http\Controllers\Admin\CargoSetting
 Route::post('/admin/cargo-settings/departure-fee', [\App\Http\Controllers\Admin\CargoSettingsController::class, 'updateDepartureFee'])->name('admin.cargo-settings.departure-fee');
 
 Route::get('/admin/schedule-reports', [\App\Http\Controllers\Admin\ScheduleReportController::class, 'index'])->name('admin.schedule.reports');
+Route::get('/admin/reports/transactions', [TransactionController::class, 'index'])
+    ->name('admin.reports.transactions')
+    ->middleware('auth');
+
 
 //mahberat
 Route::middleware(['auth', 'verified'])->prefix('mahberat')->name('mahberat.')->group(function () {
@@ -171,6 +179,11 @@ Route::get('/bus-display', [PublicDisplayController::class, 'showAllSchedules'])
 Route::get('/hisab-shum/pay/{schedule}', [\App\Http\Controllers\HisabShum\PaymentController::class, 'initiate'])->name('hisabShum.pay.schedule');
 Route::get('/hisab-shum/payment/callback', [\App\Http\Controllers\HisabShum\PaymentController::class, 'handleCallback'])->name('hisabShum.payment.callback');
 
+// routes/web.php or routes/hisabShum.php
+
+Route::get('/schedules/{schedule}/pay', [PaidReportController::class, 'showPayForm'])->name('hisabShum.schedule.payForm');
+Route::post('/schedules/{schedule}/pay', [PaidReportController::class, 'pay'])->name('hisabShum.schedule.pay');
+Route::get('/schedules/pay/callback', [PaidReportController::class, 'callback'])->name('hisabShum.schedule.callback');
 
 Route::get('/hisab-shum/paid-reports', [\App\Http\Controllers\HisabShum\PaidReportController::class, 'index'])->name('hisabShum.paidReports');
 Route::get('/hisab-shum/schedule/{schedule}/certificate', [\App\Http\Controllers\HisabShum\PaidReportController::class, 'certificate'])->name('hisabShum.certificate');

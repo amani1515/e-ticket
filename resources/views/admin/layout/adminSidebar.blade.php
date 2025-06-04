@@ -104,6 +104,9 @@
                     <a href="{{ route('admin.total.reports') }}" class="block hover:text-yellow-500">Total Report</a>
                     <a href="{{ route('admin.schedule.reports') }}" class="block hover:text-yellow-500">Schedule
                         Reports</a>
+                        
+                   <a href="{{ route('admin.reports.transactions') }}" class="block hover:text-yellow-500">Transaction</a>
+
                 </div>
             </div>
             <div>

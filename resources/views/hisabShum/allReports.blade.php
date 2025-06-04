@@ -71,7 +71,7 @@
             @forelse($schedules as $schedule)
                 <tr>
                     <td class="border px-4 py-2">{{ $schedule->bus->targa ?? '-' }}</td>
-                    <td class="border px-4 py-2">{{ $schedule->from ?? ($schedule->bus->from ?? '-') }}</td>
+                    <td class="border px-4 py-2">{{  $schedule->destination->start_from ?? '-'  }}</td>
                     <td class="border px-4 py-2">{{ $schedule->destination->destination_name ?? '-' }}</td>
                     <td class="border px-4 py-2">{{ $schedule->capacity ?? '-' }}</td>
                     <td class="border px-4 py-2">{{ $schedule->boarding ?? '-' }}</td>

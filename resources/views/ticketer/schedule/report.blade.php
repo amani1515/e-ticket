@@ -16,7 +16,7 @@
         <th class="px-4 py-2">Service Fee</th>
         <th class="px-4 py-2">Tariff</th>
         <th class="px-4 py-2">Tax</th>
-        <th class="px-4 py-2">Mewucha</th>
+        {{-- <th class="px-4 py-2">Mewucha</th> --}}
         <th class="px-4 py-2">Scheduled At</th>
         <th class="px-4 py-2">Net Balance</th>
         <th class="px-4 py-2">Action</th>
@@ -67,7 +67,7 @@
         <td class="border px-4 py-2">
             {{ $schedule->tickets()->sum('tax') }}
         </td>
-        <td class="border px-4 py-2">50</td>
+        {{-- <td class="border px-4 py-2">50</td> --}}
 
         <td class="border px-4 py-2">{{ $schedule->scheduled_at }}</td>
         <td class="border px-4 py-2">
