@@ -131,11 +131,12 @@ if ($request->cargo_id) {
     
 
     // Optional: Show the ticket receipt after it's created
-    public function receipt($id)
+   public function receipt($id)
 {
-    $ticket = Ticket::with(['destination', 'cargo'])->findOrFail($id);
+    $ticket = Ticket::with(['destination', 'cargo', 'bus.mahberat'])->findOrFail($id);
     return view('ticketer.tickets.receipt', compact('ticket'));
 }
+
 
 
     public function report()

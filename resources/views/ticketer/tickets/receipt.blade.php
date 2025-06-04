@@ -25,6 +25,8 @@
 
         .center {
             text-align: center;
+            text-decoration: bold;
+            font-weight: bold;
         }
 
         .barcode {
@@ -125,10 +127,17 @@
         'middle_aged' => 'ጎልማሳ',
         'senior' => 'ሽማግሌ',
     ];
+
+    $disabilityStatusAmharic = [
+        'None' => 'የለም',
+        'Blind / Visual Impairment' => 'ማየት የተሳነው ',
+        'Deaf / Hard of Hearing' => 'መስማት የተሳነው',
+        'Speech Impairment' => 'መናገር የተሳነው', 
+    ];
 @endphp
 
 <p><strong>የእድሜ ሁኔታ :</strong> {{ $ageStatusAmharic[$ticket->age_status] ?? $ticket->age_status }}</p>
-        <p><strong>  disability status :</strong>  {{ $ticket->disability_status }}</p>
+        <p><strong>  የአካል ጉዳት  :</strong>  {{ $disabilityStatusAmharic[$ticket->disability_status] ?? $ticket->disability_status }}</p>
 
         <p><strong>መነሻ :</strong> {{ $ticket->destination->start_from }}</p>
         <p><strong>መድረሻ :</strong> {{ $ticket->destination->destination_name }}</p>
@@ -136,15 +145,19 @@
         <p><strong>የመሳፈሪያ ሰዓት :</strong> {{ \Carbon\Carbon::parse($ticket->departure_datetime)->format('H:i') }}</p>
         <p><strong>የትኬት መለያ ቁጥር :</strong> {{ $ticket->id }}</p>
         <p><strong>ትኬት ወኪል:</strong> {{ $ticket->creator ? $ticket->creator->name : 'N/A' }}</p>
+        <p><strong>የማህበር ስም:</strong> 
+            {{ $ticket->bus && $ticket->bus->mahberat ? $ticket->bus->mahberat->name : 'N/A' }}
+        </p>
+
         <p><strong>ታሪፍ :</strong> {{ $ticket->destination->tariff }}</p>
-        <p><strong>ታክስ :</strong> {{ $ticket->destination->tax }}</p>
+        {{-- <p><strong>ታክስ :</strong> {{ $ticket->destination->tax }}</p> --}}
         <p><strong>አገልግሎት ክፍያ :</strong> {{ $ticket->destination->service_fee }}</p>
 
         {{-- Display cargo information if available --}}
         @if($ticket->cargo)
             {{-- <p><strong>Cargo Ticket:</strong> {{ $ticket->cargo->cargo_uid }}</p> --}}
             <p><strong>የእቃ ክብደት :</strong> {{ $ticket->cargo->weight }} kg</p>
-            <p><strong>የእቃ ክፍያ:</strong> {{ number_format($ticket->cargo->total_amount, 2) }} ETB</p>
+            <p><strong>የእቃ ክፍያ:</strong> {{ number_format($ticket->cargo->total_amount, 2) }} ብር </p>
         @endif
 
         <p><strong>አጠቃላይ ክፍያ :</strong>
@@ -153,7 +166,7 @@
                 $ticket->destination->tax +
                 $ticket->destination->service_fee +
                 ($ticket->cargo ? $ticket->cargo->total_amount : 0)
-            }} ETB
+            }} ብር 
         </p>
 
         <div class="center barcode">
@@ -164,6 +177,8 @@
 
         <div class="center">
             <p>ስለመረጡን እናመሰግናለን</p>
+            <p>ለአንድ ጊዜ ጉዞ ብቻ የተፈቀደ </p>
+
         </div>
 
         <div class="footer-info">

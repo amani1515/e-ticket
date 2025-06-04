@@ -56,4 +56,6 @@ public function mahberat()
     return $this->belongsTo(Mahberat::class);
 }
 
+
+
 }

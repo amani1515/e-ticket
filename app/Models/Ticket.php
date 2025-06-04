@@ -60,4 +60,12 @@ public function cargo()
 public function creator() {
     return $this->belongsTo(\App\Models\User::class, 'creator_user_id');
 }
+public function mahberat()
+{
+    return $this->belongsTo(User::class, 'mahberat_id');
+}
+public function balehabt()
+{
+    return $this->belongsTo(User::class, 'balehabt_id');
+}
 }
