@@ -53,6 +53,7 @@
 
             <div class="flex items-end">
                 <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Filter</button>
+                <a href="{{ route('ticketer.tickets.export', request()->query()) }}" class="bg-green-500 text-white px-4 py-2 rounded ml-2">Export to Excel</a>
             </div>
         </form>
 

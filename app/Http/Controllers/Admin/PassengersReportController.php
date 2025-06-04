@@ -7,14 +7,10 @@ use Illuminate\Http\Request;
 use App\Models\Ticket;
 use App\Models\Destination;
 use Carbon\Carbon;
-
-
+use App\Exports\TicketsExport;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\PassengersExport;
-use App\Exports\PassengerReportExport;
-
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\Log;
 
 class PassengersReportController extends Controller
 {
@@ -119,57 +115,20 @@ class PassengersReportController extends Controller
    
    }}
 
- 
+    public function export(Request $request)
+    {
+        if (!Auth::check() || Auth::user()->usertype !== 'admin') {
+            return response()->view('errors.403', [], 403);
+        }
 
-
-    
-
-
-   
-   
-   public function export(Request $request)
-   {
-       $query = Ticket::with('destination');
-   
-       // Apply filters
-       if ($request->filled('search')) {
-           $query->where('id', $request->search);
-       }
-   
-       if ($request->filled('gender')) {
-           $query->where('gender', $request->gender);
-       }
-   
-       if ($request->filled('destination_id')) {
-           $query->where('destination_id', $request->destination_id);
-       }
-   
-       if ($request->filled('date_filter')) {
-           $now = now();
-           switch ($request->date_filter) {
-               case 'today':
-                   $query->whereDate('created_at', $now);
-                   break;
-               case 'yesterday':
-                   $query->whereDate('created_at', $now->subDay());
-                   break;
-               case 'this_week':
-                   $query->whereBetween('created_at', [$now->startOfWeek(), $now->endOfWeek()]);
-                   break;
-               case 'this_month':
-                   $query->whereMonth('created_at', $now->month);
-                   break;
-               case 'this_year':
-                   $query->whereYear('created_at', $now->year);
-                   break;
-           }
-       }
-   
-       $tickets = $query->get();
-   
-       // Export to Excel
-       return Excel::download(new PassengerReportExport($tickets), 'passenger_report.xlsx');
-   }
-
-    
+        try {
+            $filters = $request->only(['search', 'gender', 'destination_id', 'date_filter']);
+            $fileName = 'tickets-export-' . now()->format('Y-m-d') . '.xlsx';
+            
+            return Excel::download(new TicketsExport($filters), $fileName);
+        } catch (\Exception $e) {
+            Log::error('Excel export failed: ' . $e->getMessage());
+            return back()->with('error', 'Export failed. Please try again.');
+        }
+    }
 }

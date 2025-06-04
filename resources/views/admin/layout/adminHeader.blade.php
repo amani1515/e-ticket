@@ -1,5 +1,5 @@
 <!-- filepath: d:\My comany\e-ticket\resources\views\admin\layout\adminHeader.blade.php -->
-<header class="bg-yellow-500 text-gray-900 shadow p-4 flex justify-between items-center z-30 pl-16 md:pl-4">
+<header class="bg-yellow-500 text-gray-900 shadow p-4 flex justify-between items-center z-30 pl-16 md:pl-4 sticky top-0">
     <h1 class="text-lg font-semibold">
         <a href="/home">{{ Auth::user()->usertype ?? 'User' }}</a>
     </h1>

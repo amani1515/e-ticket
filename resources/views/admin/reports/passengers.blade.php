@@ -35,17 +35,13 @@
         <button type="submit" class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded transition duration-300">🔍 Filter</button>
     </form>
 
-    <!-- Export & Print All Button -->
-    <div class="mb-4 flex gap-2">
+    <!-- Add this right after your filter form -->
+    <div class="mt-4 mb-6">
         <a href="{{ route('admin.passenger.report.export', request()->all()) }}" class="inline-block bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2 rounded transition duration-300 shadow">
             📥 Export to Excel
         </a>
-        <a href="{{ route('admin.passenger.report.print-all', request()->all()) }}" target="_blank" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded transition duration-300 shadow">
-    🖨️ Print All
-</a>
     </div>
 
-    <!-- Table -->
     @if($tickets->count())
         <div class="overflow-x-auto" id="printable-table">
             <table class="w-full text-sm bg-white border border-yellow-300 shadow-md rounded">

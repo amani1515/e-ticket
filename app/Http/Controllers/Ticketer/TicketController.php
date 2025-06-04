@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use App\Models\Bus;
+use App\Exports\TicketsExport;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Models\Schedule;
 
 class TicketController extends Controller
@@ -147,6 +149,11 @@ public function showScanForm()
 {
     return view('ticketer.tickets.scan');
 }
+ public function export(Request $request)
+    {
+        $filters = $request->all();
+        return Excel::download(new TicketsExport($filters), 'tickets_report.xlsx');
+    }
 
 public function processScan(Request $request)
 {
