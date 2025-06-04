@@ -34,7 +34,7 @@
                 <a href="#home" class="hover:text-yellow-500 transition">ዋና ገጽ</a>
                 <a href="/bus-display" class="hover:text-yellow-500 transition">ወረፋ ምልከታ</a>
                 <a href="#features" class="hover:text-yellow-500 transition">ልዩ ልዩ</a>
-                <a href="#contact" class="hover:text-yellow-500 transition">ግንኙነት</a>
+                <a href="#contact" class="hover:text-yellow-500 transition">ግንኙነት </a>
                 
                 <a href="{{ route('login') }}"
                     class="bg-gradient-to-r from-yellow-600 to-yellow-500 text-white px-5 py-2 rounded-full shadow hover:scale-105 transition transform duration-300">ግባ</a>
@@ -98,7 +98,7 @@
     <footer id="contact" class="bg-white py-10 mt-20 border-t">
         <div class="max-w-4xl mx-auto px-4 text-center">
             <h5 class="text-2xl font-semibold text-yellow-600 mb-2">እርዳታ ይፈልጋሉ ወይም የበለጠ ለማወቅ ይፈልጋሉ?</h5>
-            <p class="text-gray-600 mb-4">ቡድናችንን በ0930608000 ያግኙ</p>
+            <p class="text-gray-600 mb-4">ቡድናችንን በ0930608000 ያግኙ </p>
             <p class="text-sm text-gray-400">© {{ date('Y') }} Sevastopol Technology. All rights reserved.</p>
         </div>
     </footer>
