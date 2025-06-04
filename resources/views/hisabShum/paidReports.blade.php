@@ -30,9 +30,9 @@
                             Certificate
                         </a>
                         <a href="{{ route('hisabShum.pay.schedule', $schedule->id) }}"
-   class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded">
-   Pay
-</a>
+                          class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded">
+                            Pay
+                        </a>
 
                     </td>
                 </tr>

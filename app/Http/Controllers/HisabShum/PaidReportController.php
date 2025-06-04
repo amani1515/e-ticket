@@ -25,14 +25,14 @@ public function index()
     return view('hisabShum.paidReports', compact('schedules'));
 }
 
-public function departedCertificate($id)
-{
-    $schedule = \App\Models\Schedule::with(['bus', 'destination'])->findOrFail($id);
-    $schedule->status = 'departed';
-    $schedule->save();
+// public function departedCertificate($id)
+// {
+//     $schedule = \App\Models\Schedule::with(['bus', 'destination'])->findOrFail($id);
+//     $schedule->status = 'departed';
+//     $schedule->save();
 
-    return view('hisabShum.certificate', compact('schedule'));
-}
+//     return view('hisabShum.certificate', compact('schedule'));
+// }
 public function certificate($id)
 {
     $schedule = \App\Models\Schedule::with(['bus', 'destination'])->findOrFail($id);

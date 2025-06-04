@@ -21,6 +21,7 @@ class Schedule extends Model
         'capacity',
         'boarding',
         'wellgo_at',
+        'mewucha_fee',
         'traffic_name',
         // add any other fields you are submitting
     ];
