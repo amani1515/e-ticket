@@ -77,7 +77,7 @@
             ->where('destination_id', $schedule->destination_id)
             ->where('schedule_id', $schedule->id)
             ->whereIn('ticket_status', ['created', 'confirmed'])
-            ->count()) - 50
+            ->count()) 
     }}
 </td>
 <td class="border px-4 py-2">

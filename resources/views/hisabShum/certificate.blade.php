@@ -176,7 +176,7 @@
                 <td>{{ $schedule->scheduled_at }}</td>
             </tr>
             <tr>
-                <th>መውጫውን የሰጠው</th>
+                <th>መውጫውን የሰጠው ባለሙያ </th>
                 <td>{{ $schedule->departedBy->name ?? '-' }}</td>
             </tr>
             <tr>

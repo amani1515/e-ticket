@@ -1,16 +1,22 @@
-<!-- filepath: d:\My comany\e-ticket\resources\views\admin\reports\banner.blade.php -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Bus Banner</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Tailwind CDN for quick styling -->
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- QRCode.js for QR code generation -->
+    
+    <!-- QRCode.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
+    <!-- JsBarcode for Barcode generation -->
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    
     <!-- html2canvas for PNG download -->
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
     <style>
         body { background: #fef9c3; }
         .banner-main {
@@ -92,12 +98,13 @@
             body, html { background: #fff !important; }
             .banner-main { box-shadow: none !important; }
             button { display: none !important; }
+            #download-btn { display: none !important; }
         }
     </style>
 </head>
 <body>
     <div id="banner-capture" class="banner-main">
-        <!-- Header Row -->
+        <!-- Header -->
         <div class="header-row">
             <div class="header-info">
                 <img src="{{ asset('logo.png') }}" alt="Sevastopol Logo" class="h-32 mb-2">
@@ -112,60 +119,75 @@
                 {{ strtoupper($bus->level) }}
             </div>
         </div>
+
         <div class="section-line"></div>
-        <!-- Targa Row -->
+
+        <!-- Targa -->
         <div class="targa-row">
             <div class="targa-big">
                 {{ $bus->targa }}
             </div>
         </div>
+
         <div class="section-line"></div>
-        <!-- QR and Barcode Row -->
+
+        <!-- QR and Barcode -->
         <div class="qr-bar-row">
-            <!-- QR Side -->
+            <!-- QR Code -->
             <div class="qr-side">
                 <div id="qrcode"></div>
             </div>
-            <!-- Barcode Side -->
+
+            <!-- Barcode -->
             <div class="barcode-side">
                 <div class="barcode-label">Barcode (Unique ID)</div>
-                <img 
-                    src="https://barcode.tec-it.com/barcode.ashx?data={{ $bus->unique_bus_id }}&code=Code128&translate-esc=off" 
-                    alt="Barcode for {{ $bus->unique_bus_id }}" 
-                    style="margin:auto; display:block; max-width:420px; height:80px;"
-                >
+                <svg id="barcode" style="margin:auto; display:block; max-width:420px; height:80px;"></svg>
                 <div class="unique-id">{{ $bus->unique_bus_id }}</div>
             </div>
         </div>
+
         <div class="section-line"></div>
+
+        <!-- Download Button -->
         <div class="text-center mt-8">
             <button id="download-btn" class="bg-yellow-700 hover:bg-yellow-800 text-white font-bold py-4 px-16 rounded-full shadow-lg text-2xl transition">
                 Download as PNG
             </button>
         </div>
     </div>
+
     <script>
-        // Only QR code for unique_bus_id
-        document.addEventListener("DOMContentLoaded", function() {
-            // Remove any previous QR code
-            document.getElementById("qrcode").innerHTML = "";
+        document.addEventListener("DOMContentLoaded", function () {
+            // Generate QR Code
             new QRCode(document.getElementById("qrcode"), {
                 text: "{{ $bus->unique_bus_id }}",
                 width: 260,
                 height: 260,
-                colorDark : "#78350f",
-                colorLight : "#fffbe8",
-                correctLevel : QRCode.CorrectLevel.H
+                colorDark: "#78350f",
+                colorLight: "#fffbe8",
+                correctLevel: QRCode.CorrectLevel.H
             });
-        });
 
-        // Download as PNG functionality
-        document.getElementById('download-btn').addEventListener('click', function() {
-            html2canvas(document.getElementById('banner-capture')).then(function(canvas) {
-                var link = document.createElement('a');
-                link.download = 'bus-banner-{{ $bus->targa }}.png';
-                link.href = canvas.toDataURL();
-                link.click();
+            // Generate Barcode
+            JsBarcode("#barcode", "{{ $bus->unique_bus_id }}", {
+                format: "CODE128",
+                lineColor: "#000",
+                width: 2,
+                height: 80,
+                displayValue: false
+            });
+
+            // Download as PNG
+            document.getElementById('download-btn').addEventListener('click', function () {
+                html2canvas(document.getElementById('banner-capture'), {
+                    allowTaint: true,
+                    useCORS: true
+                }).then(function (canvas) {
+                    const link = document.createElement('a');
+                    link.download = 'bus-banner-{{ $bus->targa }}.png';
+                    link.href = canvas.toDataURL();
+                    link.click();
+                });
             });
         });
     </script>
