@@ -89,7 +89,39 @@
                     <h4 class="text-2xl font-semibold mb-2">ዘመናዊ ቲኬት አያያዝ</h4>
                     <p>ከሙሉ ክትትል እና የኦዲት መንገድ ጋር ትኬቶችን ያውጡ፣ ያረጋግጡ እና ይሰርዙ።</p>
                 </div>
-                {{-- Add more feature cards as needed --}}
+                <!-- Scheduling and Fare Collection of Mewucha Fee -->
+<div class="bg-white p-8 rounded-3xl shadow-xl hover:shadow-2xl transition transform hover:-translate-y-2 border-t-4 border-green-400">
+    <div class="text-green-500 mb-4">
+        <svg class="w-12 h-12 mx-auto" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M12 8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3zm0 9c-3.866 0-7 3.134-7 7h14c0-3.866-3.134-7-7-7z" />
+        </svg>
+    </div>
+    <h4 class="text-2xl font-semibold mb-2">መውጫ ክፍያ ዘመናዊ አስተዳደር </h4>
+    <p>የመውጫ ክፍያን በቀላሉና በመረጡት የባንክ አማራጭ ይክፈሉ </p>
+</div>
+
+<!-- Bus Scheduling -->
+<div class="bg-white p-8 rounded-3xl shadow-xl hover:shadow-2xl transition transform hover:-translate-y-2 border-t-4 border-blue-500">
+    <div class="text-blue-500 mb-4">
+        <svg class="w-12 h-12 mx-auto" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M4 16v2a2 2 0 002 2h1a2 2 0 002-2v-2H4zm11 0v2a2 2 0 002 2h1a2 2 0 002-2v-2h-5zM4 6v7h16V6a2 2 0 00-2-2H6a2 2 0 00-2 2z" />
+        </svg>
+    </div>
+    <h4 class="text-2xl font-semibold mb-2">የየተሽከርካሪ መርሃ ግብር</h4>
+    <p> ዘመናዊና ግልጽ የተሽከርካሪ ወረፋ አያያዝ </p>
+</div>
+
+<!-- Monitoring Work Environment of Menaharia -->
+<div class="bg-white p-8 rounded-3xl shadow-xl hover:shadow-2xl transition transform hover:-translate-y-2 border-t-4 border-purple-500">
+    <div class="text-purple-500 mb-4">
+        <svg class="w-12 h-12 mx-auto" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M3 4a1 1 0 011-1h16a1 1 0 011 1v4H3V4zm0 6h18v10a1 1 0 01-1 1H4a1 1 0 01-1-1V10z" />
+        </svg>
+    </div>
+    <h4 class="text-2xl font-semibold mb-2">ዘመናዊ የመረጃ አያያዝ </h4>
+    <p>ዘመናዊ የመረጃ አያያዝ ሲስተም </p>
+</div>
+
             </div>
         </div>
     </section>
