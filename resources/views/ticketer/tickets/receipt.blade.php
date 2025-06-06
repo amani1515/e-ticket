@@ -2,108 +2,129 @@
 <html>
 <head>
     <title>Sevastopol Technologies PLC</title>
-    <style>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        background: #f0f0f0;
+        font-family: monospace;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+    }
+
+    .receipt {
+        background: #fff;
+        width: 80mm;
+        padding: 6px;
+        font-size: 12px;
+        box-shadow: 0 0 3px rgba(0,0,0,0.1);
+        margin: 5px auto;
+        line-height: 1.4em;
+    }
+
+    .center {
+        text-align: center;
+        font-weight: bold;
+    }
+
+    .barcode {
+        margin-top: 8px;
+    }
+
+    .divider {
+        border-top: 1px dashed #000;
+        margin: 6px 0;
+    }
+
+    .buttons {
+        margin-top: 12px;
+        text-align: center;
+    }
+
+    .btn {
+        background-color: #4CAF50;
+        color: white;
+        padding: 8px 16px;
+        font-size: 13px;
+        cursor: pointer;
+        border: none;
+        border-radius: 4px;
+        margin-right: 5px;
+    }
+
+    .btn-back {
+        background-color: #f44336;
+    }
+
+    .btn:hover {
+        opacity: 0.8;
+    }
+
+    .logo {
+        max-width: 32mm;
+        height: auto;
+        display: block;
+        margin: 0 auto 6px auto;
+    }
+
+    .footer-info {
+        font-size: 11px;
+        color: #333;
+        margin-top: 10px;
+        text-align: center;
+    }
+
+    @media print {
         body {
+            background: none;
             margin: 0;
             padding: 0;
-            background: #f0f0f0;
-            font-family: monospace;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-        }
-
-        .receipt {
-            background: #fff;
-            width: 80mm;
-            padding: 5px;
-            font-size: 12px;
-            box-shadow: 0 0 5px rgba(0,0,0,0.2);
-            margin: 20px auto;
-        }
-
-        .center {
-            text-align: center;
-            text-decoration: bold;
-            font-weight: bold;
-        }
-
-        .barcode {
-            margin-top: 10px;
-        }
-
-        .divider {
-            border-top: 1px dashed #000;
-            margin: 5px 0;
         }
 
         .buttons {
-            margin-top: 20px;
-            text-align: center;
+            display: none;
         }
 
-        .btn {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 20px;
-            font-size: 14px;
-            cursor: pointer;
-            border: none;
-            border-radius: 5px;
-            margin-right: 10px;
+        .receipt {
+            box-shadow: none;
+            margin: 0;
+            padding: 6px;
+            width: 80mm;
+            height: auto !important;
+            font-size: 11px;
+            line-height: 1.4em;
         }
 
-        .btn-back {
-            background-color: #f44336;
-        }
-
-        .btn:hover {
-            opacity: 0.8;
+        .barcode img {
+            display: block;
+            max-width: 100%;
+            height: auto;
         }
 
         .logo {
-            width: 40mm;
-            margin: 0 auto 5px auto;
-            display: block;
+            max-width: 30mm;
+            margin-bottom: 5px;
         }
 
-        .footer-info {
-            font-size: 11px;
-            color: #333;
-            margin-top: 10px;
-            text-align: center;
+        h3 {
+            font-size: 15px;
+            margin: 5px 0;
         }
 
-        @media print {
-            body {
-                background: none;
-                margin: 0;
-                padding: 0;
-            }
-
-            .buttons {
-                display: none;
-            }
-
-            .receipt {
-                box-shadow: none;
-                margin: 0;
-                padding: 5px;
-                width: 80mm;
-                height: auto !important;
-                overflow: hidden;
-            }
-
-            .barcode, svg, img {
-                display: block !important;
-                visibility: visible !important;
-                height: auto !important;
-                width: auto !important;
-                max-width: 100% !important;
-            }
+        p {
+            margin: 3px 0;
         }
-    </style>
+
+        @page {
+            size: 80mm 210mm;
+            margin: 0;
+        }
+    }
+</style>
+
+
+
 </head>
 <body>
 
@@ -115,7 +136,7 @@
             <div class="divider"></div>
         </div>
 
-        <p><strong style="font-size: 1.3em;">ሰሌዳ ቁጥር:</strong> {{ $ticket->bus->targa ?? $ticket->bus_id }}</p>
+        <p><strong style="font-size: 1.4em;">ሰሌዳ ቁጥር:{{ $ticket->bus->targa ?? $ticket->bus_id }}</strong> </p>
         <p><strong>የተጓዥ ስም:</strong> {{ $ticket->passenger_name }}</p>
         <p><strong>ጾታ:</strong> {{ ucfirst($ticket->gender) }}</p>
         <p><strong>ፋይዳ ቁጥር:</strong> {{ $ticket->fayda_id }}</p>

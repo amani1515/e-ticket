@@ -2,6 +2,16 @@
 @extends('admin.layout.app')
 
 @section('content')
+
+@php
+$ageStatusAmharic = [
+    'baby' => 'ታዳጊ',
+    'adult' => 'ወጣት',
+    'middle_aged' => 'ጎልማሳ',
+    'senior' => 'አዛዉንት',
+];
+@endphp
+
 <div class="min-h-screen bg-gray-50 p-8">
     <div class="max-w-7xl mx-auto">
         <!-- Welcome Header -->
@@ -139,36 +149,45 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // ✅ 3. Passengers by Age Status (custom colors per status)
-    const ageColors = {
-        'baby': '#FBBF24',         // yellow
-        'adult': '#3B82F6',        // blue
-        'middle_aged': '#06B6D4',  // cyan
-        'senior': '#A21CAF'        // purple
-    };
-    const ageStatusLabels = {!! json_encode($ageStatusLabels) !!};
-    const ageStatusCounts = {!! json_encode($ageStatusCounts) !!};
-    const ageStatusColors = ageStatusLabels.map(label => ageColors[label] || '#999');
+  const ageColors = {
+    'baby': '#FBBF24',
+    'adult': '#3B82F6',
+    'middle_aged': '#06B6D4',
+    'senior': '#A21CAF'
+};
 
-    const ageStatusCtx = document.getElementById('ageStatusChart').getContext('2d');
-    new Chart(ageStatusCtx, {
-        type: 'bar',
-        data: {
-            labels: ageStatusLabels,
-            datasets: [{
-                label: 'Passengers',
-                data: ageStatusCounts,
-                backgroundColor: ageStatusColors,
-                borderRadius: 6
-            }]
-        },
-        options: {
-            plugins: { legend: { display: false } },
-            scales: {
-                y: { beginAtZero: true, ticks: { color: '#4B5563' } },
-                x: { ticks: { color: '#4B5563' } }
-            }
+// English labels from backend
+const ageStatusLabels = {!! json_encode($ageStatusLabels) !!};          // e.g., ['baby', 'adult', ...]
+const ageStatusCounts = {!! json_encode($ageStatusCounts) !!};          // e.g., [3, 10, 4, 1]
+
+// Amharic translation map
+const ageStatusTranslations = {!! json_encode($ageStatusAmharic) !!};   // { baby: "ህጻን", ... }
+
+// Translate labels
+const translatedLabels = ageStatusLabels.map(label => ageStatusTranslations[label] || label);
+const ageStatusColors = ageStatusLabels.map(label => ageColors[label] || '#999');
+
+const ageStatusCtx = document.getElementById('ageStatusChart').getContext('2d');
+new Chart(ageStatusCtx, {
+    type: 'bar',
+    data: {
+        labels: translatedLabels,
+        datasets: [{
+            label: 'ተሳፋሪዎች', // 'Passengers' in Amharic
+            data: ageStatusCounts,
+            backgroundColor: ageStatusColors,
+            borderRadius: 6
+        }]
+    },
+    options: {
+        plugins: { legend: { display: false } },
+        scales: {
+            y: { beginAtZero: true, ticks: { color: '#4B5563' } },
+            x: { ticks: { color: '#4B5563' } }
         }
-    });
+    }
+});
+
 
 
     // Quick Filter Button Handler
