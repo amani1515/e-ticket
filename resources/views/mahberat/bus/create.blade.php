@@ -65,11 +65,17 @@
             </div>
             <div class="flex flex-col gap-3">
                 <label for="status" class="font-semibold text-gray-700">Status</label>
-                <select id="status" name="status" class="input-field">
-                    <option value="active" selected>Active</option>
-                    <option value="maintenance">Maintenance</option>
-                    <option value="out_of_service">Out of Service</option>
-                </select>
+                <select id="status" name="status" class="input-field" required>
+    <option value="active" {{ old('status', $bus->status ?? '') == 'active' ? 'selected' : '' }}>Active</option>
+    <option value="maintenance" {{ old('status', $bus->status ?? '') == 'maintenance' ? 'selected' : '' }}>Maintenance</option>
+    <option value="out_of_service" {{ old('status', $bus->status ?? '') == 'out_of_service' ? 'selected' : '' }}>Out of Service</option>
+    <option value="bolo_expire" {{ old('status', $bus->status ?? '') == 'bolo_expire' ? 'selected' : '' }}>Bolo Expired</option>
+    <option value="accident" {{ old('status', $bus->status ?? '') == 'accident' ? 'selected' : '' }}>Accident</option>
+    <option value="gidaj_yeweta" {{ old('status', $bus->status ?? '') == 'gidaj_yeweta' ? 'selected' : '' }}>ግዳጅ የወጣ</option>
+    <option value="not_paid" {{ old('status', $bus->status ?? '') == 'not_paid' ? 'selected' : '' }}>Not Paid</option>
+    <option value="punished" {{ old('status', $bus->status ?? '') == 'punished' ? 'selected' : '' }}>Punished</option>
+    <option value="driver_shortage" {{ old('status', $bus->status ?? '') == 'driver_shortage' ? 'selected' : '' }}>Driver Shortage</option>
+</select>
             </div>
             <div class="flex flex-col gap-3">
                 <label for="model_year" class="font-semibold text-gray-700">Model Year</label>

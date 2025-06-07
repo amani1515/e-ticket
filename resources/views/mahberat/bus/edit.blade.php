@@ -56,10 +56,16 @@
             <div>
                 <label>Status</label>
                 <select name="status" class="w-full border p-2" required>
-                    <option value="active" {{ $bus->status == 'active' ? 'selected' : '' }}>Active</option>
-                    <option value="maintenance" {{ $bus->status == 'maintenance' ? 'selected' : '' }}>Maintenance</option>
-                    <option value="out_of_service" {{ $bus->status == 'out_of_service' ? 'selected' : '' }}>Out of Service</option>
-                </select>
+    <option value="active" {{ $bus->status == 'active' ? 'selected' : '' }}>Active</option>
+    <option value="maintenance" {{ $bus->status == 'maintenance' ? 'selected' : '' }}>Maintenance</option>
+    <option value="out_of_service" {{ $bus->status == 'out_of_service' ? 'selected' : '' }}>Out of Service</option>
+    <option value="bolo_expire" {{ $bus->status == 'bolo_expire' ? 'selected' : '' }}>Bolo Expired</option>
+    <option value="accident" {{ $bus->status == 'accident' ? 'selected' : '' }}>Accident</option>
+    <option value="gidaj_yeweta" {{ $bus->status == 'gidaj_yeweta' ? 'selected' : '' }}>ግዳጅ የወጣ</option>
+    <option value="not_paid" {{ $bus->status == 'not_paid' ? 'selected' : '' }}>Not Paid</option>
+    <option value="punished" {{ $bus->status == 'punished' ? 'selected' : '' }}>Punished</option>
+    <option value="driver_shortage" {{ $bus->status == 'driver_shortage' ? 'selected' : '' }}>Driver Shortage</option>
+</select>
             </div>
 
             <div>
