@@ -109,7 +109,7 @@
     )"
     class="bg-yellow-400 text-white px-2 py-1 rounded text-sm"
 >
-    Editt
+    Edit
 </button>
 <form action="{{ route('tickets.cancel', $ticket->id) }}" method="POST" class="inline">
     @csrf

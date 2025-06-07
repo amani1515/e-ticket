@@ -317,11 +317,36 @@ public function update(Request $request, $id)
 public function cancel($id)
 {
     $ticket = Ticket::findOrFail($id);
-    $ticket->ticket_status = 'cancelled'; // Or whatever status you use
-    $ticket->save();
+
+    // Only proceed if not already cancelled
+    if ($ticket->ticket_status !== 'cancelled') {
+        $ticket->ticket_status = 'cancelled';
+        $ticket->cancelled_at = now();
+        $ticket->save();
+
+        // Decrease the boarding count from related schedule
+        $schedule = $ticket->schedule;
+        if ($schedule && $schedule->boarding > 0) {
+            $schedule->boarding -= 1;
+            if ($schedule->boarding < $schedule->capacity) {
+                $schedule->status = 'on loading'; // Change status back to on loading if not full
+            }
+            // If boarding count reaches 0, set status to queued
+            if ($schedule->boarding === 0) {
+                $schedule->status = 'queued';
+            }
+            // If the schedule is full, set status to full
+            if ($schedule->boarding >= $schedule->capacity) {
+                $schedule->status = 'full';
+            }
+            // Save the updated schedule
+            $schedule->save();
+        }
+    }
 
     return back()->with('success', 'Ticket cancelled successfully.');
 }
+
 
 
 }
