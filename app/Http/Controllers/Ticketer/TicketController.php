@@ -314,4 +314,14 @@ public function update(Request $request, $id)
     return redirect()->back()->with('success', 'Ticket updated successfully.');
 }
 
+public function cancel($id)
+{
+    $ticket = Ticket::findOrFail($id);
+    $ticket->ticket_status = 'cancelled'; // Or whatever status you use
+    $ticket->save();
+
+    return back()->with('success', 'Ticket cancelled successfully.');
+}
+
+
 }

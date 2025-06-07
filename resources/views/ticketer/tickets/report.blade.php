@@ -111,6 +111,17 @@
 >
     Edit
 </button>
+<form action="{{ route('tickets.cancel', $ticket->id) }}" method="POST" class="inline">
+    @csrf
+    <button 
+        type="submit"
+        onclick="return confirm('Are you sure you want to cancel this ticket?');"
+        class="bg-red-500 text-white px-2 py-1 rounded text-sm"
+    >
+        Cancel
+    </button>
+</form>
+
 
                                 <!-- Print Button -->
                                 <a href="{{ route('ticketer.tickets.receipt', $ticket->id) }}" target="_blank" class="bg-blue-500 text-white px-2 py-1 rounded text-sm ml-1">Print</a>
