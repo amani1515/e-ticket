@@ -99,6 +99,7 @@ Route::get('/admin/passenger-report/export', [PassengersReportController::class,
 Route::get('/admin/passenger-report/{id}', [PassengersReportController::class, 'show'])->name('admin.passenger-report.show');
 Route::delete('/admin/passenger-report/{id}', [PassengersReportController::class, 'destroy'])->name('admin.passenger-report.destroy');
 Route::get('/admin/passenger-report/print-all', [PassengerReportController::class, 'printAll'])->name('admin.passenger.report.print-all');
+Route::put('/admin/passenger-report/{id}/refund', [PassengersReportController::class, 'refund'])->name('admin.passenger-report.refund');
 
 Route::get('/admin', [DashboardReportsController::class, 'index'])->name('admin.index');
 

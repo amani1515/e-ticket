@@ -123,4 +123,15 @@ class PassengersReportController extends Controller
             return back()->with('error', 'Export failed. Please try again.');
         }
     }
+public function refund($id)
+{
+    $ticket = Ticket::findOrFail($id);
+    $ticket->ticket_status = 'refunded';
+    $ticket->refunded_at = now();
+    $ticket->save();
+
+    return back()->with('success', 'Ticket refunded successfully.');
+}
+
+
 }

@@ -66,17 +66,37 @@
                             <td class="border px-4 py-2 capitalize">{{ $ticket->age_status }}</td>
                             <td class="border px-4 py-2">{{ $ticket->bus_id }}</td>
                             <td class="border px-4 py-2 space-x-2">
-                                <a href="{{ route('admin.passenger-report.show', $ticket->id) }}" class="text-blue-600 hover:underline">View</a>
-                                <form action="{{ route('admin.passenger-report.destroy', $ticket->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Are you sure you want to delete this ticket?')">
+                                <a href="{{ route('admin.passenger-report.show', $ticket->id) }}" class="text-blue-600 hover:text-blue-800">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    </svg>
+                                </a>
+
+                                                                    {{-- delete function works well but hide for now because delate passengers will be restricted  --}}
+                                {{-- <form action="{{ route('admin.passenger-report.destroy', $ticket->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Are you sure you want to delete this ticket?')">
                                     @csrf
                                     @method('DELETE')
                                     <button class="text-red-600 hover:underline">Delete</button>
-                                </form>
+                                </form> --}}
                                 <button onclick="printRow(this)" title="Print" class="text-blue-600 hover:text-blue-900 ml-2">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="inline h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2m-6 0v4m0 0h4m-4 0H8" />
                                     </svg>
                                 </button>
+                                <!-- Refund Button -->
+                                    <form id="refundForm-{{ $ticket->id }}" action="{{ route('admin.passenger-report.refund', $ticket->id) }}" method="POST" style="display: inline;">
+                                        @csrf
+                                        @method('PUT')
+                                        <button type="button" onclick="confirmRefund({{ $ticket->id }})" class="text-red-600 hover:text-red-800" title="Refund Ticket">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.388 15.388A9 9 0 1112 3v3" />
+                                            </svg>
+                                        </button>
+                                    </form>
                             </td>
                         </tr>
                     @endforeach
@@ -94,7 +114,7 @@
         </div>
     @endif
 </div>
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 function printRow(btn) {
     // Clone the row and table headers for printing
@@ -135,6 +155,23 @@ function printFilteredTable() {
     printWindow.focus();
     printWindow.print();
     printWindow.close();
+}
+
+function confirmRefund(ticketId) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You are about to refund this ticket!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, refund it!',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById(`refundForm-${ticketId}`).submit();
+        }
+    });
 }
 </script>
 @endsection
