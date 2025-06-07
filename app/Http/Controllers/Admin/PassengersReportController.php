@@ -75,23 +75,15 @@ class PassengersReportController extends Controller
        }
     }
 
-    public function show($id)
+       public function show($id)
     {
-        if(auth::id())
-        {
-         $usertype = Auth::user()->usertype;
-         if($usertype == 'admin')
-         {
-        $ticket = Ticket::with('destination')->findOrFail($id);
-        return view('admin.reports.passenger_show', compact('ticket'));
-    
-    }
-    else 
-    {
-       return view('errors.403');
-    }
-   
-   }
+        // Allow both admin and headoffice to view
+        if (!auth()->check() || !in_array(auth()->user()->usertype, ['admin', 'headoffice'])) {
+            return view('errors.403');
+        }
+
+        $ticket = Ticket::with(['destination', 'bus', 'schedule', 'cargo'])->findOrFail($id);
+        return view('admin.passenger.passengers_detail', compact('ticket'));
     }
 
     public function destroy($id)

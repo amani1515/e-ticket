@@ -77,4 +77,16 @@ class PassengerReportController extends Controller
         $tickets = $query->with('destination')->get(); // No paginate()
         return view('admin.reports.passengers_print', compact('tickets'));
     }
+
+    // this show function is used for show passengers detail for admin and headoffice
+    public function show($id)
+    {
+        // Allow both admin and headoffice to view
+        if (!auth()->check() || !in_array(auth()->user()->usertype, ['admin', 'headoffice'])) {
+            return view('errors.403');
+        }
+
+        $ticket = Ticket::with(['destination', 'bus', 'schedule', 'cargo'])->findOrFail($id);
+        return view('admin.passenger.passenger_detail', compact('ticket'));
+    }
 }
