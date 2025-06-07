@@ -160,7 +160,7 @@ function printFilteredTable() {
 function confirmRefund(ticketId) {
     Swal.fire({
         title: 'Are you sure?',
-        text: "You are about to refund this ticket!",
+        text: "You are about to refund this ticket! ",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#d33',
