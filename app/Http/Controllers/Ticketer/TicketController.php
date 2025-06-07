@@ -238,11 +238,17 @@ public function reports(Request $request)
         $query->where('ticket_status', $request->ticket_status);
     }
 
-    if ($request->filled('targa')) {
-        $query->whereHas('bus', function ($q) use ($request) {
-            $q->where('bus_id', 'like', '%' . $request->targa . '%');
-        });
-    }
+    if ($request->filled('search')) {
+    $search = $request->search;
+
+    $query->where(function ($q) use ($search) {
+        $q->where('id', $search) // Exact ticket ID match
+          ->orWhereHas('bus', function ($busQuery) use ($search) {
+              $busQuery->where('bus_id', 'like', '%' . $search . '%'); // Partial match on bus targa
+          });
+    });
+}
+
 
     if ($request->filled('date_filter')) {
         switch ($request->date_filter) {

@@ -35,10 +35,11 @@
                 </select>
             </div>
 
-            <div>
-                <label for="targa" class="block text-sm font-medium text-gray-700">Targa</label>
-                <input type="text" name="targa" id="targa" value="{{ request('targa') }}" class="w-full p-2 border rounded" placeholder="Search by Targa">
-            </div>
+          <div>
+    <label for="search" class="block text-sm font-medium text-gray-700">Search (Targa or Ticket ID)</label>
+    <input type="text" name="search" id="search" value="{{ request('search') }}" class="w-full p-2 border rounded" placeholder="Enter Targa or Ticket ID">
+</div>
+
 
             <div>
                 <label for="date_filter" class="block text-sm font-medium text-gray-700">Date</label>
@@ -96,7 +97,11 @@
                                 </td>
                                 <td class="border px-4 py-2">{{ $ticket->ticket_code }}</td>
                                 <td class="border px-4 py-2">
+
                                 <!-- Toggle Edit Button -->
+                                <!-- the edit button displays if only ticket_status is created   -->
+@if($ticket->ticket_status === 'created')
+                                
 <button
     onclick="openEditModal(
         {{ $ticket->id }},
@@ -111,6 +116,12 @@
 >
     Edit
 </button>
+@endif
+
+                                <!-- Cancel Button -->
+                                <!-- Only show if ticket status is 'created' -->
+
+@if($ticket->ticket_status === 'created')
 <form action="{{ route('tickets.cancel', $ticket->id) }}" method="POST" class="inline">
     @csrf
     <button 
@@ -121,6 +132,7 @@
         Cancel
     </button>
 </form>
+@endif
 
 
                                 <!-- Print Button -->
