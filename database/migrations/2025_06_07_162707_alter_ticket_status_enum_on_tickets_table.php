@@ -14,5 +14,5 @@ class AlterTicketStatusEnumOnTicketsTable extends Migration
     public function down()
     {
         DB::statement("ALTER TABLE tickets MODIFY ticket_status ENUM('created', 'confirmed') NOT NULL DEFAULT 'created'");
-    }
+    } 
 }
