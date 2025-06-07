@@ -8,7 +8,7 @@ $ageStatusAmharic = [
     'baby' => 'ታዳጊ',
     'adult' => 'ወጣት',
     'middle_aged' => 'ጎልማሳ',
-    'senior' => 'አዛዉንት',
+    'senior' => 'አenzaዉንት',
 ];
 @endphp
 
@@ -89,9 +89,9 @@ $ageStatusAmharic = [
             <h4 class="text-xl font-semibold text-gray-700 mb-4">🧑‍🦱 Passengers by Age Status (Today)</h4>
             <canvas id="ageStatusChart" height="80"></canvas>
         </div>
-         <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition duration-300 mt-8">
+        <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition duration-300 mt-8">
             <h4 class="text-xl font-semibold text-gray-700 mb-4">Passengers by disability status (Today)</h4>
-            <canvas id="disabilityChart" width="400" height="200"></canvas>
+            <canvas id="disabilityChart" width="200" height="100"></canvas> <!-- Adjusted size -->
         </div>
     </div>
 </div>
@@ -188,7 +188,22 @@ new Chart(ageStatusCtx, {
     }
 });
 
-
+    // 4. Passengers by Disability Status
+    const disabilityCtx = document.getElementById('disabilityChart').getContext('2d');
+    new Chart(disabilityCtx, {
+        type: 'pie',
+        data: {
+            labels: {!! json_encode($disabilityLabels) !!},
+            datasets: [{
+                data: {!! json_encode($disabilityCounts) !!},
+                backgroundColor: ['#3B82F6', '#F59E42', '#10B981', '#F43F5E'],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            plugins: { legend: { position: 'bottom' } }
+        }
+    });
 
     // Quick Filter Button Handler
     window.setQuickRange = function(type) {

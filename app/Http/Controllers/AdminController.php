@@ -31,7 +31,7 @@ class AdminController extends Controller
                 return view('traffic.index');
             }
 
-elseif($usertype == 'headoffice')
+elseif($usertype == 'headoffice' || $usertype == 'admin')
 {
     $startDate = request('start_date');
     $endDate = request('end_date');
@@ -77,7 +77,14 @@ elseif($usertype == 'headoffice')
         return $tickets->where('age_status', $status)->count();
     })->toArray();
 
-    return view('headOffice.index', compact(
+    // Passengers by disability status
+    $disabilityLabels = ['None', 'Blind / Visual Impairment', 'Deaf / Hard of Hearing', 'Speech Impairment'];
+    $disabilityCounts = $tickets->groupBy('disability_status')->map->count()->toArray();
+    $disabilityCounts = array_map(function($label) use ($disabilityCounts) {
+        return $disabilityCounts[$label] ?? 0;
+    }, $disabilityLabels);
+
+    return view('admin.index', compact(
         'passengersToday',
         'totalUsers',
         'totalDestinations',
@@ -91,77 +98,9 @@ elseif($usertype == 'headoffice')
         'genderLabels',
         'genderCounts',
         'ageStatusLabels',
-        'ageStatusCounts'
-    ));
-}
-          else if($usertype == 'admin')
-{
-    $startDate = request('start_date');
-    $endDate = request('end_date');
-
-    // Validate dates
-    try {
-        $startDateParsed = $startDate ? \Carbon\Carbon::parse($startDate)->toDateString() : null;
-        $endDateParsed = $endDate ? \Carbon\Carbon::parse($endDate)->toDateString() : null;
-    } catch (\Exception $e) {
-        $startDateParsed = $endDateParsed = null;
-    }
-
-    if ($startDateParsed && $endDateParsed) {
-        $tickets = \App\Models\Ticket::with('destination')
-            ->whereDate('created_at', '>=', $startDateParsed)
-            ->whereDate('created_at', '<=', $endDateParsed)
-            ->get();
-    } else {
-        $today = \Carbon\Carbon::today();
-        $tickets = \App\Models\Ticket::with('destination')
-            ->whereDate('created_at', $today)
-            ->get();
-        $startDateParsed = $endDateParsed = $today->toDateString();
-    }
-
-    $passengersToday = $tickets->count();
-    $totalUsers = \App\Models\User::count();
-    $totalDestinations = \App\Models\Destination::count();
-
-    $taxTotal = $tickets->sum(fn($t) => $t->destination->tax ?? 0);
-    $serviceFeeTotal = $tickets->sum(fn($t) => $t->destination->service_fee ?? 0);
-    $tariffTotal = $tickets->sum(fn($t) => $t->destination->tariff ?? 0);
-    $totalRevenue = $taxTotal + $serviceFeeTotal + $tariffTotal;
-
-    $grouped = $tickets->groupBy('destination.destination_name');
-    $destinationLabels = $grouped->keys();
-    $passengerCounts = $grouped->map->count();
-
-    // Passengers by gender
-    $genderLabels = ['Male', 'Female'];
-    $genderCounts = [
-        $tickets->where('gender', 'male')->count(),
-        $tickets->where('gender', 'female')->count(),
-    ];
-
-    // Passengers by age status
-    $ageStatuses = $tickets->pluck('age_status')->unique()->values();
-    $ageStatusLabels = $ageStatuses->toArray();
-    $ageStatusCounts = $ageStatuses->map(function ($status) use ($tickets) {
-        return $tickets->where('age_status', $status)->count();
-    })->toArray();
-
-    return view('admin.index', compact(
-        'passengersToday',
-        'totalUsers',
-        'totalDestinations',
-        'taxTotal',
-        'serviceFeeTotal',
-        'totalRevenue',
-        'destinationLabels',
-        'passengerCounts',
-        'startDateParsed',
-        'endDateParsed',
-        'genderLabels',
-        'genderCounts',
-        'ageStatusLabels',
-        'ageStatusCounts'
+        'ageStatusCounts',
+        'disabilityLabels',
+        'disabilityCounts'
     ));
 }
 

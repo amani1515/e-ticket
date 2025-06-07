@@ -8,6 +8,7 @@ use App\Models\Ticket;
 use App\Models\Destination;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class DashboardReportsController extends Controller
 {
@@ -19,7 +20,7 @@ public function index()
         $usertype = Auth::user()->usertype;
 
         if ($usertype == 'admin') {
-            $today = \Illuminate\Support\Carbon::today();
+            $today = now()->toDateString();
 
             // Summary counts
             $passengersToday = \App\Models\Ticket::whereDate('created_at', $today)->count();
@@ -55,13 +56,18 @@ $genderCounts = [
             })->toArray();
             
 
-            //passengersnby disability status
             // Passengers by disability status
-$disabilityStatuses = \App\Models\Ticket::whereDate('created_at', $today)->pluck('disability_status')->unique()->values();
-$disabilityLabels = $disabilityStatuses->toArray();
-$disabilityCounts = $disabilityStatuses->map(function ($status) use ($today) {
-    return \App\Models\Ticket::whereDate('created_at', $today)->where('disability_status', $status)->count();
-})->toArray();
+            $disabilityLabels = ['None', 'Blind / Visual Impairment', 'Deaf / Hard of Hearing', 'Speech Impairment'];
+            $disabilityCounts = DB::table('tickets')
+                ->select('disability_status', DB::raw('count(*) as total'))
+                ->whereDate('created_at', $today)
+                ->groupBy('disability_status')
+                ->pluck('total', 'disability_status')
+                ->toArray();
+
+            $disabilityCounts = array_map(function($label) use ($disabilityCounts) {
+                return $disabilityCounts[$label] ?? 0;
+            }, $disabilityLabels);
 
 
 return view('admin.index', compact(
