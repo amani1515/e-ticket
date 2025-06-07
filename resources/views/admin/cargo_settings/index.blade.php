@@ -5,6 +5,17 @@
         {{ session('success') }}
     </div>
 @endif
+<form method="GET" action="{{ route('admin.backup') }}">
+    @csrf
+    <button
+        type="submit"
+        onclick="return confirm('Are you sure you want to download a full backup?')"
+        class="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700"
+    >
+        Backup
+    </button>
+</form>
+
 
 <div class="max-w-md mx-auto bg-white p-6 rounded shadow">
     <h2 class="text-xl font-bold mb-4">Cargo Settings</h2>

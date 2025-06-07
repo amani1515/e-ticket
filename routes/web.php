@@ -23,6 +23,8 @@ use App\Http\Controllers\CargoMan\CargoController;
 
 use App\Http\Controllers\HisabShum\PaidReportController;
 use App\Http\Controllers\Admin\TransactionController;
+use App\Http\Controllers\Admin\BackupController;
+
 
 
 
@@ -125,6 +127,7 @@ Route::get('/admin/reports/transactions', [TransactionController::class, 'index'
     ->name('admin.reports.transactions')
     ->middleware('auth');
 
+Route::middleware(['auth'])->get('/admin/backup', [BackupController::class, 'download'])->name('admin.backup');
 
 //mahberat
 Route::middleware(['auth', 'verified'])->prefix('mahberat')->name('mahberat.')->group(function () {
