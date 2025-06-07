@@ -97,18 +97,31 @@
                                 <td class="border px-4 py-2">{{ $ticket->ticket_code }}</td>
                                 <td class="border px-4 py-2">
                                 <!-- Toggle Edit Button -->
-                                <button onclick="toggleEditForm({{ $ticket->id }})" class="bg-yellow-400 text-white px-2 py-1 rounded text-sm">Edit</button>
+<button
+    onclick="openEditModal(
+        {{ $ticket->id }},
+        '{{ addslashes($ticket->passenger_name) }}',
+        '{{ $ticket->gender }}',
+        '{{ $ticket->phone_no }}',
+        '{{ $ticket->fayda_id }}',
+        '{{ $ticket->age_status }}',
+        '{{ $ticket->disability_status }}'
+    )"
+    class="bg-yellow-400 text-white px-2 py-1 rounded text-sm"
+>
+    Edit
+</button>
 
                                 <!-- Print Button -->
                                 <a href="{{ route('ticketer.tickets.receipt', $ticket->id) }}" target="_blank" class="bg-blue-500 text-white px-2 py-1 rounded text-sm ml-1">Print</a>
 
                                 <!-- Edit Form (Hidden by default) -->
-                                <form id="edit-form-{{ $ticket->id }}" action="{{ route('ticketer.tickets.updateName', $ticket->id) }}" method="POST" class="mt-2 hidden">
+                                {{-- <form id="edit-form-{{ $ticket->id }}" action="{{ route('ticketer.tickets.updateName', $ticket->id) }}" method="POST" class="mt-2 hidden">
                                     @csrf
                                     @method('PUT')
                                     <input type="text" name="passenger_name" value="{{ $ticket->passenger_name }}" class="border p-1 text-sm rounded w-full mb-1">
                                     <button type="submit" class="bg-green-500 text-white px-2 py-1 rounded text-sm w-full">Save</button>
-                                </form>
+                                </form> --}}
                             </td>
 
                             
@@ -117,17 +130,108 @@
                     </tbody>
                 </table>
             </div>
+
+    <!-- Modal -->
+<div id="editModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden">
+    <div class="bg-white w-full max-w-lg p-6 rounded shadow-lg relative">
+        <h2 class="text-xl font-bold mb-4">Edit Ticket</h2>
+        <form id="editTicketForm" method="POST">
+            @csrf
+            @method('PUT')
+            <input type="hidden" name="ticket_id" id="modal_ticket_id">
+
+            <div class="mb-2">
+                <label class="block text-sm">የተሳፋሪ ሙሉ ስም </label>
+                <input type="text" name="passenger_name" id="modal_passenger_name" class="border p-2 w-full rounded">
+            </div>
+
+            <div class="mb-2">
+                <label class="block text-sm">ጾታ </label>
+                <select name="gender" id="modal_gender" class="border p-2 w-full rounded">
+                    <option value="male">ወንድ </option>
+                    <option value="female">ሴት </option>
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <label for="age_status" class="block">Age Status</label>
+                <select name="age_status" id="age_status" class="w-full p-2 border rounded" required>
+                    <option value="adult">ወጣት</option>
+                    <option value="baby">ታዳጊ</option>
+                    <option value="middle_aged">ጎልማሳ</option>
+                    <option value="senior">አዛውንት</option>
+                </select>
+            </div>
+
+            <label for="disability_status">Disability Status:</label>
+            <select name="disability_status" id="disability_status" required>
+                <option value="None">የለም</option>
+                <option value="Blind / Visual Impairment">ማየት የተሳነው</option>
+                <option value="Deaf / Hard of Hearing">መስማት የተሳነው</option>
+                <option value="Speech Impairment">መናገር የተሳነው</option>
+            </select>
+
+            <div class="mb-2">
+                <label class="block text-sm">Phone</label>
+                <input type="text" name="phone_no" id="modal_phone_no" class="border p-2 w-full rounded">
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-sm">Fayida ID</label>
+                <input type="text" name="fayda_id" id="modal_fayda_id" class="border p-2 w-full rounded">
+            </div>
+
+            <div class="mb-4">
+                <label for="departure_datetime" class="block">Departure Date and Time</label>
+                <input 
+                    type="datetime-local" 
+                    name="departure_datetime" 
+                    id="departure_datetime" 
+                    class="w-full p-2 border rounded" 
+                    value="{{ now()->format('Y-m-d\TH:i') }}" 
+                    required
+                >
+            </div>
+
+            <div class="flex justify-end space-x-2">
+                <button type="button" onclick="closeModal()" class="bg-gray-500 text-white px-4 py-2 rounded">Cancel</button>
+                <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
             {{ $tickets->links() }} <!-- Pagination links -->
         @else
             <p class="text-center text-gray-500">No tickets found.</p>
         @endif
     </div>
 </div>
+
+
+<!-- Script -->
 <script>
-    function toggleEditForm(ticketId) {
-        const form = document.getElementById(`edit-form-${ticketId}`);
-        form.classList.toggle('hidden');
+    function openEditModal(id, name, gender, phone, faydaId, ageStatus, disabilityStatus) {
+        const form = document.getElementById('editTicketForm');
+        form.action = `/ticketer/tickets/${id}/update`;
+
+        document.getElementById('modal_ticket_id').value = id;
+        document.getElementById('modal_passenger_name').value = name;
+        document.getElementById('modal_gender').value = gender;
+        document.getElementById('modal_phone_no').value = phone;
+        document.getElementById('modal_fayda_id').value = faydaId;
+        document.getElementById('age_status').value = ageStatus;
+        document.getElementById('disability_status').value = disabilityStatus;
+
+        document.getElementById('editModal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+        document.getElementById('editModal').classList.add('hidden');
     }
 </script>
+
+
+
 
 @endsection

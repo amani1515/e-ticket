@@ -297,16 +297,21 @@ public function reports(Request $request)
 }
 
 
-public function updateName(Request $request, Ticket $ticket)
+public function update(Request $request, $id)
 {
-    $request->validate([
-        'passenger_name' => 'required|string|max:255',
-    ]);
+    $ticket = Ticket::findOrFail($id);
 
     $ticket->passenger_name = $request->passenger_name;
+    $ticket->gender = $request->gender;
+    $ticket->phone_no = $request->phone_no;
+    $ticket->fayda_id = $request->fayda_id;
+    $ticket->age_status = $request->age_status;
+    $ticket->disability_status = $request->disability_status;
+    $ticket->departure_datetime = $request->departure_datetime;
+    // Add validation as needed
     $ticket->save();
 
-    return redirect()->back()->with('success', 'Passenger name updated successfully.');
+    return redirect()->back()->with('success', 'Ticket updated successfully.');
 }
 
 }
