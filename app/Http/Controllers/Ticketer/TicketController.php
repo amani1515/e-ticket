@@ -170,11 +170,16 @@ public function processScan(Request $request)
         return redirect()->back()->with('error', 'Ticket not found.');
     }
 
-    $ticket->ticket_status = 'confirmed'; // or 'completed' if that's your final status
+    if ($ticket->ticket_status !== 'created') {
+        return redirect()->back()->with('error', 'Ticket is not in a scannable state.');
+    }
+
+    $ticket->ticket_status = 'confirmed';
     $ticket->save();
 
-    return redirect()->back()->with('success', 'Ticket status updated successfully.');
+    return redirect()->back()->with('success', 'Ticket confirmed successfully.');
 }
+
 
 public function getFirstBus($destinationId)
 {

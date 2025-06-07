@@ -16,6 +16,8 @@
         <th class="px-4 py-2">Service Fee</th>
         <th class="px-4 py-2">Tariff</th>
         <th class="px-4 py-2">Tax</th>
+        <th class="px-4 py-2">Cancelled</th>
+        
         {{-- <th class="px-4 py-2">Mewucha</th> --}}
         <th class="px-4 py-2">Scheduled At</th>
         <th class="px-4 py-2">Net Balance</th>
@@ -67,18 +69,28 @@
         <td class="border px-4 py-2">
             {{ $schedule->tickets()->sum('tax') }}
         </td>
-        {{-- <td class="border px-4 py-2">50</td> --}}
+        {{-- this one displays total amount of money for Cancelled tickets tariff  for schedule and tariff is calculated according to destination saved from destination table --}}
+        <td class="border px-4 py-2">
+            {{
+                ($schedule->destination->tariff ?? 0) *
+                \App\Models\Ticket::where('bus_id', $schedule->bus_id)
+                    ->where('destination_id', $schedule->destination_id)
+                    ->where('schedule_id', $schedule->id)
+                    ->where('ticket_status', 'cancelled')
+                    ->count()
+            }}
+        </td>
 
         <td class="border px-4 py-2">{{ $schedule->scheduled_at }}</td>
         <td class="border px-4 py-2">
-    {{
-        (($schedule->destination->tariff ?? 0) *
-        \App\Models\Ticket::where('bus_id', $schedule->bus_id)
-            ->where('destination_id', $schedule->destination_id)
-            ->where('schedule_id', $schedule->id)
-            ->whereIn('ticket_status', ['created', 'confirmed'])
-            ->count()) 
-    }}
+            {{
+                (($schedule->destination->tariff ?? 0) *
+                \App\Models\Ticket::where('bus_id', $schedule->bus_id)
+                    ->where('destination_id', $schedule->destination_id)
+                    ->where('schedule_id', $schedule->id)
+                    ->whereIn('ticket_status', ['created', 'confirmed'])
+                    ->count())
+            }}
 </td>
 <td class="border px-4 py-2">
     @if($schedule->status === 'full')
