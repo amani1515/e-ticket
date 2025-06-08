@@ -112,7 +112,7 @@
             <div>
                 @if (Auth::user()->usertype !== 'headoffice')
                     <a href="{{ route('admin.cargo-settings.index') }}"
-                        class="block hover:text-yellow-500 font-semibold">Settings</a>
+                        class="block hover:text-yellow-500 font-semibold">System Settings</a>
                 @endif
             </div>
         </div>
