@@ -5,16 +5,12 @@
         {{ session('success') }}
     </div>
 @endif
-<form method="GET" action="{{ route('admin.backup') }}">
-    @csrf
-    <button
-        type="submit"
-        onclick="return confirm('Are you sure you want to download a full backup?')"
-        class="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700"
-    >
-        Backup
-    </button>
-</form>
+
+ <a href="{{ route('admin.backup') }}"
+   onclick="return confirm('Are you sure you want to download the full database backup?')"
+   class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+    <i class="fas fa-download mr-1"></i> Backup Database
+</a>
 
 
 <div class="max-w-md mx-auto bg-white p-6 rounded shadow">

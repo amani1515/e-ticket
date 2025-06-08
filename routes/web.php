@@ -127,8 +127,7 @@ Route::get('/admin/reports/transactions', [TransactionController::class, 'index'
     ->name('admin.reports.transactions')
     ->middleware('auth');
 
-Route::middleware(['auth'])->get('/admin/backup', [BackupController::class, 'download'])->name('admin.backup');
-
+Route::get('/admin/backup', [BackupController::class, 'backupDownload'])->name('admin.backup');
 //mahberat
 Route::middleware(['auth', 'verified'])->prefix('mahberat')->name('mahberat.')->group(function () {
     Route::get('/bus/create', [App\Http\Controllers\Mahberat\BusController::class, 'create'])->name('bus.create');
