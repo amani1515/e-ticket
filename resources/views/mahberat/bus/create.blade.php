@@ -40,7 +40,7 @@
             <div class="flex flex-col gap-3">
                 <label for="level" class="font-semibold text-gray-700">Level <span class="text-red-500">*</span></label>
                 <select id="level" name="level" required class="input-field">
-                    <option value="">Select Level</option>
+                   
                     <option value="level1">Level 1</option>
                     <option value="level2">Level 2</option>
                     <option value="level3">Level 3</option>
@@ -49,11 +49,19 @@
             <div class="flex flex-col gap-3">
                 <label for="sub-level" class="font-semibold text-gray-700">Sub-Level <span class="text-red-500">*</span></label>
                 <select id="sub-level" name="sub-level" required class="input-field">
-                    <option value="">Select sub-level</option>
+                    
                     <option value="high">High</option>
                     <option value="mid">Mid</option>
                     <option value="low">Low</option>
                 </select>
+            </div>
+             <div class="flex flex-col gap-3">
+                <label for="distance" class="font-semibold text-gray-700">distance <span class="text-red-500">*</span></label>
+                <select id="sub-level" name="sub-level" required class="input-field">
+                    
+                    <option value="long">Long Distance</option>
+                    <option value="short">Short Distance</option>
+                    </select>
             </div>
             <div class="flex flex-col gap-3">
                 <label for="total_seats" class="font-semibold text-gray-700">Total Seats</label>
@@ -100,7 +108,7 @@
             <div class="flex flex-col gap-3">
                 <label for="owner_id" class="font-semibold text-gray-700">Owner</label>
                 <select id="owner_id" name="owner_id" class="input-field">
-                    <option value="">Select Owner</option>
+                    
                     @foreach (App\Models\User::where('usertype', 'balehabt')->get() as $owner)
                         <option value="{{ $owner->id }}">{{ $owner->name }}</option>
                     @endforeach
