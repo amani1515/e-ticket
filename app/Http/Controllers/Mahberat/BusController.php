@@ -43,12 +43,13 @@ class BusController extends Controller
             'bolo_id' => 'required|string',
             'motor_number' => 'required|string',
             'color' => 'required|string',
+            'distance'=>'required|string',
             'owner_id' => 'nullable|exists:users,id',
             'file1' => 'nullable|file',
             'file2' => 'nullable|file',
             'file3' => 'nullable|file',
         ]);
-
+    
         // Handle file uploads
         foreach (['file1', 'file2', 'file3'] as $fileKey) {
             if ($request->hasFile($fileKey)) {
@@ -56,21 +57,22 @@ class BusController extends Controller
                 $validated[$fileKey] = $path;
             }
         }
-
+    
         $validated['status'] = $validated['status'] ?? 'active';
         $validated['registered_by'] = Auth::id();
         // Assign mahberat_id of current user
         $validated['mahberat_id'] = auth()->user()->mahberat_id;
-
+    
         // Generate unique bus id: SEV+year+date+random10+29
         $date = now()->format('Ymd');
         $random = strtoupper(substr(bin2hex(random_bytes(5)), 0, 10));
         $uniqueBusId = 'SEV' . now()->year . $date . $random . '29';
         $validated['unique_bus_id'] = $uniqueBusId;
-
+    
         Bus::create($validated);
-
-        return redirect()->back()->with('success', 'Bus added successfully.');
+    
+       return redirect()->back()->with('success', 'Bus added successfully.')
+                         ->with('second_success', 'Second success message.');
     }
 
     // Show a single bus details, check ownership
@@ -111,6 +113,7 @@ class BusController extends Controller
             'bolo_id' => 'required|string',
             'motor_number' => 'required|string',
             'color' => 'required|string',
+            'distance'=>'required|string',
             'owner_id' => 'nullable|exists:users,id',
             'file1' => 'nullable|file',
             'file2' => 'nullable|file',

@@ -93,6 +93,14 @@
                 <input type="text" name="color" value="{{ old('color', $bus->color) }}" class="w-full border p-2" required>
             </div>
         </div>
+        <div class="flex flex-col gap-3">
+                <label for="distance" class="font-semibold text-gray-700">distance <span class="text-red-500">*</span></label>
+                <select id="sub-level" name="sub-level" required class="input-field">
+                    
+                    <option value="long">Long Distance</option>
+                    <option value="short">Short Distance</option>
+                    </select>
+            </div>
 
         <div class="mt-4">
             <label>Upload File 1</label>
