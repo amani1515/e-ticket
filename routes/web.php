@@ -177,7 +177,7 @@ Route::get('/admin/buses', [BusController::class, 'index'])->name('admin.buses.i
 Route::get('/admin/bus-reports', [BusReportController::class, 'index'])->name('admin.bus.reports');
 
 Route::get('/bus-display', [PublicDisplayController::class, 'showAllSchedules']);
-
+Route::get('/shop', [App\Http\Controllers\Shop\ShopController::class, 'index']);
 
 //for hisab shum
 Route::get('/hisab-shum/pay/{schedule}', [\App\Http\Controllers\HisabShum\PaymentController::class, 'initiate'])->name('hisabShum.pay.schedule');
