@@ -12,8 +12,21 @@ class ShopController extends Controller
      */
     public function index()
     {
-      return view('shop.index');  
-        //
+        $destinations = \App\Models\Destination::all();
+        $schedules = \App\Models\Schedule::whereIn('status', ['queued', 'on loading'])->with('bus');
+    
+        return view('shop.index', compact('destinations', 'schedules'));
+    }
+    public function success()
+    {
+        // Handle successful payment
+        return view('shop.success');
+    }
+    
+    public function cancel()
+    {
+        // Handle cancelled payment
+        return view('shop.cancel');
     }
 
     /**
