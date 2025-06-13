@@ -14,4 +14,17 @@ class OnlineTicketController extends Controller
     {
         return view('online-ticket.create'); // we'll create this view next
     }
+        public function search(Request $request)
+    {
+        $keyword = $request->input('search');
+
+        $schedules = BusSchedule::whereHas('bus', function ($q) {
+                $q->where('type', 'long'); // assuming enum or string type
+            })
+            ->where('destination', 'like', '%' . $keyword . '%')
+            ->with('bus') // eager load bus info
+            ->get();
+
+        return view('online-ticket.index', compact('schedules', 'keyword'));
+    }
 }

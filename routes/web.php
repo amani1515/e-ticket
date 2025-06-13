@@ -233,3 +233,7 @@ Route::middleware(['auth'])->group(function () {
 
 // online ticket create
 Route::get('/online-ticket/create', [App\Http\Controllers\OnlineTicketController::class, 'create'])->name('online-ticket.create');
+use App\Http\Controllers\OnlineTicketController;
+
+Route::get('/online-ticket', [OnlineTicketController::class, 'index'])->name('online-ticket.index');
+Route::get('/online-ticket/search', [OnlineTicketController::class, 'search'])->name('online-ticket.search');
