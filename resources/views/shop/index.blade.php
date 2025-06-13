@@ -81,7 +81,7 @@
                 <div class="form-group">
                     <label for="car">Car</label>
                     <select name="car" id="car" class="form-control">
-                        @foreach ($schedules as $schedule)
+                        @foreach (collect($schedules) as $schedule)
                             <option value="{{ $schedule->bus->id }}">{{ $schedule->bus->targa }}</option>
                         @endforeach
                     </select>
@@ -99,7 +99,6 @@
             <script>
                 // JavaScript code for handling search functionality
                 $(function() {
-                    var destinations = <?php echo json_encode($destinations); ?>;
                     var schedules = <?php echo json_encode($schedules); ?>;
 
                     $('#destination').autocomplete({

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Bus;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str; // Add this line
 
 class BusController extends Controller
 {
@@ -26,54 +27,55 @@ class BusController extends Controller
     }
 
     // Store new bus in DB
-    public function store(Request $request)
-    {
-        // Validate input fields
-        $validated = $request->validate([
-            'targa' => 'required|string',
-            'driver_name' => 'required|string',
-            'driver_phone' => 'required|string',
-            'redat_name' => 'required|string',
-            'level' => 'required|in:level1,level2,level3',
-            'total_seats' => 'required|integer',
-            'cargo_capacity' => 'required|numeric|min:0',
-            'status' => 'nullable|in:active,maintenance,out of service',
-            'model_year' => 'required|integer',
-            'model' => 'required|string',
-            'bolo_id' => 'required|string',
-            'motor_number' => 'required|string',
-            'color' => 'required|string',
-            'distance'=>'required|string',
-            'owner_id' => 'nullable|exists:users,id',
-            'file1' => 'nullable|file',
-            'file2' => 'nullable|file',
-            'file3' => 'nullable|file',
-        ]);
-    
-        // Handle file uploads
-        foreach (['file1', 'file2', 'file3'] as $fileKey) {
-            if ($request->hasFile($fileKey)) {
-                $path = $request->file($fileKey)->store('bus_files', 'public');
-                $validated[$fileKey] = $path;
-            }
+   public function store(Request $request)
+{
+    // ✅ Step 1: Validate Request Inputs
+    $validated = $request->validate([
+        'targa'           => 'required|string',
+        'driver_name'     => 'required|string',
+        'driver_phone'    => 'required|string',
+        'redat_name'      => 'required|string',
+        'level'           => 'required|in:level1,level2,level3',
+        'total_seats'     => 'required|integer',
+        'cargo_capacity'  => 'required|numeric|min:0',
+        'status' => 'nullable|in:active,maintenance,out_of_service,bolo_expire,accident,gidaj_yeweta,not_paid,punished,driver_shortage',
+        'model_year'      => 'required|integer',
+        'model'           => 'required|string',
+        'bolo_id'         => 'required|string',
+        'motor_number'    => 'required|string',
+        'color'           => 'required|string',
+        'distance'        => 'required|string',
+        'owner_id'        => 'nullable|exists:users,id',
+        'file1'           => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+        'file2'           => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+        'file3'           => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+    ]);
+
+    // ✅ Step 2: Handle File Uploads (with fallback pathing)
+    foreach (['file1', 'file2', 'file3'] as $fileKey) {
+        if ($request->hasFile($fileKey)) {
+            $validated[$fileKey] = $request->file($fileKey)->store("bus_files", "public");
         }
-    
-        $validated['status'] = $validated['status'] ?? 'active';
-        $validated['registered_by'] = Auth::id();
-        // Assign mahberat_id of current user
-        $validated['mahberat_id'] = auth()->user()->mahberat_id;
-    
-        // Generate unique bus id: SEV+year+date+random10+29
-        $date = now()->format('Ymd');
-        $random = strtoupper(substr(bin2hex(random_bytes(5)), 0, 10));
-        $uniqueBusId = 'SEV' . now()->year . $date . $random . '29';
-        $validated['unique_bus_id'] = $uniqueBusId;
-    
-        Bus::create($validated);
-    
-       return redirect()->back()->with('success', 'Bus added successfully.')
-                         ->with('second_success', 'Second success message.');
     }
+
+    // ✅ Step 3: Add default or system-assigned values
+    $validated['status']         = $validated['status'] ?? 'active';
+    $validated['registered_by']  = Auth::id();
+    $validated['mahberat_id']    = Auth::user()->mahberat_id;
+
+    // ✅ Step 4: Generate a Unique Bus ID
+    $datePart   = now()->format('Ymd');
+    $randomPart = strtoupper(Str::random(10));
+    $validated['unique_bus_id'] = "SEV" . now()->year . $datePart . $randomPart . "29";
+
+    // ✅ Step 5: Save to DB
+    Bus::create($validated);
+
+    // ✅ Step 6: Redirect back with session flashes
+    return redirect()->back()
+        ->with('success', 'Bus added successfully.')
+        ->with('second_success', 'Second success message.');
+}
 
     // Show a single bus details, check ownership
     public function show($id)
@@ -100,24 +102,24 @@ class BusController extends Controller
         $bus = Bus::where('id', $id)->where('mahberat_id', $mahberatId)->firstOrFail();
 
         $validated = $request->validate([
-            'targa' => 'required|string',
-            'driver_name' => 'required|string',
-            'driver_phone' => 'required|string',
-            'redat_name' => 'required|string',
-            'level' => 'required|in:level1,level2,level3',
-            'total_seats' => 'required|integer',
-            'cargo_capacity' => 'required|numeric|min:0',
-            'status' => 'required|in:active,maintenance,out of service',
-            'model_year' => 'required|integer',
-            'model' => 'required|string',
-            'bolo_id' => 'required|string',
-            'motor_number' => 'required|string',
-            'color' => 'required|string',
-            'distance'=>'required|string',
-            'owner_id' => 'nullable|exists:users,id',
-            'file1' => 'nullable|file',
-            'file2' => 'nullable|file',
-            'file3' => 'nullable|file',
+            'targa'           => 'required|string',
+        'driver_name'     => 'required|string',
+        'driver_phone'    => 'required|string',
+        'redat_name'      => 'required|string',
+        'level'           => 'required|in:level1,level2,level3',
+        'total_seats'     => 'required|integer',
+        'cargo_capacity'  => 'required|numeric|min:0',
+        'status' => 'nullable|in:active,maintenance,out_of_service,bolo_expire,accident,gidaj_yeweta,not_paid,punished,driver_shortage',
+        'model_year'      => 'required|integer',
+        'model'           => 'required|string',
+        'bolo_id'         => 'required|string',
+        'motor_number'    => 'required|string',
+        'color'           => 'required|string',
+        'distance'        => 'required|string',
+        'owner_id'        => 'nullable|exists:users,id',
+        'file1'           => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+        'file2'           => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+        'file3'           => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
         ]);
 
         // Handle file replacements - delete old files if new ones uploaded

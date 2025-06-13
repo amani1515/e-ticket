@@ -13,7 +13,7 @@ class ShopController extends Controller
     public function index()
     {
         $destinations = \App\Models\Destination::all();
-        $schedules = \App\Models\Schedule::whereIn('status', ['queued', 'on loading'])->with('bus');
+        $schedules = \App\Models\Schedule::whereIn('status', ['queued', 'on loading'])->with('bus')->get(); // Ensure it's an Eloquent Collection
     
         return view('shop.index', compact('destinations', 'schedules'));
     }

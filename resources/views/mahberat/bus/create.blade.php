@@ -1,22 +1,37 @@
-@extends('mahberat.layout.app')
+@extends('admin.layout.app')
 
 @section('content')
-<div class="container mx-auto px-4 py-8 animate-fade-in">
-    <h2 class="text-2xl font-bold text-blue-700 mb-6 border-b pb-2">🚌 Register New Bus</h2>
+<div class="container mx-auto mt-8 p-8 bg-white shadow-md rounded-md">
+    <h1 class="text-2xl font-semibold mb-4">Create New Bus</h1>
 
-    {{-- Success Message --}}
-    @if (session('success'))
-        <script>
+   @if(session('success'))
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
             Swal.fire({
+                toast: true,
+                position: 'top-end',
                 icon: 'success',
-                title: 'Success',
-                text: '{{ session('success') }}',
-                confirmButtonText: 'OK'
+                title: '{{ session('success') }}',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                },
+                showClass: {
+                    popup: 'animate__animated animate__fadeInDown'
+                },
+                hideClass: {
+                    popup: 'animate__animated animate__fadeOutUp'
+                }
             });
-        </script>
-    @endif
+        });
+    </script>
+@endif
 
-    <form action="{{ route('mahberat.bus.store') }}" method="POST" enctype="multipart/form-data"
+
+    <form id="bus-form" action="{{ route('mahberat.bus.store') }}" method="POST" enctype="multipart/form-data"
           class="max-w-3xl mx-auto space-y-8 bg-gradient-to-br from-blue-50 via-white to-blue-100 border border-blue-200 rounded-2xl shadow-xl p-8 transition-all duration-300 hover:shadow-2xl">
         @csrf
 
@@ -40,28 +55,25 @@
             <div class="flex flex-col gap-3">
                 <label for="level" class="font-semibold text-gray-700">Level <span class="text-red-500">*</span></label>
                 <select id="level" name="level" required class="input-field">
-                   
                     <option value="level1">Level 1</option>
                     <option value="level2">Level 2</option>
                     <option value="level3">Level 3</option>
                 </select>
             </div>
             <div class="flex flex-col gap-3">
-                <label for="sub-level" class="font-semibold text-gray-700">Sub-Level <span class="text-red-500">*</span></label>
-                <select id="sub-level" name="sub-level" required class="input-field">
-                    
+                <label for="sub_level" class="font-semibold text-gray-700">Sub-Level <span class="text-red-500">*</span></label>
+                <select id="sub_level" name="sub_level" required class="input-field">
                     <option value="high">High</option>
                     <option value="mid">Mid</option>
                     <option value="low">Low</option>
                 </select>
             </div>
-             <div class="flex flex-col gap-3">
-                <label for="distance" class="font-semibold text-gray-700">distance <span class="text-red-500">*</span></label>
-                <select id="sub-level" name="sub-level" required class="input-field">
-                    
+            <div class="flex flex-col gap-3">
+                <label for="distance" class="font-semibold text-gray-700">Distance <span class="text-red-500">*</span></label>
+                <select id="distance" name="distance" required class="input-field">
                     <option value="long">Long Distance</option>
                     <option value="short">Short Distance</option>
-                    </select>
+                </select>
             </div>
             <div class="flex flex-col gap-3">
                 <label for="total_seats" class="font-semibold text-gray-700">Total Seats</label>
@@ -74,16 +86,16 @@
             <div class="flex flex-col gap-3">
                 <label for="status" class="font-semibold text-gray-700">Status</label>
                 <select id="status" name="status" class="input-field" required>
-    <option value="active" {{ old('status', $bus->status ?? '') == 'active' ? 'selected' : '' }}>Active</option>
-    <option value="maintenance" {{ old('status', $bus->status ?? '') == 'maintenance' ? 'selected' : '' }}>Maintenance</option>
-    <option value="out_of_service" {{ old('status', $bus->status ?? '') == 'out_of_service' ? 'selected' : '' }}>Out of Service</option>
-    <option value="bolo_expire" {{ old('status', $bus->status ?? '') == 'bolo_expire' ? 'selected' : '' }}>Bolo Expired</option>
-    <option value="accident" {{ old('status', $bus->status ?? '') == 'accident' ? 'selected' : '' }}>Accident</option>
-    <option value="gidaj_yeweta" {{ old('status', $bus->status ?? '') == 'gidaj_yeweta' ? 'selected' : '' }}>ግዳጅ የወጣ</option>
-    <option value="not_paid" {{ old('status', $bus->status ?? '') == 'not_paid' ? 'selected' : '' }}>Not Paid</option>
-    <option value="punished" {{ old('status', $bus->status ?? '') == 'punished' ? 'selected' : '' }}>Punished</option>
-    <option value="driver_shortage" {{ old('status', $bus->status ?? '') == 'driver_shortage' ? 'selected' : '' }}>Driver Shortage</option>
-</select>
+                    <option value="active" {{ old('status', $bus->status ?? '') == 'active' ? 'selected' : '' }}>Active</option>
+                    <option value="maintenance" {{ old('status', $bus->status ?? '') == 'maintenance' ? 'selected' : '' }}>Maintenance</option>
+                    <option value="out_of_service" {{ old('status', $bus->status ?? '') == 'out_of_service' ? 'selected' : '' }}>Out of Service</option>
+                    <option value="bolo_expire" {{ old('status', $bus->status ?? '') == 'bolo_expire' ? 'selected' : '' }}>Bolo Expired</option>
+                    <option value="accident" {{ old('status', $bus->status ?? '') == 'accident' ? 'selected' : '' }}>Accident</option>
+                    <option value="gidaj_yeweta" {{ old('status', $bus->status ?? '') == 'gidaj_yeweta' ? 'selected' : '' }}>ግዳጅ የወጣ</option>
+                    <option value="not_paid" {{ old('status', $bus->status ?? '') == 'not_paid' ? 'selected' : '' }}>Not Paid</option>
+                    <option value="punished" {{ old('status', $bus->status ?? '') == 'punished' ? 'selected' : '' }}>Punished</option>
+                    <option value="driver_shortage" {{ old('status', $bus->status ?? '') == 'driver_shortage' ? 'selected' : '' }}>Driver Shortage</option>
+                </select>
             </div>
             <div class="flex flex-col gap-3">
                 <label for="model_year" class="font-semibold text-gray-700">Model Year</label>
@@ -108,7 +120,6 @@
             <div class="flex flex-col gap-3">
                 <label for="owner_id" class="font-semibold text-gray-700">Owner</label>
                 <select id="owner_id" name="owner_id" class="input-field">
-                    
                     @foreach (App\Models\User::where('usertype', 'balehabt')->get() as $owner)
                         <option value="{{ $owner->id }}">{{ $owner->name }}</option>
                     @endforeach
@@ -135,6 +146,31 @@
         </div>
     </form>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.getElementById('bus-form').addEventListener('submit', function(event) {
+        // Example validation: Check if required fields are filled
+        const requiredFields = ['targa', 'driver_name', 'driver_phone', 'redat_name', 'level', 'sub_level', 'distance', 'cargo_capacity'];
+        let isValid = true;
+
+        requiredFields.forEach(function(fieldId) {
+            const field = document.getElementById(fieldId);
+            if (!field.value.trim()) {
+                isValid = false;
+                field.classList.add('border-red-500');
+                field.classList.remove('border-gray-300');
+            } else {
+                field.classList.remove('border-red-500');
+                field.classList.add('border-gray-300');
+            }
+        });
+
+        if (!isValid) {
+            event.preventDefault(); // Prevent form submission
+            alert('Please fill in all required fields.');
+        }
+    });
+</script>
 
 {{-- Optional: Add simple fade animation --}}
 <style>
