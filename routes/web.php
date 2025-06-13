@@ -228,3 +228,8 @@ Route::middleware(['auth'])->group(function () {
         ->name('headoffice.dashboard');
     // Add more routes for other admin pages as needed, all pointing to headOffice views
 });
+
+
+
+// online ticket create
+Route::get('/online-ticket/create', [App\Http\Controllers\OnlineTicketController::class, 'create'])->name('online-ticket.create');

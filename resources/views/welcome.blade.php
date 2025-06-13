@@ -65,9 +65,11 @@
    class="bg-white text-yellow-700 font-bold px-8 py-3 rounded-full shadow-lg transition-all duration-300 ease-in-out transform hover:bg-gray-100 hover:scale-110 hover:shadow-xl active:scale-95 focus:outline-none focus:ring-4 focus:ring-yellow-300 animate-bounce">
    አሁን ጀምር
 </a> --}}
-     <a href="/shop"
-        class="inline-block bg-white text-yellow-700 px-8 py-3 rounded-lg text-lg font-semibold shadow hover:text-amber-500 transition animate-bounce">
-        አሁን ጀምር</a>       
+<a href="{{ route('online-ticket.create') }}"
+   class="inline-block bg-white text-yellow-700 px-8 py-3 rounded-lg text-lg font-semibold shadow hover:text-amber-500 transition animate-bounce">
+   አሁን ጀምር
+</a>
+    
         </div>
     </section>
 
