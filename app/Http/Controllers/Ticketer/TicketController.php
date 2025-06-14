@@ -66,7 +66,6 @@ public function store(Request $request)
         'bus_id' => 'required|string|max:255', // This is targa from the form!
         'departure_datetime' => 'required|date',
         'disability_status' => 'required|in:None,Blind / Visual Impairment,Deaf / Hard of Hearing,Speech Impairment',
-
     ]);
 
     $destination = Destination::findOrFail($request->destination_id);
@@ -76,58 +75,58 @@ public function store(Request $request)
     if (!$bus) {
         return back()->withErrors(['bus_id' => 'Bus not found.']);
     }
-    // Find the related schedule (status queued or on loading)
-$schedule = Schedule::where('bus_id', $bus->id)
-    ->where('destination_id', $request->destination_id)
-    ->whereIn('status', ['queued', 'on loading'])
-    ->first();
-
-$ticket = Ticket::create([
-    'cargo_id' => $request->cargo_id, // <-- Save by cargo_id
-    'passenger_name' => $request->passenger_name,
-    'gender' => $request->gender,
-    'age_status' => $request->age_status,
-    'destination_id' => $request->destination_id,
-    'bus_id' => $bus->id,
-    'schedule_id' => $schedule ? $schedule->id : null, // <-- add this line
-    'departure_datetime' => $request->departure_datetime,
-    'ticket_code' => 'SE' . now()->format('Ymd') . strtoupper(uniqid()),
-    'creator_user_id' => auth()->id(),
-    'tax' => $destination->tax,
-    'service_fee' => $destination->service_fee,
-    'ticket_status' => 'created',
-    'disability_status' => $request->disability_status,
-    'phone_no' => $request->phone_no, // <-- Add this line if you have a phone number field
-    'fayda_id' => $request->fayda_id, // <-- Add this line if you have a fayda_id field
-
-]);
 
     // Find the related schedule (status queued or on loading)
-    // $schedule = Schedule::where('bus_id', $bus->id)
-    //     ->where('destination_id', $request->destination_id)
-    //     ->whereIn('status', ['queued', 'on loading'])
-    //     ->first();
+    $schedule = Schedule::where('bus_id', $bus->id)
+        ->where('destination_id', $request->destination_id)
+        ->whereIn('status', ['queued', 'on loading'])
+        ->first();
+
+    $ticket = Ticket::create([
+        'cargo_id' => $request->cargo_id,
+        'passenger_name' => $request->passenger_name,
+        'gender' => $request->gender,
+        'age_status' => $request->age_status,
+        'destination_id' => $request->destination_id,
+        'bus_id' => $bus->id,
+        'schedule_id' => $schedule ? $schedule->id : null,
+        'departure_datetime' => $request->departure_datetime,
+        'ticket_code' => 'SE' . now()->format('Ymd') . strtoupper(uniqid()),
+        'creator_user_id' => auth()->id(),
+        'tax' => $destination->tax,
+        'service_fee' => $destination->service_fee,
+        'ticket_status' => 'created',
+        'disability_status' => $request->disability_status,
+        'phone_no' => $request->phone_no,
+        'fayda_id' => $request->fayda_id,
+    ]);
 
     // Update cargo status to 'paid' if cargo is attached
-if ($request->cargo_id) {
-    \App\Models\Cargo::where('id', $request->cargo_id)->update(['status' => 'paid']);
-}
+    if ($request->cargo_id) {
+        \App\Models\Cargo::where('id', $request->cargo_id)->update(['status' => 'paid']);
+    }
 
-        if ($schedule) {
-            $schedule->ticket_created_by = auth()->id(); // Set ticketer's user id
+    if ($schedule) {
+        $schedule->ticket_created_by = auth()->id();
 
-            $schedule->boarding = $schedule->boarding + 1;
-            if ($schedule->boarding >= $schedule->capacity) {
-                $schedule->status = 'full';
-            } elseif ($schedule->status === 'queued') {
-                $schedule->status = 'on loading'; // <-- quotes!
-            }
-            $schedule->save();
-}
+        // Count only tickets with status 'created' or 'confirmed'
+        $boardingCount = Ticket::where('schedule_id', $schedule->id)
+            ->whereIn('ticket_status', ['created', 'confirmed'])
+            ->count();
+
+        $schedule->boarding = $boardingCount;
+
+        if ($boardingCount >= $schedule->capacity) {
+            $schedule->status = 'full';
+        } elseif ($schedule->status === 'queued') {
+            $schedule->status = 'on loading';
+        }
+        $schedule->save();
+    }
 
     return redirect()->route('ticketer.tickets.receipt', $ticket->id);
 }
-    
+
     
 
     // Optional: Show the ticket receipt after it's created
@@ -335,29 +334,28 @@ public function cancel($id)
         $ticket->cancelled_at = now();
         $ticket->save();
 
-        // Decrease the boarding count from related schedule
         $schedule = $ticket->schedule;
-        if ($schedule && $schedule->boarding > 0) {
-            $schedule->boarding -= 1;
-            if ($schedule->boarding < $schedule->capacity) {
-                $schedule->status = 'on loading'; // Change status back to on loading if not full
-            }
-            // If boarding count reaches 0, set status to queued
-            if ($schedule->boarding === 0) {
-                $schedule->status = 'queued';
-            }
-            // If the schedule is full, set status to full
-            if ($schedule->boarding >= $schedule->capacity) {
+        if ($schedule) {
+            // Recalculate boarding count for only 'created' or 'confirmed' tickets
+            $boardingCount = Ticket::where('schedule_id', $schedule->id)
+                ->whereIn('ticket_status', ['created', 'confirmed'])
+                ->count();
+
+            $schedule->boarding = $boardingCount;
+
+            if ($boardingCount >= $schedule->capacity) {
                 $schedule->status = 'full';
+            } elseif ($boardingCount === 0) {
+                $schedule->status = 'queued';
+            } else {
+                $schedule->status = 'on loading';
             }
-            // Save the updated schedule
             $schedule->save();
         }
     }
 
     return back()->with('success', 'Ticket cancelled successfully.');
 }
-
 
 
 }
