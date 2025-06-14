@@ -3,7 +3,7 @@
 @extends('traffic.layout.app')
 
 @section('content')
-<div class="max-w-2xl mx-auto mt-8 md:mt-12 p-4 md:p-8 bg-white shadow-xl rounded-2xl">
+<div class="max-w-2xl mx-auto p-4 md:p-8 bg-white shadow-xl rounded-2xl">
     <h2 class="text-2xl md:text-3xl font-extrabold text-blue-700 mb-6 text-center tracking-wide">Schedule Details</h2>
 
     @if(isset($schedule))
@@ -124,7 +124,7 @@
         @endif
 
         <div class="divide-y divide-gray-200">
-            <div class="flex flex-col md:flex-row md:justify-between py-4 items-center">
+            <div class="flex flex-col md:flex-row md:justify-between items-center">
                 <span class="font-semibold text-gray-600 text-xl md:text-2xl">Schedule UID:</span>
                 <span class="text-gray-900 text-xl md:text-2xl break-all">{{ $schedule->schedule_uid }}</span>
                 <span class="text-gray-900 font-bold px-4 py-2 text-2xl rounded-full 
@@ -142,13 +142,19 @@
                 <span class="text-gray-900 text-xl md:text-2xl">{{ $schedule->date ?? ($schedule->scheduled_at ?? '-') }}</span>
             </div>
             <div class="flex flex-col md:flex-row md:justify-between py-4 items-center">
+                <span class="font-semibold text-gray-600 text-xl md:text-2xl">Wellgo :</span>
+                <span class="text-gray-900 text-xl md:text-2xl">{{ $schedule->wellgo_at }}</span>
+            </div>
+            <div class="flex flex-col md:flex-row md:justify-between py-4 items-center">
+                <span class="font-semibold text-gray-600 text-xl md:text-2xl">Wellgo By:</span>
+                <span class="text-gray-900 text-xl md:text-2xl">{{ $schedule->traffic_name }}</span>
+            </div>
+           
+            <div class="flex flex-col md:flex-row md:justify-between py-4 items-center">
                 <span class="font-semibold text-gray-600 text-xl md:text-2xl">Destination:</span>
                 <span class="text-gray-900 text-xl md:text-2xl">{{ $schedule->destination->destination_name }}</span>
             </div>
-            <div class="flex flex-col md:flex-row md:justify-between py-4 items-center">
-                <span class="font-semibold text-gray-600 text-xl md:text-2xl">Tariff:</span>
-                <span class="text-gray-900 text-xl md:text-2xl">{{ $schedule->destination->tariff }} ETB</span>
-            </div>
+         
             <div class="py-4">
                 <span class="font-semibold text-gray-600 block mb-2 text-xl md:text-2xl">Bus Information:</span>
                 @if(isset($schedule->bus) && is_object($schedule->bus))
@@ -159,7 +165,7 @@
                         <div><span class="font-semibold">Redat Name:</span> {{ $schedule->bus->redat_name }}</div>
                         <div><span class="font-semibold">Level:</span> {{ $schedule->bus->level }}</div>
                         <div><span class="font-semibold">Total Seats:</span> {{ $schedule->bus->total_seats }}</div>
-                        <div><span class="font-semibold">Model Year:</span> {{ $schedule->bus->model_year }}</div>
+                       
                         <div><span class="font-semibold">Model:</span> {{ $schedule->bus->model }}</div>
                         <div><span class="font-semibold">Bolo ID:</span> {{ $schedule->bus->bolo_id }}</div>
                         <div><span class="font-semibold">Motor Number:</span> {{ $schedule->bus->motor_number }}</div>
@@ -173,11 +179,11 @@
                 <span class="font-semibold text-gray-600 block mb-2 text-xl md:text-2xl">Destination Details:</span>
                 @if(isset($schedule->destination) && is_object($schedule->destination))
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 text-gray-800 text-lg md:text-2xl">
-                        <div><span class="font-semibold">Name:</span> {{ $schedule->destination->destination_name }}</div>
+                       
                         <div><span class="font-semibold">From:</span> {{ $schedule->destination->start_from }}</div>
-                        <div><span class="font-semibold">Tariff:</span> {{ $schedule->destination->tariff }}</div>
-                        <div><span class="font-semibold">Tax:</span> {{ $schedule->destination->tax }}</div>
-                        <div><span class="font-semibold">Service Fee:</span> {{ $schedule->destination->service_fee }}</div>
+                         <div><span class="font-semibold">To:</span> {{ $schedule->destination->destination_name }}</div>
+                        <div><span class="font-semibold">Tariff:</span> {{ $schedule->destination->tariff }} Birr</div>
+                       
                     </div>
                 @else
                     <span class="text-gray-400 text-2xl">No destination info</span>
