@@ -83,15 +83,15 @@ $ageStatusAmharic = [
 
         <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition duration-300 mt-8">
             <h4 class="text-xl font-semibold text-gray-700 mb-4">👫 Passengers by Gender (Today)</h4>
-            <canvas id="genderChart" style="width:200px; height:200px; max-width:200px; max-height:200px;"></canvas>
+            <canvas id="genderChart" style="width:200px; height:200px; max-width:200px; max-height:400px;"></canvas>
         </div>
         <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition duration-300 mt-8">
             <h4 class="text-xl font-semibold text-gray-700 mb-4">🧑‍🦱 Passengers by Age Status (Today)</h4>
-            <canvas id="ageStatusChart" height="80"></canvas>
+            <canvas id="ageStatusChart" height="40"></canvas>
         </div>
         <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition duration-300 mt-8">
             <h4 class="text-xl font-semibold text-gray-700 mb-4">Passengers by disability status (Today)</h4>
-            <canvas id="disabilityChart" width="200" height="100"></canvas> <!-- Adjusted size -->
+            <canvas id="disabilityChart" style="width:200px; height:400px; max-width:900px; max-height:300px;"></canvas> <!-- Adjusted size -->
         </div>
     </div>
 </div>

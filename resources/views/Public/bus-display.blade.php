@@ -60,7 +60,8 @@
 
     @php
         $busColors = ['#fbbf24', '#60a5fa', '#34d399', '#f87171', '#a78bfa', '#f472b6', '#facc15', '#38bdf8', '#fb7185', '#4ade80'];
-        $destArray = $destinations->values(); // Ensure it's a collection with numeric keys
+        // Use unique() to remove duplicate destinations
+        $destArray = $destinations->unique('destination_name')->values(); // Ensure it's a collection with numeric keys
     @endphp
 
     <div id="card-rotator" class="grid grid-cols-1 md:grid-cols-2 gap-10">
@@ -132,7 +133,9 @@
                             <div class="flex flex-col md:flex-row gap-2 md:items-center">
                                 <span class="font-semibold text-gray-900">ታርጋ:</span>
                                 <span>${schedule.bus?.targa ?? 'N/A'}</span>
-                                <span class="text-base text-gray-400">${schedule.created_at_human ?? ''}</span>
+                           
+
+                                
                             </div>
                             <div class="flex items-center gap-3 mt-2 md:mt-0">
                                 ${
