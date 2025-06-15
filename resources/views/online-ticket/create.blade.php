@@ -32,9 +32,10 @@
 
                 <a href="#"
                    class="block mt-4 text-center bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700 transition">
-                    ቲኬት ይቁረጡ
+                    ቲኬት ይቁጡ
                 </a>
             </div>
+            
         </div>
     @empty
         <p class="col-span-full text-center text-gray-600 text-lg">የተመዘገቡ መንገዶች አልተገኙም።</p>
