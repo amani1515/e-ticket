@@ -1,4 +1,4 @@
-@extends('admin.layout.app')
+@extends('mahberat.layout.app')
 
 @section('content')
 <div class="container mx-auto mt-8 p-8 bg-white shadow-md rounded-md">
