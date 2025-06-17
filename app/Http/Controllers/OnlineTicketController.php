@@ -32,7 +32,7 @@ public function create()
     {
         $keyword = $request->input('search');
 
-        $schedules = BusSchedule::whereHas('bus', function ($q) {
+        $schedules = Schedule::whereHas('bus', function ($q) {
                 $q->where('distance', 'long'); // assuming enum or string type
             })
             ->where('destination', 'like', '%' . $keyword . '%')

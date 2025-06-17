@@ -28,14 +28,13 @@
                 <p><span class="font-semibold">መድረሻ:</span> {{ $schedule->destination->destination_name }}</p>
                 <p><span class="font-semibold">የመነሻ ሰዓት:</span> {{ \Carbon\Carbon::parse($schedule->departure_time)->format('g:i A') }}</p>
                 <p><span class="font-semibold">ታሪፍ:</span> {{ number_format($schedule->destination->tariff, 2) }} ብር</p>
-                <p><span class="font-semibold">ቀሪ ቲኬቶች:</span> {{ $schedule->bus->capacity - $schedule->boarding }}</p>
+                <p><span class="font-semibold">ቀሪ ቲኬት:</span> {{ $schedule->bus->capacity - $schedule->boarding }}</p>
 
                 <a href="#"
                    class="block mt-4 text-center bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700 transition">
-                    ቲኬት ይቁጡ
+                    ቲኬት ይቁረጡ
                 </a>
             </div>
-            
         </div>
     @empty
         <p class="col-span-full text-center text-gray-600 text-lg">የተመዘገቡ መንገዶች አልተገኙም።</p>
