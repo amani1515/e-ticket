@@ -16,6 +16,6 @@ class PublicDisplayController extends Controller
             }
         ])->get();
 
-        return view('public.bus-display', compact('destinations'));
+        return view('Public.bus-display', compact('destinations'));
     }
 }
