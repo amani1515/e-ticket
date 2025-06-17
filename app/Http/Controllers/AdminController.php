@@ -114,7 +114,7 @@ elseif($usertype == 'headoffice' || $usertype == 'admin')
             }
              else if($usertype == 'hisabshum')
             {
-                return view('hisabshum.index');
+                return view('hisabShum.index');
             }
             else
             {
