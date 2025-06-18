@@ -1,7 +1,13 @@
 <?php
 
-use App\Http\Controllers\Admin\AdminCashReportController;
+// web.php - Main Route Definitions for the E-Ticket System
+// -------------------------------------------------------
+// This file defines all web routes for the application, grouped by feature and user role.
+// Categories: Admin, Ticketer, Mahberat, Traffic, CargoMan, HisabShum, Public, Shop, Online Ticket
+// Repetitive routes are grouped using route groups, prefixes, and resource controllers where possible.
+
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\AdminCashReportController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\DestinationController;
@@ -25,14 +31,16 @@ use App\Http\Controllers\HisabShum\PaidReportController;
 use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\BackupController;
 
-
-
-
-
+// --------------------
+// Public Routes
+// --------------------
 Route::get('/', function () {
     return view('welcome');
 });
 
+// --------------------
+// Authenticated Dashboard Redirect
+// --------------------
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
@@ -41,199 +49,156 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return redirect('/home');
     })->name('dashboard');
-
-   
 });
 
-
-route::get('/home', [AdminController::class, 'index']);
-
-Route::view('/admin', 'admin.index')->name('admin.index');
+// --------------------
+// Admin Routes
+// --------------------
+Route::get('/home', [AdminController::class, 'index']);
 Route::get('/admin', [DashboardReportsController::class, 'index'])->name('admin.index');
 
-
-// admin routes for user function
+// User Management
 Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/users', [UserController::class, 'index'])->name('users.index');
-    Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
-    Route::post('/users', [UserController::class, 'store'])->name('users.store');
+    Route::resource('users', UserController::class)->except(['show', 'edit', 'update', 'destroy']);
+    Route::get('users/{id}', [UserController::class, 'show'])->name('users.show');
+    Route::get('users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
+    Route::put('users/{id}', [UserController::class, 'update'])->name('users.update');
+    Route::delete('users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
 });
-Route::prefix('admin')->middleware(['auth'])->group(function () {
-    Route::get('/users', [UserController::class, 'index'])->name('admin.users.index');
-    Route::get('/users/{id}', [UserController::class, 'show'])->name('admin.users.show');
-    Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('admin.users.edit');
-    Route::put('/users/{id}', [UserController::class, 'update'])->name('admin.users.update');
-    Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('admin.users.destroy');
-});
-// Admin destination routes
 
+// Destinations
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('destinations', DestinationController::class);
 });
 
-Route::get('/balehabt/dashboard', [\App\Http\Controllers\Balehabt\BusController::class, 'index'])->middleware('auth');
+// Bus Management
+Route::get('/admin/buses', [BusController::class, 'index'])->name('admin.buses.index');
+Route::get('/admin/bus-reports', [BusReportController::class, 'index'])->name('admin.bus.reports');
+Route::get('/admin/buses/banner/{id}', [BusController::class, 'banner'])->name('admin.buses.banner');
 
+// Passenger Reports
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('passenger-report', [PassengersReportController::class, 'index'])->name('passenger-report');
+    Route::get('passenger-report/export', [PassengersReportController::class, 'export'])->name('passenger.report.export');
+    Route::get('passenger-report/{id}', [PassengersReportController::class, 'show'])->name('passenger-report.show');
+    Route::delete('passenger-report/{id}', [PassengersReportController::class, 'destroy'])->name('passenger-report.destroy');
+    Route::put('passenger-report/{id}/refund', [PassengersReportController::class, 'refund'])->name('passenger-report.refund');
+    Route::get('passenger-report/print-all', [PassengerReportController::class, 'printAll'])->name('passenger.report.print-all');
+});
 
-
-Route::get('/tickets/report', [TicketController::class, 'report'])->name('ticketer.tickets.report')->middleware('auth');
-
-Route::get('/ticketer/tickets/report', [TicketController::class, 'report'])->name('ticketer.tickets.report');
-Route::get('/ticketer/tickets/create', [TicketController::class, 'create'])->name('ticketer.tickets.create');
-Route::post('/ticketer/tickets/store', [TicketController::class, 'store'])->name('ticketer.tickets.store');
-Route::get('/ticketer/tickets/receipt/{ticketId}', [TicketController::class, 'showReceipt'])->name('ticketer.tickets.receipt');
-Route::get('/ticketer/tickets/scan', [TicketController::class, 'scan'])->name('ticketer.tickets.scan');
-Route::get('/ticketer/tickets/{id}/receipt', [TicketController::class, 'receipt'])->name('ticketer.tickets.receipt');
-Route::get('/ticketer/scan', [TicketController::class, 'showScanForm'])->name('ticketer.tickets.scan');
-Route::post('/ticketer/scan', [TicketController::class, 'processScan'])->name('ticketer.tickets.processScan');
-Route::get('/ticketer/first-queued-bus/{destination}', [App\Http\Controllers\Ticketer\TicketController::class, 'firstQueuedBus']);
-Route::post('/ticketer/increment-boarding/{destinationId}', [App\Http\Controllers\Ticketer\TicketController::class, 'incrementBoardingForFirstQueuedBus']); // web.php
-Route::get('/ticketer/schedule-report', [\App\Http\Controllers\Ticketer\ScheduleController::class, 'report'])->name('ticketer.schedule.report');
-Route::post('/ticketer/schedule/{schedule}/pay', [\App\Http\Controllers\Ticketer\ScheduleController::class, 'pay'])->name('ticketer.schedule.pay');
-Route::get('/ticketer/cargo-info/{uid}', [\App\Http\Controllers\Ticketer\TicketController::class, 'cargoInfo']);
-Route::put('/ticketer/tickets/{id}/update', [TicketController::class, 'update'])->name('ticketer.tickets.update');
-Route::post('/ticketer/tickets/{id}/cancel', [TicketController::class, 'cancel'])->name('tickets.cancel');
-
-Route::get('/ticketer/tickets/export', [App\Http\Controllers\Ticketer\TicketController::class, 'export'])
-    ->name('ticketer.tickets.export');
-
-Route::get('/admin/passenger-report', [PassengersReportController::class, 'index'])->name('admin.passenger-report');
-Route::get('/admin/passenger-report/export', [PassengersReportController::class, 'export'])->name('admin.passenger.report.export');
-Route::get('/admin/passenger-report/{id}', [PassengersReportController::class, 'show'])->name('admin.passenger-report.show');
-Route::delete('/admin/passenger-report/{id}', [PassengersReportController::class, 'destroy'])->name('admin.passenger-report.destroy');
-Route::get('/admin/passenger-report/print-all', [PassengerReportController::class, 'printAll'])->name('admin.passenger.report.print-all');
-Route::put('/admin/passenger-report/{id}/refund', [PassengersReportController::class, 'refund'])->name('admin.passenger-report.refund');
-
-Route::get('/admin', [DashboardReportsController::class, 'index'])->name('admin.index');
-
-
+// Mahberat Management
 Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::resource('mahberats', MahberatController::class)->only(['index', 'create', 'store']);
 });
-Route::get('/admin/mahberats', [MahberatController::class, 'index'])->name('admin.mahberats.index');
-Route::get('/admin/mahberats/create', [MahberatController::class, 'create'])->name('admin.mahberats.create');
-Route::post('/admin/mahberats', [MahberatController::class, 'store'])->name('admin.mahberats.store');
 
-Route::get('/admin/buses/banner/{id}', [BusController::class, 'banner'])->name('admin.buses.banner');
+// Cash Reports
+Route::get('/admin/cash-reports', [AdminCashReportController::class, 'index'])->name('admin.cash.reports');
+Route::post('/admin/cash-reports/{id}/mark-received', [AdminCashReportController::class, 'markAsReceived'])->name('admin.cash.reports.receive');
+
+// Backup
+Route::get('/admin/backup', [BackupController::class, 'backupDownload'])->name('admin.backup');
+
+// Schedule Reports
+Route::get('/admin/schedule-reports', [\App\Http\Controllers\Admin\ScheduleReportController::class, 'index'])->name('admin.schedule.reports');
+Route::get('/admin/reports/transactions', [TransactionController::class, 'index'])->name('admin.reports.transactions')->middleware('auth');
 Route::get('/admin/total-reports', [\App\Http\Controllers\Admin\TotalReportController::class, 'index'])->name('admin.total.reports');
-Route::get('/admin/passenger-report/export', [PassengersReportController::class, 'export'])
-    ->name('admin.passenger.report.export');
+
+// Cargo Settings
 Route::resource('admin/cargo-settings', \App\Http\Controllers\Admin\CargoSettingsController::class)
     ->only(['index', 'edit', 'update'])
     ->names('admin.cargo-settings');
 Route::post('/admin/cargo-settings/departure-fee', [\App\Http\Controllers\Admin\CargoSettingsController::class, 'updateDepartureFee'])->name('admin.cargo-settings.departure-fee');
 
-Route::get('/admin/schedule-reports', [\App\Http\Controllers\Admin\ScheduleReportController::class, 'index'])->name('admin.schedule.reports');
-Route::get('/admin/reports/transactions', [TransactionController::class, 'index'])
-    ->name('admin.reports.transactions')
-    ->middleware('auth');
-
-Route::get('/admin/backup', [BackupController::class, 'backupDownload'])->name('admin.backup');
-//mahberat
-Route::middleware(['auth', 'verified'])->prefix('mahberat')->name('mahberat.')->group(function () {
-    Route::get('/bus/create', [App\Http\Controllers\Mahberat\BusController::class, 'create'])->name('bus.create');
-    Route::post('/bus/store', [App\Http\Controllers\Mahberat\BusController::class, 'store'])->name('bus.store');
+// --------------------
+// Ticketer Routes
+// --------------------
+Route::middleware(['auth', 'verified'])->prefix('ticketer')->name('ticketer.')->group(function () {
+    Route::get('/tickets/report', [TicketController::class, 'report'])->name('tickets.report');
+    Route::get('/tickets/create', [TicketController::class, 'create'])->name('tickets.create');
+    Route::post('/tickets/store', [TicketController::class, 'store'])->name('tickets.store');
+    Route::get('/tickets/receipt/{ticketId}', [TicketController::class, 'showReceipt'])->name('tickets.receipt');
+    Route::get('/tickets/scan', [TicketController::class, 'scan'])->name('tickets.scan');
+    Route::get('/tickets/{id}/receipt', [TicketController::class, 'receipt'])->name('tickets.receipt');
+    Route::get('/scan', [TicketController::class, 'showScanForm'])->name('tickets.scan');
+    Route::post('/scan', [TicketController::class, 'processScan'])->name('tickets.processScan');
+    Route::get('/first-queued-bus/{destination}', [TicketController::class, 'firstQueuedBus']);
+    Route::post('/increment-boarding/{destinationId}', [TicketController::class, 'incrementBoardingForFirstQueuedBus']);
+    Route::get('/schedule-report', [\App\Http\Controllers\Ticketer\ScheduleController::class, 'report'])->name('schedule.report');
+    Route::post('/schedule/{schedule}/pay', [\App\Http\Controllers\Ticketer\ScheduleController::class, 'pay'])->name('schedule.pay');
+    Route::get('/cargo-info/{uid}', [TicketController::class, 'cargoInfo']);
+    Route::put('/tickets/{id}/update', [TicketController::class, 'update'])->name('tickets.update');
+    Route::post('/tickets/{id}/cancel', [TicketController::class, 'cancel'])->name('tickets.cancel');
+    Route::get('/tickets/export', [TicketController::class, 'export'])->name('tickets.export');
+    // Cash reports
+    Route::get('/cash-report', [\App\Http\Controllers\Ticketer\CashReportController::class, 'index'])->name('cash-report.index');
+    Route::post('/cash-report/submit', [\App\Http\Controllers\Ticketer\CashReportController::class, 'submit'])->name('cash-report.submit');
 });
-Route::middleware(['auth', 'verified'])->prefix('mahberat')->name('mahberat.')->group(function () {
-    Route::get('/buses', [App\Http\Controllers\Mahberat\BusController::class, 'index'])->name('bus.index');
-    Route::get('/bus/{bus}/edit', [App\Http\Controllers\Mahberat\BusController::class, 'edit'])->name('bus.edit');
-    Route::put('/bus/{bus}', [App\Http\Controllers\Mahberat\BusController::class, 'update'])->name('bus.update');
-    Route::delete('/bus/{bus}', [App\Http\Controllers\Mahberat\BusController::class, 'destroy'])->name('bus.destroy');
-});
 
-Route::middleware(['auth'])->prefix('mahberat')->name('mahberat.')->group(function () {
+// --------------------
+// Mahberat Routes
+// --------------------
+Route::middleware(['auth', 'verified'])->prefix('mahberat')->name('mahberat.')->group(function () {
+    Route::get('/buses', [\App\Http\Controllers\Mahberat\BusController::class, 'index'])->name('bus.index');
+    Route::get('/bus/create', [\App\Http\Controllers\Mahberat\BusController::class, 'create'])->name('bus.create');
+    Route::post('/bus/store', [\App\Http\Controllers\Mahberat\BusController::class, 'store'])->name('bus.store');
+    Route::get('/bus/{bus}/edit', [\App\Http\Controllers\Mahberat\BusController::class, 'edit'])->name('bus.edit');
+    Route::put('/bus/{bus}', [\App\Http\Controllers\Mahberat\BusController::class, 'update'])->name('bus.update');
+    Route::delete('/bus/{bus}', [\App\Http\Controllers\Mahberat\BusController::class, 'destroy'])->name('bus.destroy');
+    // Schedule management
     Route::get('/schedule', [ScheduleController::class, 'index'])->name('schedule.index');
     Route::get('/schedule/create', [ScheduleController::class, 'create'])->name('schedule.create');
     Route::post('/schedule', [ScheduleController::class, 'store'])->name('schedule.store');
 });
-Route::get('/mahberat/schedules/card-view', [App\Http\Controllers\Mahberat\ScheduleController::class, 'cardView'])->name('schedules.card-view');
-Route::get('/ticketer/get-first-queued-bus/{destination}', [App\Http\Controllers\Ticketer\TicketController::class, 'getFirstQueuedBus']);
-
-
-Route::get('/ticketer/tickets/report', [TicketController::class, 'reports'])->name('ticketer.tickets.report');
-
-//routes for cash reports
-Route::middleware(['auth', 'verified'])->prefix('ticketer')->name('ticketer.')->group(function () {
-    Route::get('/cash-report', [App\Http\Controllers\Ticketer\CashReportController::class, 'index'])->name('cash-report.index');
-    Route::post('/cash-report/submit', [App\Http\Controllers\Ticketer\CashReportController::class, 'submit'])->name('cash-report.submit');
-});
-
-
-// will be deleted   start here
-Route::get('/admin/cash-reports', [AdminCashReportController::class, 'index'])->name('admin.cash.reports');
-Route::post('/admin/cash-reports/{id}/mark-received', [AdminCashReportController::class, 'markAsReceived'])->name('admin.cash.reports.receive');
-
-
-
-//shop
-Route::get('/shop', [App\Http\Controllers\Shop\ShopController::class, 'index']);
-Route::post('/shop/tickets', [App\Http\Controllers\Shop\ShopController::class, 'store'])->name('shop.tickets.store');
-Route::get('/shop/tickets/success', [App\Http\Controllers\Shop\ShopController::class, 'success'])->name('shop.tickets.success');
-Route::get('/shop/tickets/cancel', [App\Http\Controllers\Shop\ShopController::class, 'cancel'])->name('shop.tickets.cancel');
-
-// up to here
-
-
-
-// Route for All Buses
-Route::get('/admin/buses', [BusController::class, 'index'])->name('admin.buses.index');
-
-// Route for Bus Report
-Route::get('/admin/bus-reports', [BusReportController::class, 'index'])->name('admin.bus.reports');
-
-Route::get('/bus-display', [PublicDisplayController::class, 'showAllSchedules']);
-
-
-//for hisab shum
-Route::get('/hisab-shum/pay/{schedule}', [\App\Http\Controllers\HisabShum\PaymentController::class, 'initiate'])->name('hisabShum.pay.schedule');
-Route::get('/hisab-shum/payment/callback', [\App\Http\Controllers\HisabShum\PaymentController::class, 'handleCallback'])->name('hisabShum.payment.callback');
-
-// routes/web.php or routes/hisabShum.php
-
-Route::get('/schedules/{schedule}/pay', [PaidReportController::class, 'showPayForm'])->name('hisabShum.schedule.payForm');
-Route::post('/schedules/{schedule}/pay', [PaidReportController::class, 'pay'])->name('hisabShum.schedule.pay');
-Route::get('/schedules/pay/callback', [PaidReportController::class, 'callback'])->name('hisabShum.schedule.callback');
-
-Route::get('/hisab-shum/paid-reports', [\App\Http\Controllers\HisabShum\PaidReportController::class, 'index'])->name('hisabShum.paidReports');
-Route::get('/hisab-shum/schedule/{schedule}/certificate', [\App\Http\Controllers\HisabShum\PaidReportController::class, 'certificate'])->name('hisabShum.certificate');
-Route::get('/hisab-shum/all-reports', [\App\Http\Controllers\HisabShum\AllReportController::class, 'index'])->name('hisabShum.allReports');
+Route::get('/mahberat/schedules/card-view', [\App\Http\Controllers\Mahberat\ScheduleController::class, 'cardView'])->name('schedules.card-view');
 Route::delete('/mahberat/schedule/{id}', [ScheduleController::class, 'destroy'])->name('mahberat.schedule.destroy');
+
+// --------------------
+// Traffic Routes
+// --------------------
 Route::post('/traffic/schedule-scan', [TrafficScheduleController::class, 'scan'])->name('traffic.schedule.scan');
 Route::post('/traffic/schedule/{schedule}/wellgo', [TrafficScheduleController::class, 'markWellgo'])->name('traffic.wellgo');
 Route::get('/traffic/schedule-scan', function () {
     return view('traffic.schedule.result');
 })->name('traffic.schedule.scan.form');
 
+// --------------------
+// HisabShum Routes
+// --------------------
+Route::get('/hisab-shum/pay/{schedule}', [\App\Http\Controllers\HisabShum\PaymentController::class, 'initiate'])->name('hisabShum.pay.schedule');
+Route::get('/hisab-shum/payment/callback', [\App\Http\Controllers\HisabShum\PaymentController::class, 'handleCallback'])->name('hisabShum.payment.callback');
+Route::get('/schedules/{schedule}/pay', [PaidReportController::class, 'showPayForm'])->name('hisabShum.schedule.payForm');
+Route::post('/schedules/{schedule}/pay', [PaidReportController::class, 'pay'])->name('hisabShum.schedule.pay');
+Route::get('/schedules/pay/callback', [PaidReportController::class, 'callback'])->name('hisabShum.schedule.callback');
+Route::get('/hisab-shum/paid-reports', [\App\Http\Controllers\HisabShum\PaidReportController::class, 'index'])->name('hisabShum.paidReports');
+Route::get('/hisab-shum/schedule/{schedule}/certificate', [\App\Http\Controllers\HisabShum\PaidReportController::class, 'certificate'])->name('hisabShum.certificate');
+Route::get('/hisab-shum/all-reports', [\App\Http\Controllers\HisabShum\AllReportController::class, 'index'])->name('hisabShum.allReports');
 
-
-Route::get('/balehabt/overall-bus-report', [BusController::class, 'overallBusReport'])->name('balehabt.overallBusReport');
-
-
-
-
-// CargoMan Home
-Route::get('/cargoman', [\App\Http\Controllers\CargoMan\HomeController::class, 'index'])->name('cargoMan.home');
-
-// Measure Cargo (Create)
-Route::get('/cargoman/cargo/create', [\App\Http\Controllers\CargoMan\CargoController::class, 'create'])->name('cargoMan.cargo.create');
-Route::post('/cargoman/cargo', [\App\Http\Controllers\CargoMan\CargoController::class, 'store'])->name('cargoMan.cargo.store');
-
-// All Cargos (Index)
-Route::get('/cargoman/cargo', [\App\Http\Controllers\CargoMan\CargoController::class, 'index'])->name('cargoMan.cargo.index');
-Route::get('/cargoman/first-queued-schedule/{destination}', [\App\Http\Controllers\CargoMan\CargoController::class, 'firstQueuedSchedule']);
-Route::get('/cargoman/cargo/{id}/receipt', [\App\Http\Controllers\CargoMan\CargoController::class, 'receipt'])->name('cargoMan.cargo.receipt');
-Route::get('/cargoman/available-schedules/{destination}', [\App\Http\Controllers\CargoMan\CargoController::class, 'availableSchedules']);
-
-Route::middleware(['auth'])->group(function () {
-    Route::get('/headoffice', [HeadOfficeAdminReadOnlyController::class, 'dashboard'])
-        ->name('headoffice.dashboard');
-    // Add more routes for other admin pages as needed, all pointing to headOffice views
+// --------------------
+// CargoMan Routes
+// --------------------
+Route::prefix('cargoman')->name('cargoMan.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\CargoMan\HomeController::class, 'index'])->name('home');
+    Route::get('/cargo/create', [\App\Http\Controllers\CargoMan\CargoController::class, 'create'])->name('cargo.create');
+    Route::post('/cargo', [\App\Http\Controllers\CargoMan\CargoController::class, 'store'])->name('cargo.store');
+    Route::get('/cargo', [\App\Http\Controllers\CargoMan\CargoController::class, 'index'])->name('cargo.index');
+    Route::get('/first-queued-schedule/{destination}', [\App\Http\Controllers\CargoMan\CargoController::class, 'firstQueuedSchedule']);
+    Route::get('/cargo/{id}/receipt', [\App\Http\Controllers\CargoMan\CargoController::class, 'receipt'])->name('cargo.receipt');
+    Route::get('/available-schedules/{destination}', [\App\Http\Controllers\CargoMan\CargoController::class, 'availableSchedules']);
 });
 
+// --------------------
+// Public Display & Shop
+// --------------------
+Route::get('/bus-display', [PublicDisplayController::class, 'showAllSchedules']);
+Route::get('/shop', [\App\Http\Controllers\Shop\ShopController::class, 'index']);
+Route::post('/shop/tickets', [\App\Http\Controllers\Shop\ShopController::class, 'store'])->name('shop.tickets.store');
+Route::get('/shop/tickets/success', [\App\Http\Controllers\Shop\ShopController::class, 'success'])->name('shop.tickets.success');
+Route::get('/shop/tickets/cancel', [\App\Http\Controllers\Shop\ShopController::class, 'cancel'])->name('shop.tickets.cancel');
 
-
-// online ticket create
-Route::get('/online-ticket/create', [App\Http\Controllers\OnlineTicketController::class, 'create'])->name('online-ticket.create');
+// --------------------
+// Online Ticket
+// --------------------
 use App\Http\Controllers\OnlineTicketController;
-
+Route::get('/online-ticket/create', [OnlineTicketController::class, 'create'])->name('online-ticket.create');
 Route::get('/online-ticket', [OnlineTicketController::class, 'index'])->name('online-ticket.index');
 Route::get('/online-ticket/search', [OnlineTicketController::class, 'search'])->name('online-ticket.search');
