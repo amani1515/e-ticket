@@ -33,13 +33,11 @@ class ScheduleController extends Controller
     {
         $user = Auth::user();
         $mahberat = $user->mahberat;
-
         // Get destinations and active buses for this Mahberat
         $destinations = $mahberat->destinations()->get();
         $buses = Bus::where('mahberat_id', $mahberat->id)
                     ->where('status', 'active')
                     ->get();
-
         return view('mahberat.schedule.create', compact('destinations', 'buses'));
     }
 
