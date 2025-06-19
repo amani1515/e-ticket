@@ -54,7 +54,7 @@
                 <div class="flex flex-col gap-3">
                     <label for="driver_phone" class="font-semibold text-gray-700">Driver Phone <span
                             class="text-red-500">*</span></label>
-                    <input type="text" id="driver_phone" name="driver_phone" placeholder="Driver Phone" required
+                    <input type="text" id="driver_phone" name="driver_phone" placeholder="phone ex 09..." required
                         class="input-field" maxlength="10" pattern="[0-9]{1,10}"
                         title="Please enter only numbers (maximum 10 digits)"
                         oninput="this.value = this.value.replace(/[^0-9]/g, '')">
