@@ -20,7 +20,14 @@ class ResetUserPassword implements ResetsUserPasswords
     {
         Validator::make($input, [
             'password' => $this->passwordRules(),
+        ], [
+            'password.min' => 'Password must be at least 8 characters.',
+            'password.mixed' => 'Password must contain both uppercase and lowercase letters.',
+            'password.numbers' => 'Password must include at least one number.',
+            'password.symbols' => 'Password must include at least one special character.',
+            'password.uncompromised' => 'This password has appeared in a data leak. Please choose a different one.',
         ])->validate();
+
 
         $user->forceFill([
             'password' => Hash::make($input['password']),
