@@ -51,51 +51,56 @@ class UserController extends Controller
     // Store the newly created user in the database
     // Inside the store method of UserController
 
-    public function store(Request $request)
-    {
-        // Validate input
-        if(auth::id())
-        {
-            $usertype = Auth::user()->usertype;
-            if($usertype == 'admin')
-            {
-                $validatedData = $request->validate([
-                    'name' => 'required|string|max:255|unique:users,name',
-                    'email' => 'required|email|unique:users',
-                    'phone' => ['required', 'regex:/^09\d{8}$/'],
-                    'usertype' => 'required|string',
-                    'password' => 'required|string|confirmed',
-                    'mahberat_id' => 'nullable|exists:mahberats,id', // 👈 validate mahberat_id
-                    'assigned_destinations' => 'nullable|array',
-                    'assigned_destinations.*' => 'exists:destinations,id', // Validate that destination IDs exist
-                ]);
-
-                // Create the user
-                $user = User::create([
-                    'name' => $validatedData['name'],
-                    'email' => $validatedData['email'],
-                    'phone' => $validatedData['phone'],
-                    'usertype' => $validatedData['usertype'],
-                    'password' => Hash::make($validatedData['password']),
-                    'mahberat_id' => $validatedData['mahberat_id'] ?? null, // 👈 save to user
-                ]);
-
-                // Assign the selected destinations to the user
-                if (isset($validatedData['assigned_destinations'])) {
-                    $user->destinations()->sync($validatedData['assigned_destinations']);
-                }
-
-                // Redirect or respond back
-                return redirect()->route('admin.users.index')->with('success', 'User created successfully!');
 
 
+public function store(Request $request)
+{
+    if (Auth::id()) {
+        $usertype = Auth::user()->usertype;
+
+        if ($usertype === 'admin') {
+            $validatedData = $request->validate([
+                'name' => 'required|string|max:255|unique:users,name',
+                'email' => 'required|email|unique:users',
+                'phone' => ['required', 'regex:/^09\d{8}$/'],
+                'usertype' => 'required|string',
+                'password' => 'required|string|confirmed',
+                'mahberat_id' => 'nullable|exists:mahberats,id',
+                'assigned_destinations' => 'nullable|array',
+                'assigned_destinations.*' => 'exists:destinations,id',
+            ]);
+
+            // Sanitize input values to protect against XSS
+            $sanitized = [
+                'name' => strip_tags($validatedData['name']),
+                'email' => strip_tags($validatedData['email']),
+                'phone' => strip_tags($validatedData['phone']),
+                'usertype' => strip_tags($validatedData['usertype']),
+                'mahberat_id' => $validatedData['mahberat_id'] ?? null,
+            ];
+
+            // Create user with sanitized values
+            $user = User::create([
+                'name' => $sanitized['name'],
+                'email' => $sanitized['email'],
+                'phone' => $sanitized['phone'],
+                'usertype' => $sanitized['usertype'],
+                'password' => Hash::make($validatedData['password']),
+                'mahberat_id' => $sanitized['mahberat_id'],
+            ]);
+
+            // Assign destinations (no need to sanitize — already validated)
+            if (isset($validatedData['assigned_destinations'])) {
+                $user->destinations()->sync($validatedData['assigned_destinations']);
             }
-            else 
-            {
-                return view('errors.403');
-            }
+
+            return redirect()->route('admin.users.index')->with('success', 'User created successfully!');
+        } else {
+            return view('errors.403');
         }
     }
+}
+
 
     public function destroy(User $user)
     {

@@ -142,5 +142,13 @@
         toggleFields(); // run on page load
     });
 </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const phoneInput = document.getElementById('phone');
+        phoneInput.addEventListener('input', function () {
+            this.value = this.value.replace(/[^\d]/g, '').slice(0, 10); // digits only, max 10
+        });
+    });
+</script>
 
 @endsection
