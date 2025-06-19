@@ -62,7 +62,7 @@ class UserController extends Controller
                 $validatedData = $request->validate([
                     'name' => 'required|string|max:255|unique:users,name',
                     'email' => 'required|email|unique:users',
-                    'phone' => 'required|string',
+                    'phone' => ['required', 'regex:/^09\d{8}$/'],
                     'usertype' => 'required|string',
                     'password' => 'required|string|confirmed',
                     'mahberat_id' => 'nullable|exists:mahberats,id', // 👈 validate mahberat_id

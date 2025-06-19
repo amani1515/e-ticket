@@ -11,6 +11,7 @@
     - Data for destinations and mahberats is injected from the controller
     - Styled with Tailwind CSS classes
 --}}
+
 @extends('admin.layout.app')
 @include('admin.users.modals')
 
@@ -43,7 +44,7 @@
         <!-- Phone: User's phone number -->
         <div>
             <label for="phone" class="block font-medium">Phone</label>
-            <input type="text" name="phone" id="phone" value="{{ old('phone') }}"
+            <input type="text" name="phone" id="phone" value="{{ old('phone') }}" placeholder="phone ex 09..." 
                 class="w-full px-4 py-2 border rounded">
             @error('phone')
                 <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -122,4 +123,24 @@
                 class="w-full bg-yellow-500 text-white py-2 px-4 rounded hover:bg-yellow-600 transition">Add User</button>
         </div>
     </form>
+
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const userTypeSelect = document.getElementById('usertype');
+        const destinationDiv = document.getElementById('assigned_destinations').closest('div');
+        const mahberatDiv = document.getElementById('mahberat_id').closest('div');
+
+        function toggleFields() {
+            const selected = userTypeSelect.value;
+
+            destinationDiv.style.display = (selected === 'ticketer') ? 'block' : 'none';
+            mahberatDiv.style.display = (selected === 'mahberat') ? 'block' : 'none';
+        }
+
+        userTypeSelect.addEventListener('change', toggleFields);
+        toggleFields(); // run on page load
+    });
+</script>
+
 @endsection
