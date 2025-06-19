@@ -87,7 +87,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 });
 
 // Mahberat Management
-Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth',])->prefix('admin')->name('admin.')->group(function () {
     Route::resource('mahberats', MahberatController::class)->only(['index', 'create', 'store']);
 });
 
