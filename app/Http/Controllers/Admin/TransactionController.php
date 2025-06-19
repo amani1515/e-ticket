@@ -15,6 +15,7 @@ class TransactionController extends Controller
 {
    public function index(Request $request)
 {
+    if 
     $query = Transaction::query();
 
     if ($request->filled('level')) {
