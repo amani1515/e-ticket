@@ -9,24 +9,34 @@
         @csrf
 
         <!-- Destination Name -->
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Destination Name</label>
-            <input 
-                type="text" 
-                name="destination_name" 
-                class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-yellow-500" 
-                required>
-        </div>
+       <!-- Destination Name -->
+<div>
+    <label class="block text-sm font-medium text-gray-700 mb-1">Destination Name</label>
+    <input 
+        type="text" 
+        name="destination_name" 
+        id="destination_name"
+        maxlength="100"
+        onpaste="return false"
+        class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-yellow-500"
+        required>
+</div>
 
-        <!-- Start From -->
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Start From</label>
-            <input 
-                type="text" 
-                name="start_from" 
-                class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-yellow-500" 
-                required>
-        </div>
+<!-- Start From -->
+<div>
+    <label class="block text-sm font-medium text-gray-700 mb-1">Start From</label>
+    <input 
+        type="text" 
+        name="start_from" 
+        id="start_from"
+        maxlength="100"
+        onpaste="return false"
+        class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-yellow-500"
+        required>
+</div>
+
+
+
 
         <!-- Distance -->
         <div>
@@ -83,4 +93,19 @@
         </div>
     </form>
 </div>
+
+<!-- JS: Restrict input to letters, spaces, basic punctuation -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const safeInput = (element) => {
+            element.addEventListener('input', function () {
+                // Only allow letters, spaces, hyphens, and basic punctuation
+                this.value = this.value.replace(/[^A-Za-zአ-ፐ0-9\s\-.,]/g, '').slice(0, 100);
+            });
+        };
+
+        safeInput(document.getElementById('destination_name'));
+        safeInput(document.getElementById('start_from'));
+    });
+</script>
 @endsection
