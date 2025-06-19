@@ -1,5 +1,14 @@
-@vite(['resources/css/app.css', 'resources/js/app.js'])
-<script src="//unpkg.com/alpinejs" defer></script>
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>{{ config('app.name', 'E-Ticket') }} - Ticketer</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script src="//unpkg.com/alpinejs" defer></script>
+</head>
 
 <body class="bg-gray-100 text-gray-900">
     <div x-data="{ open: false }" class="flex h-screen overflow-hidden">
@@ -32,9 +41,11 @@
             <div class="hidden lg:block p-4 bg-white shadow">
                 @include('ticketer.layout.ticketerHeader')
             </div>
-            <main class="p-2 bg-yellow-600 min-h-screen>
+            <main class="p-2 bg-yellow-600 min-h-screen">
                 @yield('content')
             </main>
         </div>
     </div>
 </body>
+
+</html>

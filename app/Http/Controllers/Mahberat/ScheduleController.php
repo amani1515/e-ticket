@@ -85,10 +85,7 @@ class ScheduleController extends Controller
             'destination_id'  => $request->destination_id,
             'scheduled_by'    => $user->id,
             'mahberat_id'     => $mahberatId,
-            'scheduled_at'    =>
-        'scheduled_by' => $user->id,
-        'mahberat_id' => $mahberatId,
-        'scheduled_at' => now(),
+            'scheduled_at' => now(),  
         'status' => 'queued',
         'capacity' => $bus->total_seats,
         'cargo_capacity' => $bus->cargo_capacity,
