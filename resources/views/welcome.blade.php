@@ -59,7 +59,7 @@
         <div class="max-w-4xl mx-auto px-4 text-center">
             <h2 class="text-5xl font-extrabold mb-4 leading-tight drop-shadow-md">ዘመናዊ የህዝብ አውቶብስ ትኬት አስተዳደር</h2>
             <p class="text-xl mb-8 opacity-90">የአውቶቡስ ትኬቶችን፣ ሾፌሮችን እና መርሃ ግብሮችን ለማስተዳደር ቀላል፣ ፈጣን እና የተደራጀ መድረክ - ለውስጣዊ
-                ሰራተኞች አጠቃቀም የተሰራ።</p>
+                ሰራተኞች አጠቃቀም የተሰራ system።</p>
                 
 {{-- <a href="{{ route('login') }}"
    class="bg-white text-yellow-700 font-bold px-8 py-3 rounded-full shadow-lg transition-all duration-300 ease-in-out transform hover:bg-gray-100 hover:scale-110 hover:shadow-xl active:scale-95 focus:outline-none focus:ring-4 focus:ring-yellow-300 animate-bounce">
