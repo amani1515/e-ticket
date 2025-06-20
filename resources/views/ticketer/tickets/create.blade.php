@@ -235,24 +235,31 @@
                         return;
                     }
 
-                    fetch('/ticketer/cargo-info/' + encodeURIComponent(uid), {
-                            method: 'GET',
+                    fetch('/ticketer/cargo-info', {
+                            method: 'POST',
                             headers: {
+                                'Content-Type': 'application/json',
                                 'X-Requested-With': 'XMLHttpRequest',
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
                                     ?.getAttribute('content') || ''
-                            }
+                            },
+                            body: JSON.stringify({
+                                cargo_uid: uid
+                            })
                         })
                         .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Network response was not ok');
-                            }
-                            return response.json();
+                            return response.json().then(data => {
+                                if (!response.ok) {
+                                    throw new Error(data.error || 'Access denied');
+                                }
+                                return data;
+                            });
                         })
                         .then(data => {
                             if (data && data.id) {
+                                // Don't display cargo_uid for security - use destination instead
                                 infoDiv.textContent =
-                                    `Cargo found: ${sanitizeInput(data.cargo_uid)}, Weight: ${sanitizeInput(data.weight)} kg`;
+                                    `Cargo found: Weight: ${sanitizeInput(data.weight)} kg - ${sanitizeInput(data.destination)}`;
                                 infoDiv.className = 'text-sm text-green-700 mt-2';
                                 cargoIdInput.value = sanitizeInput(data.id);
                             } else {

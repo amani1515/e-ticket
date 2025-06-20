@@ -30,6 +30,7 @@ use App\Http\Controllers\CargoMan\CargoController;
 use App\Http\Controllers\HisabShum\PaidReportController;
 use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\BackupController;
+use App\Http\Controllers\Admin\SmsTemplateController;
 
 // --------------------
 // Public Routes
@@ -111,6 +112,11 @@ Route::resource('admin/cargo-settings', \App\Http\Controllers\Admin\CargoSetting
     ->names('admin.cargo-settings');
 Route::post('/admin/cargo-settings/departure-fee', [\App\Http\Controllers\Admin\CargoSettingsController::class, 'updateDepartureFee'])->name('admin.cargo-settings.departure-fee');
 
+// SMS Templates
+Route::middleware(['auth', 'verified', 'prevent.caching'])->prefix('admin')->name('admin.')->group(function () {
+    Route::resource('sms-template', SmsTemplateController::class);
+});
+
 // --------------------
 // Ticketer Routes
 // --------------------
@@ -127,7 +133,8 @@ Route::middleware(['auth', 'verified', 'prevent.caching'])->prefix('ticketer')->
     Route::post('/increment-boarding/{destinationId}', [TicketController::class, 'incrementBoardingForFirstQueuedBus']);
     Route::get('/schedule-report', [\App\Http\Controllers\Ticketer\ScheduleController::class, 'report'])->name('schedule.report');
     Route::post('/schedule/{schedule}/pay', [\App\Http\Controllers\Ticketer\ScheduleController::class, 'pay'])->name('schedule.pay');
-    Route::get('/cargo-info/{uid}', [TicketController::class, 'cargoInfo']);
+    // Secure cargo info route - use POST with encrypted payload instead of GET with UID in URL
+    Route::post('/cargo-info', [TicketController::class, 'cargoInfo'])->name('cargo.info');
     Route::put('/tickets/{id}/update', [TicketController::class, 'update'])->name('tickets.update');
     Route::post('/tickets/{id}/cancel', [TicketController::class, 'cancel'])->name('tickets.cancel');
     Route::get('/tickets/export', [TicketController::class, 'export'])->name('tickets.export');

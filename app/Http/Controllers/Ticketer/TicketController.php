@@ -138,14 +138,57 @@ public function store(Request $request)
 
 
 
-    public function report()
+    public function report(Request $request)
 {
-    $tickets = Ticket::with('destination')
-        ->where('creator_user_id', Auth::id())
-        ->latest()
-        ->get();
+    $query = Ticket::query();
 
-    return view('ticketer.tickets.report', compact('tickets'));
+    // Filter tickets created by the current user
+    $query->where('creator_user_id', auth()->id());
+
+    if ($request->filled('destination_id')) {
+        $query->where('destination_id', $request->destination_id);
+    }
+
+    if ($request->filled('ticket_status')) {
+        $query->where('ticket_status', $request->ticket_status);
+    }
+
+    if ($request->filled('search')) {
+    $search = $request->search;
+
+    $query->where(function ($q) use ($search) {
+        $q->where('id', $search) // Exact ticket ID match
+          ->orWhereHas('bus', function ($busQuery) use ($search) {
+              $busQuery->where('bus_id', 'like', '%' . $search . '%'); // Partial match on bus targa
+          });
+    });
+}
+
+
+    if ($request->filled('date_filter')) {
+        switch ($request->date_filter) {
+            case 'today':
+                $query->whereDate('departure_datetime', now()->toDateString());
+                break;
+            case 'yesterday':
+                $query->whereDate('departure_datetime', now()->subDay()->toDateString());
+                break;
+            case 'this_week':
+                $query->whereBetween('departure_datetime', [now()->startOfWeek(), now()->endOfWeek()]);
+                break;
+            case 'two_days_before':
+                $query->whereDate('departure_datetime', now()->subDays(2)->toDateString());
+                break;
+        }
+    }
+
+    // Fetch destinations assigned to the current user
+    $user = auth()->user()->load('destinations');
+    $destinations = $user->destinations;
+
+    $tickets = $query->with(['destination', 'bus'])->latest()->paginate(10);
+
+    return view('ticketer.tickets.report', compact('tickets', 'destinations'));
 }
 public function showScanForm()
 {
@@ -226,59 +269,7 @@ public function getFirstQueuedBus($destinationId)
 }
 
 
-// tickets report for filter purpose
-public function reports(Request $request)
-{
-    $query = Ticket::query();
 
-    // Filter tickets created by the current user
-    $query->where('creator_user_id', auth()->id());
-
-    if ($request->filled('destination_id')) {
-        $query->where('destination_id', $request->destination_id);
-    }
-
-    if ($request->filled('ticket_status')) {
-        $query->where('ticket_status', $request->ticket_status);
-    }
-
-    if ($request->filled('search')) {
-    $search = $request->search;
-
-    $query->where(function ($q) use ($search) {
-        $q->where('id', $search) // Exact ticket ID match
-          ->orWhereHas('bus', function ($busQuery) use ($search) {
-              $busQuery->where('bus_id', 'like', '%' . $search . '%'); // Partial match on bus targa
-          });
-    });
-}
-
-
-    if ($request->filled('date_filter')) {
-        switch ($request->date_filter) {
-            case 'today':
-                $query->whereDate('departure_datetime', now()->toDateString());
-                break;
-            case 'yesterday':
-                $query->whereDate('departure_datetime', now()->subDay()->toDateString());
-                break;
-            case 'this_week':
-                $query->whereBetween('departure_datetime', [now()->startOfWeek(), now()->endOfWeek()]);
-                break;
-            case 'two_days_before':
-                $query->whereDate('departure_datetime', now()->subDays(2)->toDateString());
-                break;
-        }
-    }
-
-    // Fetch destinations assigned to the current user
-    $user = auth()->user()->load('destinations');
-    $destinations = $user->destinations;
-
-    $tickets = $query->with(['destination', 'bus'])->latest()->paginate(10);
-
-    return view('ticketer.tickets.report', compact('tickets', 'destinations'));
-}
 
         public function firstQueuedBus($destinationId)
         {
@@ -293,17 +284,49 @@ public function reports(Request $request)
             ]);
         }
 
-        public function cargoInfo($uid)
+        public function cargoInfo(Request $request)
 {
-    $cargo = \App\Models\Cargo::where('cargo_uid', $uid)->first();
-    if ($cargo) {
-        return response()->json([
-            'id' => $cargo->id,
-            'cargo_uid' => $cargo->cargo_uid,
-            'weight' => $cargo->weight,
-        ]);
+    // Validate the request
+    $request->validate([
+        'cargo_uid' => 'required|string|max:50',
+    ]);
+    
+    $uid = $request->input('cargo_uid');
+    
+    // Additional security: Rate limiting and user verification
+    $user = auth()->user();
+    if (!$user || !in_array($user->usertype, ['admin', 'ticketer', 'cargoman'])) {
+        return response()->json(['error' => 'Unauthorized access'], 403);
     }
-    return response()->json([]);
+    
+    $cargo = \App\Models\Cargo::where('cargo_uid', $uid)->first();
+    
+    if (!$cargo) {
+        // Log suspicious activity - someone trying to access non-existent cargo
+        \Log::warning('Attempted access to non-existent cargo', [
+            'user_id' => $user->id,
+            'ip' => $request->ip(),
+            'attempted_uid' => substr($uid, 0, 5) . '***', // Partially hide UID in logs
+        ]);
+        
+        return response()->json(['error' => 'Cargo not found'], 404);
+    }
+    
+    // Additional authorization check - users can only access cargo from their assigned destinations
+    if ($user->usertype === 'ticketer') {
+        $userDestinations = $user->destinations->pluck('id')->toArray();
+        if (!in_array($cargo->destination_id, $userDestinations)) {
+            return response()->json(['error' => 'Access denied'], 403);
+        }
+    }
+    
+    return response()->json([
+        'id' => $cargo->id,
+        'weight' => $cargo->weight,
+        'status' => $cargo->status,
+        // Don't return the actual cargo_uid in response for security
+        'destination' => $cargo->destination->name ?? 'Unknown',
+    ]);
 }
 
 

@@ -12,10 +12,14 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // Register the PreventCaching middleware
+        // Register security middleware
         $middleware->alias([
             'prevent.caching' => \App\Http\Middleware\PreventCaching::class,
+            'security.headers' => \App\Http\Middleware\SecurityHeaders::class,
         ]);
+        
+        // Apply security headers globally
+        $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
