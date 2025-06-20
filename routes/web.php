@@ -30,7 +30,6 @@ use App\Http\Controllers\CargoMan\CargoController;
 use App\Http\Controllers\HisabShum\PaidReportController;
 use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\BackupController;
-use App\Http\Controllers\Admin\CargoSettingsController;
 
 // --------------------
 // Public Routes
@@ -59,7 +58,7 @@ Route::get('/home', [AdminController::class, 'index']);
 Route::get('/admin', [DashboardReportsController::class, 'index'])->name('admin.index');
 
 // User Management
-Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'verified', 'prevent.caching'])->prefix('admin')->name('admin.')->group(function () {
     Route::resource('users', UserController::class)->except(['show', 'edit', 'update', 'destroy']);
     Route::get('users/{id}', [UserController::class, 'show'])->name('users.show');
     Route::get('users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
@@ -93,8 +92,10 @@ Route::middleware(['auth',])->prefix('admin')->name('admin.')->group(function ()
 });
 
 // Cash Reports
-Route::get('/admin/cash-reports', [AdminCashReportController::class, 'index'])->name('admin.cash.reports');
-Route::post('/admin/cash-reports/{id}/mark-received', [AdminCashReportController::class, 'markAsReceived'])->name('admin.cash.reports.receive');
+Route::middleware(['prevent.caching'])->group(function () {
+    Route::get('/admin/cash-reports', [AdminCashReportController::class, 'index'])->name('admin.cash.reports');
+    Route::post('/admin/cash-reports/{id}/mark-received', [AdminCashReportController::class, 'markAsReceived'])->name('admin.cash.reports.receive');
+});
 
 // Backup
 Route::get('/admin/backup', [BackupController::class, 'backupDownload'])->name('admin.backup');
@@ -110,17 +111,10 @@ Route::resource('admin/cargo-settings', \App\Http\Controllers\Admin\CargoSetting
     ->names('admin.cargo-settings');
 Route::post('/admin/cargo-settings/departure-fee', [\App\Http\Controllers\Admin\CargoSettingsController::class, 'updateDepartureFee'])->name('admin.cargo-settings.departure-fee');
 
-// SMS Template Management
-Route::get('/admin/test-second-queued-sms', [PublicDisplayController::class, 'notifySecondQueuedBus']);
-Route::delete('/admin/sms-template/{id}', [CargoSettingsController::class, 'destroySmsTemplate'])->name('admin.sms-template.destroy');
-Route::get('/admin/sms-templates', [CargoSettingsController::class, 'smsTemplateIndex'])->name('admin.sms-template.index');
-Route::get('/admin/sms-template/create', [CargoSettingsController::class, 'createSmsTemplate'])->name('admin.sms-template.create');
-Route::post('/admin/sms-template', [CargoSettingsController::class, 'storeSmsTemplate'])->name('admin.sms-template.store');
-Route::put('/admin/sms-template/{id}', [\App\Http\Controllers\Admin\CargoSettingsController::class, 'updateSmsTemplate'])->name('admin.sms-template.update');
 // --------------------
 // Ticketer Routes
 // --------------------
-Route::middleware(['auth', 'verified'])->prefix('ticketer')->name('ticketer.')->group(function () {
+Route::middleware(['auth', 'verified', 'prevent.caching'])->prefix('ticketer')->name('ticketer.')->group(function () {
     Route::get('/tickets/report', [TicketController::class, 'report'])->name('tickets.report');
     Route::get('/tickets/create', [TicketController::class, 'create'])->name('tickets.create');
     Route::post('/tickets/store', [TicketController::class, 'store'])->name('tickets.store');
@@ -145,7 +139,7 @@ Route::middleware(['auth', 'verified'])->prefix('ticketer')->name('ticketer.')->
 // --------------------
 // Mahberat Routes
 // --------------------
-Route::middleware(['auth', 'verified'])->prefix('mahberat')->name('mahberat.')->group(function () {
+Route::middleware(['auth', 'verified', 'prevent.caching'])->prefix('mahberat')->name('mahberat.')->group(function () {
     Route::get('/buses', [\App\Http\Controllers\Mahberat\BusController::class, 'index'])->name('bus.index');
     Route::get('/bus/create', [\App\Http\Controllers\Mahberat\BusController::class, 'create'])->name('bus.create');
     Route::post('/bus/store', [\App\Http\Controllers\Mahberat\BusController::class, 'store'])->name('bus.store');
@@ -172,19 +166,21 @@ Route::get('/traffic/schedule-scan', function () {
 // --------------------
 // HisabShum Routes
 // --------------------
-Route::get('/hisab-shum/pay/{schedule}', [\App\Http\Controllers\HisabShum\PaymentController::class, 'initiate'])->name('hisabShum.pay.schedule');
-Route::get('/hisab-shum/payment/callback', [\App\Http\Controllers\HisabShum\PaymentController::class, 'handleCallback'])->name('hisabShum.payment.callback');
-Route::get('/schedules/{schedule}/pay', [PaidReportController::class, 'showPayForm'])->name('hisabShum.schedule.payForm');
-Route::post('/schedules/{schedule}/pay', [PaidReportController::class, 'pay'])->name('hisabShum.schedule.pay');
-Route::get('/schedules/pay/callback', [PaidReportController::class, 'callback'])->name('hisabShum.schedule.callback');
-Route::get('/hisab-shum/paid-reports', [\App\Http\Controllers\HisabShum\PaidReportController::class, 'index'])->name('hisabShum.paidReports');
-Route::get('/hisab-shum/schedule/{schedule}/certificate', [\App\Http\Controllers\HisabShum\PaidReportController::class, 'certificate'])->name('hisabShum.certificate');
-Route::get('/hisab-shum/all-reports', [\App\Http\Controllers\HisabShum\AllReportController::class, 'index'])->name('hisabShum.allReports');
+Route::middleware(['prevent.caching'])->group(function () {
+    Route::get('/hisab-shum/pay/{schedule}', [\App\Http\Controllers\HisabShum\PaymentController::class, 'initiate'])->name('hisabShum.pay.schedule');
+    Route::get('/hisab-shum/payment/callback', [\App\Http\Controllers\HisabShum\PaymentController::class, 'handleCallback'])->name('hisabShum.payment.callback');
+    Route::get('/schedules/{schedule}/pay', [PaidReportController::class, 'showPayForm'])->name('hisabShum.schedule.payForm');
+    Route::post('/schedules/{schedule}/pay', [PaidReportController::class, 'pay'])->name('hisabShum.schedule.pay');
+    Route::get('/schedules/pay/callback', [PaidReportController::class, 'callback'])->name('hisabShum.schedule.callback');
+    Route::get('/hisab-shum/paid-reports', [\App\Http\Controllers\HisabShum\PaidReportController::class, 'index'])->name('hisabShum.paidReports');
+    Route::get('/hisab-shum/schedule/{schedule}/certificate', [\App\Http\Controllers\HisabShum\PaidReportController::class, 'certificate'])->name('hisabShum.certificate');
+    Route::get('/hisab-shum/all-reports', [\App\Http\Controllers\HisabShum\AllReportController::class, 'index'])->name('hisabShum.allReports');
+});
 
 // --------------------
 // CargoMan Routes
 // --------------------
-Route::prefix('cargoman')->name('cargoMan.')->group(function () {
+Route::middleware(['prevent.caching'])->prefix('cargoman')->name('cargoMan.')->group(function () {
     Route::get('/', [\App\Http\Controllers\CargoMan\HomeController::class, 'index'])->name('home');
     Route::get('/cargo/create', [\App\Http\Controllers\CargoMan\CargoController::class, 'create'])->name('cargo.create');
     Route::post('/cargo', [\App\Http\Controllers\CargoMan\CargoController::class, 'store'])->name('cargo.store');

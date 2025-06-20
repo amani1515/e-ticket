@@ -12,7 +12,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-       
+        // Register the PreventCaching middleware
+        $middleware->alias([
+            'prevent.caching' => \App\Http\Middleware\PreventCaching::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

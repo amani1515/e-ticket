@@ -1,6 +1,10 @@
 @extends('admin.layout.app')
 
 @section('content')
+{{-- Prevent caching of sensitive financial data --}}
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <div class="max-w-6xl mx-auto p-6">
     <h2 class="text-2xl font-bold mb-4">All Cash Reports</h2>
 

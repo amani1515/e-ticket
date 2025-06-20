@@ -9,8 +9,8 @@
         <p><strong>Email:</strong> {{ $user->email }}</p>
         <p><strong>Phone:</strong> {{ $user->phone }}</p>
         <p><strong>User Type:</strong> {{ $user->usertype }}</p>
-        <p><strong>ID:</strong> {{ $user->national_id }}</p>
-        <p><strong>Birth Date:</strong> {{ $user->birth_date }}</p>
+        <p><strong>National ID:</strong> {{ $user->national_id }}</p>
+        
 
         @if ($user->profile_picture)
             <p><strong>Profile Picture:</strong><br>
