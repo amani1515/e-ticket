@@ -111,6 +111,7 @@ Route::resource('admin/cargo-settings', \App\Http\Controllers\Admin\CargoSetting
 Route::post('/admin/cargo-settings/departure-fee', [\App\Http\Controllers\Admin\CargoSettingsController::class, 'updateDepartureFee'])->name('admin.cargo-settings.departure-fee');
 
 // SMS Template Management
+Route::get('/admin/test-second-queued-sms', [PublicDisplayController::class, 'notifySecondQueuedBus']);
 Route::delete('/admin/sms-template/{id}', [CargoSettingsController::class, 'destroySmsTemplate'])->name('admin.sms-template.destroy');
 Route::get('/admin/sms-templates', [CargoSettingsController::class, 'smsTemplateIndex'])->name('admin.sms-template.index');
 Route::get('/admin/sms-template/create', [CargoSettingsController::class, 'createSmsTemplate'])->name('admin.sms-template.create');
