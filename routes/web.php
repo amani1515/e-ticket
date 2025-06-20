@@ -30,6 +30,7 @@ use App\Http\Controllers\CargoMan\CargoController;
 use App\Http\Controllers\HisabShum\PaidReportController;
 use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\BackupController;
+use App\Http\Controllers\Admin\CargoSettingsController;
 
 // --------------------
 // Public Routes
@@ -109,6 +110,12 @@ Route::resource('admin/cargo-settings', \App\Http\Controllers\Admin\CargoSetting
     ->names('admin.cargo-settings');
 Route::post('/admin/cargo-settings/departure-fee', [\App\Http\Controllers\Admin\CargoSettingsController::class, 'updateDepartureFee'])->name('admin.cargo-settings.departure-fee');
 
+// SMS Template Management
+Route::delete('/admin/sms-template/{id}', [CargoSettingsController::class, 'destroySmsTemplate'])->name('admin.sms-template.destroy');
+Route::get('/admin/sms-templates', [CargoSettingsController::class, 'smsTemplateIndex'])->name('admin.sms-template.index');
+Route::get('/admin/sms-template/create', [CargoSettingsController::class, 'createSmsTemplate'])->name('admin.sms-template.create');
+Route::post('/admin/sms-template', [CargoSettingsController::class, 'storeSmsTemplate'])->name('admin.sms-template.store');
+Route::put('/admin/sms-template/{id}', [\App\Http\Controllers\Admin\CargoSettingsController::class, 'updateSmsTemplate'])->name('admin.sms-template.update');
 // --------------------
 // Ticketer Routes
 // --------------------

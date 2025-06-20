@@ -109,12 +109,21 @@
 
                 </div>
             </div>
+            <!-- sidebar manue for sms templates  -->
+<div>
+    @if (Auth::user()->usertype !== 'headoffice')
+        <a href="{{ route('admin.sms-template.index') }}"
+            class="block hover:text-yellow-500 font-semibold">Sms templates</a>
+    @endif
+</div>
+
             <div>
                 @if (Auth::user()->usertype !== 'headoffice')
                     <a href="{{ route('admin.cargo-settings.index') }}"
                         class="block hover:text-yellow-500 font-semibold">System Settings</a>
                 @endif
             </div>
+
         </div>
     </div>
 </div>

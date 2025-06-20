@@ -53,18 +53,26 @@
         <button type="submit" class="mt-4 bg-green-600 text-white px-4 py-2 rounded">Save Departure Fees</button>
     </form>
 </div>
+<!-- filepath: d:\My comany\e-ticket\resources\views\admin\cargo_settings\index.blade.php -->
+<!-- filepath: d:\My comany\e-ticket\resources\views\admin\cargo_settings\create-sms-template.blade.php -->
 <div class="max-w-md mx-auto bg-white p-6 rounded shadow mt-10">
-    <h2 class="text-xl font-bold mb-4">Driver SMS Template</h2>
-    <div>
-        <label class="block text-sm">Message to Driver</label>
-        <textarea readonly class="border rounded px-2 py-1 w-full bg-gray-100 text-gray-800" rows="4">
-ሰላም [Driver Name], የርስዎ መርሀግብር ከ [Departure] ወደ  [Destination] መጫን ስለጀመረ እባክዎ አስፈላጊዉን ዝግጅት ያድርጉ። 
-Sevastopol technologies plc.
-        </textarea>
-        <p class="text-sm text-gray-500 mt-2">This is a sample SMS that would be sent to the driver when bus status is on loadin.</p>
-    </div>
-            <button type="submit" class="mt-4 bg-green-600 text-white px-4 py-2 rounded">Save </button>
-
+    <h2 class="text-xl font-bold mb-4">Create New SMS Template</h2>
+    <form method="POST" action="{{ route('admin.sms-template.store') }}">
+        @csrf
+        <div class="mb-4">
+            <label class="block text-sm mb-1">Template Name</label>
+            <input type="text" name="name" class="border rounded px-2 py-1 w-full text-gray-800" required>
+        </div>
+        <div class="mb-4">
+            <label class="block text-sm mb-1">Type</label>
+            <input type="text" name="type" class="border rounded px-2 py-1 w-full text-gray-800" required placeholder="e.g. driver, user, mahberat">
+        </div>
+        <div class="mb-4">
+            <label class="block text-sm mb-1">Message Content</label>
+            <textarea name="content" class="border rounded px-2 py-1 w-full text-gray-800" rows="4" required></textarea>
+        </div>
+        <button type="submit" class="mt-4 bg-green-600 text-white px-4 py-2 rounded">Save</button>
+    </form>
 </div>
 
 

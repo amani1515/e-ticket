@@ -1,11 +1,11 @@
 <?php
-
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\CargoSetting;
 use App\Models\DepartureFee;
+use App\Models\SmsTemplate; // Add this
 use Illuminate\Support\Facades\Auth;
 
 class CargoSettingsController extends Controller
@@ -17,8 +17,9 @@ class CargoSettingsController extends Controller
     {
         $setting = CargoSetting::first();
         $departureFees = DepartureFee::pluck('fee', 'level')->toArray();
+        $driverSmsTemplate = SmsTemplate::where('type', 'driver')->first(); // Fetch driver SMS template
 
-        return view('admin.cargo_settings.index', compact('setting', 'departureFees'));
+        return view('admin.cargo_settings.index', compact('setting', 'departureFees', 'driverSmsTemplate'));
     }
 
     /**
@@ -31,6 +32,34 @@ class CargoSettingsController extends Controller
 
         return view('admin.cargo_settings.edit', compact('setting', 'departureFees'));
     }
+
+
+public function smsTemplateIndex()
+{
+    $templates = \App\Models\SmsTemplate::all();
+    return view('admin.sms_templates.index', compact('templates'));
+}
+
+    public function createSmsTemplate()
+{
+    return view('admin.cargo_settings.index');
+}
+
+public function storeSmsTemplate(Request $request)
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'type' => 'required|string|max:255',
+        'content' => 'required|string',
+    ]);
+    \App\Models\SmsTemplate::create($request->only(['name', 'type', 'content']));
+    return redirect()->back()->with('success', 'SMS Template created successfully!');
+}
+public function destroySmsTemplate($id)
+{
+    \App\Models\SmsTemplate::findOrFail($id)->delete();
+    return back()->with('success', 'SMS Template deleted!');
+}
 
     /**
      * Update cargo fee/tax/service settings.
@@ -69,5 +98,21 @@ class CargoSettingsController extends Controller
         }
 
         return back()->with('success', 'Departure fees saved to database successfully.');
+    }
+
+    /**
+     * Update driver SMS template.
+     */
+    public function updateSmsTemplate(Request $request, $id)
+    {
+        $request->validate([
+            'content' => 'required|string',
+        ]);
+
+        $template = SmsTemplate::findOrFail($id);
+        $template->content = $request->input('content');
+        $template->save();
+
+        return back()->with('success', 'Driver SMS template updated!');
     }
 }
