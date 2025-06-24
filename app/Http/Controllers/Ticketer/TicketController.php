@@ -19,6 +19,7 @@ class TicketController extends Controller
 {
     // Show the create ticket form
 
+    
     public function index(Request $request)
 {
     $query = Ticket::query();

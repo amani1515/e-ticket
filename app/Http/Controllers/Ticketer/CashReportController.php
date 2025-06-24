@@ -13,9 +13,14 @@ use Carbon\Carbon;
 // Admins can view all reports and mark them as received.
 class CashReportController extends Controller
 {
+   
     // Show the cash report page for the current ticketer
     public function index()
     {
+        // Ensure the user is tiketer
+        if (auth()->user()->usertype !== 'ticketer') {
+            return view('errors.403'); // Forbidden access for non-ticketers
+        }
         $user = auth()->user();
 
         // Get all unreported tickets for this user, including cargo info
@@ -48,6 +53,10 @@ class CashReportController extends Controller
     // Handle submission of the daily cash report by the ticketer
     public function submit(Request $request)
     {
+
+        if (auth()->user()->usertype !== 'ticketer') {
+            return view('errors.403'); // Forbidden access for non-ticketers
+        }
         $user = auth()->user();
         $today = Carbon::today();
 
@@ -84,6 +93,10 @@ class CashReportController extends Controller
     // Show all submitted cash reports to admin for review
     public function adminIndex()
     {
+        // Ensure the user is admin
+        if (auth()->user()->usertype !== 'admin') {
+            return view('errors.403'); // Forbidden access for non-admins
+        }
         $reports = CashReport::with('user')->latest()->get();
         return view('admin.cash_reports.index', compact('reports'));
     }
@@ -91,6 +104,10 @@ class CashReportController extends Controller
     // Admin marks a report as received (status update)
     public function markAsReceived($id)
     {
+        // Ensure the user is admin
+        if (auth()->user()->usertype !== 'admin') { 
+            return view('errors.403'); // Forbidden access for non-admins
+        }   
         $report = CashReport::findOrFail($id);
         $report->status = 'received';
         $report->save();
