@@ -166,4 +166,39 @@ public function callback(Request $request)
     return redirect()->route('hisabShum.paidReports')->with('error', 'Payment verification failed.');
 }
 
+
+public function payWithCash($id)
+{
+    $schedule = \App\Models\Schedule::with('bus')->findOrFail($id);
+
+    // Get the bus level for this schedule
+    $busLevel = $schedule->bus->level ?? null;
+
+    // Get the fee amount for the bus level
+    $feeRecord = \App\Models\DepartureFee::where('level', $busLevel)->first();
+    $feeAmount = $feeRecord ? $feeRecord->fee : 0;
+
+    // Update schedule: set fee, mark as paid, and set as departed
+    $schedule->mewucha_fee = $feeAmount;
+    $schedule->mewucha_status = 'paid';
+    $schedule->status = 'departed';
+    $schedule->departed_by = auth()->id();
+    $schedule->departed_at = now();
+    $schedule->save();
+
+    // Log transaction
+    \App\Models\Transaction::create([
+        'tx_ref' => 'cash-' . uniqid(),
+        'amount' => $feeAmount,
+        'currency' => 'ETB',
+        'payment_gateway' => 'cash',
+        'payment_method' => 'cash',
+        'level' => $busLevel ?? 'unknown',
+        'schedule_id' => $schedule->id,
+        'status' => 'paid',
+        'paid_at' => now(),
+    ]);
+
+    return back()->with('success', 'Payment marked as paid with cash and bus marked as departed.');
+}
 }

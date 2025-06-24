@@ -59,8 +59,12 @@
                     class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded">
                         Pay
                     </a>
-
-
+<form action="{{ route('hisabShum.schedule.payCash', $schedule->id) }}" method="POST" class="inline">
+    @csrf
+    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded">
+        Pay with cash
+    </button>
+</form>
 
 
                     </td>

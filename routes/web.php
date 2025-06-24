@@ -179,6 +179,7 @@ Route::middleware(['prevent.caching'])->group(function () {
     Route::get('/hisab-shum/payment/callback', [\App\Http\Controllers\HisabShum\PaymentController::class, 'handleCallback'])->name('hisabShum.payment.callback');
     Route::get('/schedules/{schedule}/pay', [PaidReportController::class, 'showPayForm'])->name('hisabShum.schedule.payForm');
     Route::post('/schedules/{schedule}/pay', [PaidReportController::class, 'pay'])->name('hisabShum.schedule.pay');
+    Route::post('/hisabShum/schedule/{id}/pay-cash', [\App\Http\Controllers\HisabShum\PaidReportController::class, 'payWithCash'])->name('hisabShum.schedule.payCash');
     Route::get('/schedules/pay/callback', [PaidReportController::class, 'callback'])->name('hisabShum.schedule.callback');
     Route::get('/hisab-shum/paid-reports', [\App\Http\Controllers\HisabShum\PaidReportController::class, 'index'])->name('hisabShum.paidReports');
     Route::get('/hisab-shum/schedule/{schedule}/certificate', [\App\Http\Controllers\HisabShum\PaidReportController::class, 'certificate'])->name('hisabShum.certificate');
