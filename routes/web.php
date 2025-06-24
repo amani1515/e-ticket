@@ -31,6 +31,7 @@ use App\Http\Controllers\HisabShum\PaidReportController;
 use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\BackupController;
 use App\Http\Controllers\Admin\SmsTemplateController;
+use App\Http\Controllers\Balehabt\BusController as BalehabtBusController;
 
 // --------------------
 // Public Routes
@@ -182,6 +183,14 @@ Route::middleware(['prevent.caching'])->group(function () {
     Route::get('/hisab-shum/paid-reports', [\App\Http\Controllers\HisabShum\PaidReportController::class, 'index'])->name('hisabShum.paidReports');
     Route::get('/hisab-shum/schedule/{schedule}/certificate', [\App\Http\Controllers\HisabShum\PaidReportController::class, 'certificate'])->name('hisabShum.certificate');
     Route::get('/hisab-shum/all-reports', [\App\Http\Controllers\HisabShum\AllReportController::class, 'index'])->name('hisabShum.allReports');
+});
+
+// --------------------
+// Balehabt Routes
+// --------------------
+Route::middleware(['auth', 'verified', 'prevent.caching'])->prefix('balehabt')->name('balehabt.')->group(function () {
+    Route::get('/', [BalehabtBusController::class, 'index'])->name('index');
+    Route::get('/overall-bus-report', [BalehabtBusController::class, 'overallBusReport'])->name('overallBusReport');
 });
 
 // --------------------

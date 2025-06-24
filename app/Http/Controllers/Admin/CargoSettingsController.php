@@ -16,6 +16,16 @@ class CargoSettingsController extends Controller
     public function index()
     {
         $setting = CargoSetting::first();
+        
+        // Create default settings if none exist
+        if (!$setting) {
+            $setting = CargoSetting::create([
+                'fee_per_km' => 0.00,
+                'tax_percent' => 0.00,
+                'service_fee' => 0.00,
+            ]);
+        }
+        
         $departureFees = DepartureFee::pluck('fee', 'level')->toArray();
         $driverSmsTemplate = SmsTemplate::where('type', 'driver')->first(); // Fetch driver SMS template
 
@@ -28,6 +38,16 @@ class CargoSettingsController extends Controller
     public function edit()
     {
         $setting = CargoSetting::first();
+        
+        // Create default settings if none exist
+        if (!$setting) {
+            $setting = CargoSetting::create([
+                'fee_per_km' => 0.00,
+                'tax_percent' => 0.00,
+                'service_fee' => 0.00,
+            ]);
+        }
+        
         $departureFees = DepartureFee::pluck('fee', 'level')->toArray();
 
         return view('admin.cargo_settings.edit', compact('setting', 'departureFees'));
@@ -73,6 +93,16 @@ public function destroySmsTemplate($id)
         ]);
 
         $setting = CargoSetting::first();
+        
+        // Create default settings if none exist
+        if (!$setting) {
+            $setting = CargoSetting::create([
+                'fee_per_km' => 0.00,
+                'tax_percent' => 0.00,
+                'service_fee' => 0.00,
+            ]);
+        }
+        
         $setting->update($request->only(['fee_per_km', 'tax_percent', 'service_fee']));
 
         return redirect()->route('admin.cargo-settings.index')->with('success', 'Cargo settings updated!');
