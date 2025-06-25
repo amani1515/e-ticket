@@ -181,7 +181,6 @@ public function payWithCash($id)
     // Update schedule: set fee, mark as paid, and set as departed
     $schedule->mewucha_fee = $feeAmount;
     $schedule->mewucha_status = 'paid';
-    $schedule->status = 'departed';
     $schedule->departed_by = auth()->id();
     $schedule->departed_at = now();
     $schedule->save();
