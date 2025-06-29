@@ -43,7 +43,7 @@
                 <ul id="schedule-submenu" class="ml-6 mt-2 space-y-1 hidden">
                     <li><a href="{{ route('mahberat.schedule.index') }}" class="block px-4 py-2 rounded hover:bg-gray-700">View Schedule</a></li>
                     <li><a href="{{ route('mahberat.schedule.create') }}" class="block px-4 py-2 rounded hover:bg-gray-700">Add Schedule</a></li>
-                    <li><a href="{{ route('schedules.card-view') }}" class="block px-4 py-2 rounded hover:bg-gray-700">Card View</a></li>
+                    <li><a href="{{ route('mahberat.schedules.card-view') }}" class="block px-4 py-2 rounded hover:bg-gray-700">Card View</a></li>
                 </ul>
             </li>
             </li>

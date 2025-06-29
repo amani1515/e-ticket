@@ -133,7 +133,9 @@ Route::resource('sms-template', SmsTemplateController::class);
 // --------------------
 // Ticketer Routes
 // --------------------
-Route::middleware(['auth', 'verified', 'prevent.caching'])->prefix('ticketer')->name('ticketer.')->group(function () {
+
+// Only ticketer users
+Route::middleware(['auth', 'role:ticketer'])->prefix('ticketer')->name('ticketer.')->group(function () {
     Route::get('/tickets/report', [TicketController::class, 'report'])->name('tickets.report');
     Route::get('/tickets/create', [TicketController::class, 'create'])->name('tickets.create');
     Route::post('/tickets/store', [TicketController::class, 'store'])->name('tickets.store');
@@ -156,10 +158,11 @@ Route::middleware(['auth', 'verified', 'prevent.caching'])->prefix('ticketer')->
     Route::post('/cash-report/submit', [\App\Http\Controllers\Ticketer\CashReportController::class, 'submit'])->name('cash-report.submit');
 });
 
+
 // --------------------
 // Mahberat Routes
 // --------------------
-Route::middleware(['auth', 'verified', 'prevent.caching'])->prefix('mahberat')->name('mahberat.')->group(function () {
+Route::middleware(['auth', 'role:mahberat'])->prefix('mahberat')->name('mahberat.')->group(function () {
     Route::get('/buses', [\App\Http\Controllers\Mahberat\BusController::class, 'index'])->name('bus.index');
     Route::get('/bus/create', [\App\Http\Controllers\Mahberat\BusController::class, 'create'])->name('bus.create');
     Route::post('/bus/store', [\App\Http\Controllers\Mahberat\BusController::class, 'store'])->name('bus.store');
@@ -170,9 +173,13 @@ Route::middleware(['auth', 'verified', 'prevent.caching'])->prefix('mahberat')->
     Route::get('/schedule', [ScheduleController::class, 'index'])->name('schedule.index');
     Route::get('/schedule/create', [ScheduleController::class, 'create'])->name('schedule.create');
     Route::post('/schedule', [ScheduleController::class, 'store'])->name('schedule.store');
+        Route::get('/schedules/card-view', [\App\Http\Controllers\Mahberat\ScheduleController::class, 'cardView'])
+        ->name('schedules.card-view');
+
+    Route::delete('/schedule/{id}', [\App\Http\Controllers\Mahberat\ScheduleController::class, 'destroy'])
+        ->name('schedule.destroy');
 });
-Route::get('/mahberat/schedules/card-view', [\App\Http\Controllers\Mahberat\ScheduleController::class, 'cardView'])->name('schedules.card-view');
-Route::delete('/mahberat/schedule/{id}', [ScheduleController::class, 'destroy'])->name('mahberat.schedule.destroy');
+
 
 // --------------------
 // Traffic Routes
