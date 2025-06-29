@@ -1,4 +1,4 @@
-@extends('hisabShum.layouts.app')
+@extends('hisabshum.layouts.app')
 
 @section('title', 'Paid Reports')
 
@@ -48,18 +48,18 @@
                     <td class="border px-4 py-2">{{ $schedule->scheduled_at }}</td>
                     <td class="border px-4 py-2 space-x-2">
                        @if($schedule->mewucha_status === 'paid')
-                        <a href="{{ route('hisabShum.certificate', $schedule->id) }}"
+                        <a href="{{ route('hisabshum.certificate', $schedule->id) }}"
                         class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded"
                         target="_blank">
                             Certificate
                         </a>
                     @endif
 
-                    <a href="{{ route('hisabShum.schedule.payForm', $schedule->id) }}"
+                    <a href="{{ route('hisabshum.schedule.payForm', $schedule->id) }}"
                     class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded">
                         Pay
                     </a>
-<form action="{{ route('hisabShum.schedule.payCash', $schedule->id) }}" method="POST" class="inline">
+<form action="{{ route('hisabshum.schedule.payCash', $schedule->id) }}" method="POST" class="inline">
     @csrf
     <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded">
         Pay with cash

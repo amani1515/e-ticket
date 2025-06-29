@@ -45,7 +45,7 @@
         </div>
         <div>
             <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Filter</button>
-            <a href="{{ route('hisabShum.allReports') }}" class="ml-2 text-sm text-gray-600 underline">Reset</a>
+            <a href="{{ route('hisabshum.allReports') }}" class="ml-2 text-sm text-gray-600 underline">Reset</a>
         </div>
     </form>
 

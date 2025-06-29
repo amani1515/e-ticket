@@ -193,17 +193,20 @@ Route::get('/traffic/schedule-scan', function () {
 // --------------------
 // HisabShum Routes
 // --------------------
-Route::middleware(['prevent.caching'])->group(function () {
-    Route::get('/hisab-shum/pay/{schedule}', [\App\Http\Controllers\HisabShum\PaymentController::class, 'initiate'])->name('hisabShum.pay.schedule');
-    Route::get('/hisab-shum/payment/callback', [\App\Http\Controllers\HisabShum\PaymentController::class, 'handleCallback'])->name('hisabShum.payment.callback');
-    Route::get('/schedules/{schedule}/pay', [PaidReportController::class, 'showPayForm'])->name('hisabShum.schedule.payForm');
-    Route::post('/schedules/{schedule}/pay', [PaidReportController::class, 'pay'])->name('hisabShum.schedule.pay');
-    Route::post('/hisabShum/schedule/{id}/pay-cash', [\App\Http\Controllers\HisabShum\PaidReportController::class, 'payWithCash'])->name('hisabShum.schedule.payCash');
-    Route::get('/schedules/pay/callback', [PaidReportController::class, 'callback'])->name('hisabShum.schedule.callback');
-    Route::get('/hisab-shum/paid-reports', [\App\Http\Controllers\HisabShum\PaidReportController::class, 'index'])->name('hisabShum.paidReports');
-    Route::get('/hisab-shum/schedule/{schedule}/certificate', [\App\Http\Controllers\HisabShum\PaidReportController::class, 'certificate'])->name('hisabShum.certificate');
-    Route::get('/hisab-shum/all-reports', [\App\Http\Controllers\HisabShum\AllReportController::class, 'index'])->name('hisabShum.allReports');
+
+Route::middleware(['auth', 'role:hisabshum'])->prefix('hisabshum')->name('hisabshum.')->group(function () {
+      Route::get('/hisab-shum/pay/{schedule}', [\App\Http\Controllers\HisabShum\PaymentController::class, 'initiate'])->name('pay.schedule');
+    Route::get('/hisab-shum/payment/callback', [\App\Http\Controllers\HisabShum\PaymentController::class, 'handleCallback'])->name('payment.callback');
+    Route::get('/schedules/{schedule}/pay', [PaidReportController::class, 'showPayForm'])->name('.\schedule.payForm');
+    Route::post('/schedules/{schedule}/pay', [PaidReportController::class, 'pay'])->name('schedule.pay');
+    Route::post('/hisabShum/schedule/{id}/pay-cash', [\App\Http\Controllers\HisabShum\PaidReportController::class, 'payWithCash'])->name('schedule.payCash');
+    Route::get('/schedules/pay/callback', [PaidReportController::class, 'callback'])->name('schedule.callback');
+    Route::get('/hisab-shum/paid-reports', [\App\Http\Controllers\HisabShum\PaidReportController::class, 'index'])->name('paidReports');
+    Route::get('/hisab-shum/schedule/{schedule}/certificate', [\App\Http\Controllers\HisabShum\PaidReportController::class, 'certificate'])->name('certificate');
+    Route::get('/hisab-shum/all-reports', [\App\Http\Controllers\HisabShum\AllReportController::class, 'index'])->name('allReports');
+
 });
+
 
 // --------------------
 // Balehabt Routes
