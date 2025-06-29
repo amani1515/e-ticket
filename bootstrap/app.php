@@ -16,6 +16,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'prevent.caching' => \App\Http\Middleware\PreventCaching::class,
             'security.headers' => \App\Http\Middleware\SecurityHeaders::class,
+            'role' => \App\Http\Middleware\RoleMiddleware::class, // <-- Add this line
+
         ]);
         
         // Apply security headers globally

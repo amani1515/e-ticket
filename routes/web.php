@@ -73,10 +73,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('destinations', DestinationController::class);
 });
 
-// Bus Management
-Route::get('/admin/buses', [BusController::class, 'index'])->name('admin.buses.index');
-Route::get('/admin/bus-reports', [BusReportController::class, 'index'])->name('admin.bus.reports');
-Route::get('/admin/buses/banner/{id}', [BusController::class, 'banner'])->name('admin.buses.banner');
 
 // Passenger Reports
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -90,33 +86,49 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 // Mahberat Management
 Route::middleware(['auth',])->prefix('admin')->name('admin.')->group(function () {
-    Route::resource('mahberats', MahberatController::class)->only(['index', 'create', 'store']);
 });
 
-// Cash Reports
-Route::middleware(['prevent.caching'])->group(function () {
-    Route::get('/admin/cash-reports', [AdminCashReportController::class, 'index'])->name('admin.cash.reports');
-    Route::post('/admin/cash-reports/{id}/mark-received', [AdminCashReportController::class, 'markAsReceived'])->name('admin.cash.reports.receive');
-});
+
 
 // Backup
+    // admin-only routes 
+
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+
 Route::get('/admin/backup', [BackupController::class, 'backupDownload'])->name('admin.backup');
 
 // Schedule Reports
-Route::get('/admin/schedule-reports', [\App\Http\Controllers\Admin\ScheduleReportController::class, 'index'])->name('admin.schedule.reports');
-Route::get('/admin/reports/transactions', [TransactionController::class, 'index'])->name('admin.reports.transactions')->middleware('auth');
-Route::get('/admin/total-reports', [\App\Http\Controllers\Admin\TotalReportController::class, 'index'])->name('admin.total.reports');
+Route::get('/schedule-reports', [\App\Http\Controllers\Admin\ScheduleReportController::class, 'index'])->name('schedule.reports');
+Route::get('/reports/transactions', [TransactionController::class, 'index'])->name('reports.transactions')->middleware('auth');
+Route::get('/total-reports', [\App\Http\Controllers\Admin\TotalReportController::class, 'index'])->name('total.reports');
 
 // Cargo Settings
-Route::resource('admin/cargo-settings', \App\Http\Controllers\Admin\CargoSettingsController::class)
+Route::resource('/cargo-settings', \App\Http\Controllers\Admin\CargoSettingsController::class)
     ->only(['index', 'edit', 'update'])
-    ->names('admin.cargo-settings');
-Route::post('/admin/cargo-settings/departure-fee', [\App\Http\Controllers\Admin\CargoSettingsController::class, 'updateDepartureFee'])->name('admin.cargo-settings.departure-fee');
+    ->names('.cargo-settings');
+Route::post('/cargo-settings/departure-fee', [\App\Http\Controllers\Admin\CargoSettingsController::class, 'updateDepartureFee'])->name('admin.cargo-settings.departure-fee');
 
-// SMS Templates
-Route::middleware(['auth', 'verified', 'prevent.caching'])->prefix('admin')->name('admin.')->group(function () {
-    Route::resource('sms-template', SmsTemplateController::class);
+// Cash Reports
+    Route::middleware(['prevent.caching'])->group(function () {
+        Route::get('/cash-reports', [AdminCashReportController::class, 'index'])->name('cash.reports');
+        Route::post('/cash-reports/{id}/mark-received', [AdminCashReportController::class, 'markAsReceived'])->name('cash.reports.receive');
+    });
+
+    Route::resource('destinations', DestinationController::class);
+    Route::resource('mahberats', controller: MahberatController::class)->only(['index', 'create', 'store']);
+
+    // Bus Management
+Route::get('/buses', [BusController::class, 'index'])->name('buses.index');
+Route::get('/bus-reports', [BusReportController::class, 'index'])->name('bus.reports');
+Route::get('/buses/banner/{id}', [BusController::class, 'banner'])->name('buses.banner');
+    
+// route for sms
+Route::resource('sms-template', SmsTemplateController::class);
+
 });
+
+
+
 
 // --------------------
 // Ticketer Routes
