@@ -16,7 +16,6 @@
             </div>
         </div>
 
-        <a href="#" class="block py-2 px-4 rounded hover:bg-blue-700">Settings</a>
         <!-- Add more sidebar links here -->
     </nav>
 </aside>

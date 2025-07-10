@@ -110,12 +110,12 @@
                 </div>
             </div>
             <!-- sidebar manue for sms templates  -->
-<div>
+{{-- <div>
     @if (Auth::user()->usertype !== 'headoffice')
         <a href="{{ route('admin.sms-template.index') }}"
             class="block hover:text-yellow-500 font-semibold">Sms templates</a>
     @endif
-</div>
+</div> --}}
 
             <div>
                 @if (Auth::user()->usertype !== 'headoffice')

@@ -1,4 +1,4 @@
-@extends('hisabshum.layouts.app')
+@extends('hisabShum.layouts.app')
 
 @section('title', 'Paid Reports')
 
@@ -54,11 +54,11 @@
                             Certificate
                         </a>
                     @endif
-
-                    <a href="{{ route('hisabshum.schedule.payForm', $schedule->id) }}"
+  {{-- chapa integration --}}
+                    {{-- <a href="{{ route('hisabshum.schedule.payForm', $schedule->id) }}"
                     class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded">
                         Pay
-                    </a>
+                    </a> --}}
 <form action="{{ route('hisabshum.schedule.payCash', $schedule->id) }}" method="POST" class="inline">
     @csrf
     <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded">

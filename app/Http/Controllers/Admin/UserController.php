@@ -102,23 +102,14 @@ public function store(Request $request)
 }
 
 
-    public function destroy(User $user)
-    {
-
-        if(auth::id())
-        {
-            $usertype = Auth::user()->usertype;
-            if($usertype == 'admin')
-            {
-                $user->delete();
-                return redirect()->route('admin.users.index')->with('success', 'User deleted successfully!');
-            }
-            else 
-            {
-                return view('errors.403');
-            }
-        }
+public function destroy(User $user)
+{
+    if (auth()->check() && Auth::user()->usertype === 'admin') {
+        $user->delete(); // or $user->forceDelete() if you want permanent deletion
+        return redirect()->route('admin.users.index')->with('success', 'User deleted successfully!');
     }
+    return abort(403);
+}
 
     public function show($id) {
         if(auth::id())

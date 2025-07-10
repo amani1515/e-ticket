@@ -61,11 +61,7 @@ Route::get('/admin', [DashboardReportsController::class, 'index'])->name('admin.
 
 // User Management
 Route::middleware(['auth', 'verified', 'prevent.caching'])->prefix('admin')->name('admin.')->group(function () {
-    Route::resource('users', UserController::class)->except(['show', 'edit', 'update', 'destroy']);
-    Route::get('users/{id}', [UserController::class, 'show'])->name('users.show');
-    Route::get('users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
-    Route::put('users/{id}', [UserController::class, 'update'])->name('users.update');
-    Route::delete('users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+
 });
 
 // Destinations
@@ -94,8 +90,12 @@ Route::middleware(['auth',])->prefix('admin')->name('admin.')->group(function ()
     // admin-only routes 
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
-
-Route::get('/admin/backup', [BackupController::class, 'backupDownload'])->name('admin.backup');
+    Route::resource('users', UserController::class)->except(['show', 'edit', 'update', 'destroy']);
+    Route::get('users/{id}', [UserController::class, 'show'])->name('users.show');
+    Route::get('users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
+    Route::put('users/{id}', [UserController::class, 'update'])->name('users.update');
+    Route::delete('users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+Route::get('backup', [BackupController::class, 'backupDownload'])->name('backup');
 
 // Schedule Reports
 Route::get('/schedule-reports', [\App\Http\Controllers\Admin\ScheduleReportController::class, 'index'])->name('schedule.reports');
@@ -103,10 +103,10 @@ Route::get('/reports/transactions', [TransactionController::class, 'index'])->na
 Route::get('/total-reports', [\App\Http\Controllers\Admin\TotalReportController::class, 'index'])->name('total.reports');
 
 // Cargo Settings
-Route::resource('/cargo-settings', \App\Http\Controllers\Admin\CargoSettingsController::class)
-    ->only(['index', 'edit', 'update'])
-    ->names('.cargo-settings');
-Route::post('/cargo-settings/departure-fee', [\App\Http\Controllers\Admin\CargoSettingsController::class, 'updateDepartureFee'])->name('admin.cargo-settings.departure-fee');
+  Route::resource('cargo-settings', \App\Http\Controllers\Admin\CargoSettingsController::class)
+        ->only(['index', 'edit', 'update'])
+        ->names('cargo-settings');
+Route::post('/cargo-settings/departure-fee', [\App\Http\Controllers\Admin\CargoSettingsController::class, 'updateDepartureFee'])->name('cargo-settings.departure-fee');
 
 // Cash Reports
     Route::middleware(['prevent.caching'])->group(function () {
@@ -197,7 +197,7 @@ Route::get('/traffic/schedule-scan', function () {
 Route::middleware(['auth', 'role:hisabshum'])->prefix('hisabshum')->name('hisabshum.')->group(function () {
       Route::get('/hisab-shum/pay/{schedule}', [\App\Http\Controllers\HisabShum\PaymentController::class, 'initiate'])->name('pay.schedule');
     Route::get('/hisab-shum/payment/callback', [\App\Http\Controllers\HisabShum\PaymentController::class, 'handleCallback'])->name('payment.callback');
-    Route::get('/schedules/{schedule}/pay', [PaidReportController::class, 'showPayForm'])->name('.\schedule.payForm');
+    Route::get('/schedules/{schedule}/pay', [PaidReportController::class, 'showPayForm'])->name('schedule.payForm');
     Route::post('/schedules/{schedule}/pay', [PaidReportController::class, 'pay'])->name('schedule.pay');
     Route::post('/hisabShum/schedule/{id}/pay-cash', [\App\Http\Controllers\HisabShum\PaidReportController::class, 'payWithCash'])->name('schedule.payCash');
     Route::get('/schedules/pay/callback', [PaidReportController::class, 'callback'])->name('schedule.callback');

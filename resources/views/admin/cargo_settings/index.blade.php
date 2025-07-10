@@ -55,7 +55,7 @@
 </div>
 <!-- filepath: d:\My comany\e-ticket\resources\views\admin\cargo_settings\index.blade.php -->
 <!-- filepath: d:\My comany\e-ticket\resources\views\admin\cargo_settings\create-sms-template.blade.php -->
-<div class="max-w-md mx-auto bg-white p-6 rounded shadow mt-10">
+{{-- <div class="max-w-md mx-auto bg-white p-6 rounded shadow mt-10">
     <h2 class="text-xl font-bold mb-4">Create New SMS Template</h2>
     <form method="POST" action="{{ route('admin.sms-template.store') }}">
         @csrf
@@ -73,7 +73,7 @@
         </div>
         <button type="submit" class="mt-4 bg-green-600 text-white px-4 py-2 rounded">Save</button>
     </form>
-</div>
+</div> --}}
 
 
 @endsection
