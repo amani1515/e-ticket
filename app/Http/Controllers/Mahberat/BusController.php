@@ -33,7 +33,7 @@ class BusController extends Controller
     {
         // Validate request inputs
         $validated = $request->validate([
-            'targa'           => 'required|string',
+            'targa' => 'required|digits_between:1,8|unique:buses,targa',
             'driver_name'     => 'required|string',
             'driver_phone'    => 'required|string',
             'redat_name'      => 'required|string',
@@ -60,6 +60,8 @@ class BusController extends Controller
             }
         }
 
+        
+
         // Set default values and assign system fields
         $validated['status']         = $validated['status'] ?? 'active';
         $validated['registered_by']  = Auth::id();
@@ -78,6 +80,14 @@ class BusController extends Controller
             ->with('success', 'Bus added successfully.')
             ->with('second_success', 'Second success message.');
     }
+
+
+// Check if a bus with the given targa already exists
+    public function checkTarga(Request $request)
+            {
+                $exists = \App\Models\Bus::where('targa', $request->targa)->exists();
+                return response()->json(['exists' => $exists]);
+            }
 
     // Show details for a single bus, ensuring ownership
     public function show($id)

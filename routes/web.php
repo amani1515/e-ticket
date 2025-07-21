@@ -177,7 +177,9 @@ Route::middleware(['auth', 'role:mahberat'])->prefix('mahberat')->name('mahberat
         ->name('schedules.card-view');
 
     Route::delete('/schedule/{id}', [\App\Http\Controllers\Mahberat\ScheduleController::class, 'destroy'])
+
         ->name('schedule.destroy');
+        Route::get('/bus/check-targa', [\App\Http\Controllers\Mahberat\BusController::class, 'checkTarga']);
 });
 
 

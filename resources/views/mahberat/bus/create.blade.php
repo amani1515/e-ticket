@@ -42,6 +42,8 @@
                     <input type="text" id="targa" name="targa" placeholder="Targa" required class="input-field"
                         maxlength="8" pattern="[0-9]{1,8}" title="Please enter only numbers (maximum 8 digits)"
                         oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                        <p id="targa-warning" class="text-sm text-red-600 hidden"></p>
+                        
                 </div>
                 <div class="flex flex-col gap-3">
                     <label for="driver_name" class="font-semibold text-gray-700">Driver Name <span
@@ -270,8 +272,30 @@ function validateFile(input) {
                 alert('Please fill in all required fields.');
             }
         });
-    </script>
+        
 
+        
+    </script>
+<script>
+document.getElementById('targa').addEventListener('blur', function() {
+    const targa = this.value;
+    const warning = document.getElementById('targa-warning');
+    if (targa.length > 0) {
+        fetch(`/mahberat/bus/check-targa?targa=${encodeURIComponent(targa)}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.exists) {
+                    warning.textContent = '🚫 This targa is already registered!';
+                    warning.classList.remove('hidden');
+                } else {
+                    warning.classList.add('hidden');
+                }
+            });
+    } else {
+        warning.classList.add('hidden');
+    }
+});
+</script>
     {{-- Optional: Add simple fade animation --}}
     <style>
         .animate-fade-in {

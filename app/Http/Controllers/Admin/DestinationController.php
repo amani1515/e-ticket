@@ -37,15 +37,14 @@ class DestinationController extends Controller
     {
         // Validate input
         // Validate input
-        $request->validate([
-            'destination_name' => 'required|string|max:255',
-            'start_from' => 'required|string|max:255',
-            'distance' => 'required|numeric',
-
-            'tariff' => 'required|string|max:255',
-            'tax' => 'required|numeric', // Validate as numeric
-            'service_fee' => 'required|numeric', // Validate as numeric
-        ]);
+       $request->validate([
+                'destination_name' => 'required|string|max:100',
+                'start_from' => 'required|string|max:100',
+                'distance' => 'required|numeric|min:0|max:10000',
+                'tariff' => 'required|numeric|min:0|max:10000',
+                'tax' => 'required|numeric|min:0|max:10000',
+                'service_fee' => 'required|numeric|min:0|max:10000',
+            ]);
     
         // Save destination
         Destination::create([

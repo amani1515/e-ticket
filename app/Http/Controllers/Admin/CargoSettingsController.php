@@ -84,51 +84,44 @@ public function destroySmsTemplate($id)
     /**
      * Update cargo fee/tax/service settings.
      */
-    public function update(Request $request)
-    {
-        $request->validate([
-            'fee_per_km' => 'required|numeric|min:0',
-            'tax_percent' => 'required|numeric|min:0',
-            'service_fee' => 'required|numeric|min:0',
+public function update(Request $request)
+{
+    $request->validate([
+        'fee_per_km'   => 'required|numeric|min:0|max:1000',
+        'tax_percent'  => 'required|numeric|min:0|max:1000',
+        'service_fee'  => 'required|numeric|min:0|max:1000',
+    ]);
+
+    $setting = CargoSetting::first();
+    if (!$setting) {
+        $setting = CargoSetting::create([
+            'fee_per_km' => 0.00,
+            'tax_percent' => 0.00,
+            'service_fee' => 0.00,
         ]);
+    }
+    $setting->update($request->only(['fee_per_km', 'tax_percent', 'service_fee']));
 
-        $setting = CargoSetting::first();
-        
-        // Create default settings if none exist
-        if (!$setting) {
-            $setting = CargoSetting::create([
-                'fee_per_km' => 0.00,
-                'tax_percent' => 0.00,
-                'service_fee' => 0.00,
-            ]);
-        }
-        
-        $setting->update($request->only(['fee_per_km', 'tax_percent', 'service_fee']));
+    return redirect()->route('admin.cargo-settings.index')->with('success', 'Cargo settings updated!');
+}
 
-        return redirect()->route('admin.cargo-settings.index')->with('success', 'Cargo settings updated!');
+public function updateDepartureFee(Request $request)
+{
+    $request->validate([
+        'level1' => 'required|numeric|min:0|max:1000',
+        'level2' => 'required|numeric|min:0|max:1000',
+        'level3' => 'required|numeric|min:0|max:1000',
+    ]);
+
+    foreach (['level1', 'level2', 'level3'] as $level) {
+        DepartureFee::updateOrCreate(
+            ['level' => $level],
+            ['fee' => $request->input($level)]
+        );
     }
 
-    /**
-     * Update departure fee for each bus level.
-     */
-    public function updateDepartureFee(Request $request)
-    {
-        $request->validate([
-            'level1' => 'required|numeric|min:0',
-            'level2' => 'required|numeric|min:0',
-            'level3' => 'required|numeric|min:0',
-        ]);
-
-        // Loop through and update or insert each level's fee
-        foreach (['level1', 'level2', 'level3'] as $level) {
-            DepartureFee::updateOrCreate(
-                ['level' => $level],
-                ['fee' => $request->input($level)]
-            );
-        }
-
-        return back()->with('success', 'Departure fees saved to database successfully.');
-    }
+    return back()->with('success', 'Departure fees saved to database successfully.');
+}
 
     /**
      * Update driver SMS template.
