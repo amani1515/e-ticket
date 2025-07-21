@@ -66,6 +66,8 @@ public function store(Request $request)
         'destination_id' => 'required|exists:destinations,id',
         'bus_id' => 'required|string|max:255', // This is targa from the form!
         'departure_datetime' => 'required|date',
+        'phone_no' => 'nullable|digits:10|unique:tickets,phone_no',
+        'fayda_id' => 'nullable|string|max:20|unique:tickets,fayda_id',
         'disability_status' => 'required|in:None,Blind / Visual Impairment,Deaf / Hard of Hearing,Speech Impairment',
     ]);
 
@@ -128,7 +130,17 @@ public function store(Request $request)
     return redirect()->route('ticketer.tickets.receipt', $ticket->id);
 }
 
-    
+public function checkPhone(Request $request)
+{
+    $exists = Ticket::where('phone_no', $request->phone_no)->exists();
+    return response()->json(['exists' => $exists]);
+}
+
+public function checkFaydaId(Request $request)
+{
+    $exists = Ticket::where('fayda_id', $request->fayda_id)->exists();
+    return response()->json(['exists' => $exists]);
+}
 
     // Optional: Show the ticket receipt after it's created
    public function receipt($id)

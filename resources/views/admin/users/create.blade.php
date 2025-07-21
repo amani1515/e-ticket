@@ -46,6 +46,7 @@
             <label for="phone" class="block font-medium">Phone</label>
             <input type="text" name="phone" id="phone" value="{{ old('phone') }}" placeholder="phone ex 09..." 
                 class="w-full px-4 py-2 border rounded">
+                <p id="phone-warning" class="text-sm text-red-600 hidden"></p>
             @error('phone')
                 <span class="text-red-500 text-sm">{{ $message }}</span>
             @enderror
@@ -150,5 +151,24 @@
         });
     });
 </script>
-
+<script>
+document.getElementById('phone').addEventListener('blur', function() {
+    const phone = this.value;
+    const warning = document.getElementById('phone-warning');
+    if (phone.length === 10) {
+        fetch(`/admin/users/check-phone?phone=${encodeURIComponent(phone)}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.exists) {
+                    warning.textContent = '🚫 This phone number is already registered!';
+                    warning.classList.remove('hidden');
+                } else {
+                    warning.classList.add('hidden');
+                }
+            });
+    } else {
+        warning.classList.add('hidden');
+    }
+});
+</script>
 @endsection

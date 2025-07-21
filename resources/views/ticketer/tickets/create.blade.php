@@ -162,6 +162,7 @@
                         placeholder="09XXXXXXXX" value="{{ old('phone_no') }}" maxlength="10" minlength="10"
                         pattern="[0-9]{10}" data-validation="phone_number" title="Please enter exactly 10 digits"
                         autocomplete="tel">
+                        <p id="phone_no_warning" class="text-sm text-red-600 hidden"></p>
                     <div class="validation-error text-red-500 text-sm mt-1" id="phone_no_error"></div>
                     @error('phone_no')
                         <span class="text-red-500 text-sm">{{ e($message) }}</span>
@@ -175,6 +176,7 @@
                         class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         placeholder="Fayda ID" value="{{ old('fayda_id') }}" maxlength="20" pattern="[A-Za-z0-9]+"
                         data-validation="alphanumeric" title="Only letters and numbers allowed" autocomplete="off">
+                        <p id="fayda_id_warning" class="text-sm text-red-600 hidden"></p>
                     <div class="validation-error text-red-500 text-sm mt-1" id="fayda_id_error"></div>
                     @error('fayda_id')
                         <span class="text-red-500 text-sm">{{ e($message) }}</span>
@@ -597,4 +599,44 @@
             });
         });
     </script>
+
+    <script>
+document.getElementById('phone_no').addEventListener('blur', function() {
+    const phone = this.value;
+    const warning = document.getElementById('phone_no_warning');
+    if (phone.length === 10) {
+        fetch(`/ticketer/tickets/check-phone?phone_no=${encodeURIComponent(phone)}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.exists) {
+                    warning.textContent = '🚫 This phone number is already registered!';
+                    warning.classList.remove('hidden');
+                } else {
+                    warning.classList.add('hidden');
+                }
+            });
+    } else {
+        warning.classList.add('hidden');
+    }
+});
+
+document.getElementById('fayda_id').addEventListener('blur', function() {
+    const faydaId = this.value;
+    const warning = document.getElementById('fayda_id_warning');
+    if (faydaId.length > 0) {
+        fetch(`/ticketer/tickets/check-fayda-id?fayda_id=${encodeURIComponent(faydaId)}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.exists) {
+                    warning.textContent = '🚫 This Fayda ID is already registered!';
+                    warning.classList.remove('hidden');
+                } else {
+                    warning.classList.add('hidden');
+                }
+            });
+    } else {
+        warning.classList.add('hidden');
+    }
+});
+</script>
 @endsection

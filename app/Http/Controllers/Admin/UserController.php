@@ -59,16 +59,16 @@ public function store(Request $request)
         $usertype = Auth::user()->usertype;
 
         if ($usertype === 'admin') {
-            $validatedData = $request->validate([
-                'name' => 'required|string|max:255|unique:users,name',
-                'email' => 'required|email|unique:users',
-                'phone' => ['required', 'regex:/^09\d{8}$/'],
-                'usertype' => 'required|string',
-                'password' => 'required|string|confirmed',
-                'mahberat_id' => 'nullable|exists:mahberats,id',
-                'assigned_destinations' => 'nullable|array',
-                'assigned_destinations.*' => 'exists:destinations,id',
-            ]);
+                $validatedData = $request->validate([
+                    'name' => 'required|string|max:255|unique:users,name',
+                    'email' => 'required|email|unique:users',
+                    'phone' => ['required', 'regex:/^09\d{8}$/', 'unique:users,phone'], // <-- add unique here
+                    'usertype' => 'required|string',
+                    'password' => 'required|string|confirmed',
+                    'mahberat_id' => 'nullable|exists:mahberats,id',
+                    'assigned_destinations' => 'nullable|array',
+                    'assigned_destinations.*' => 'exists:destinations,id',
+                ]);
 
             // Sanitize input values to protect against XSS
             $sanitized = [
@@ -99,6 +99,12 @@ public function store(Request $request)
             return view('errors.403');
         }
     }
+}
+
+public function checkPhone(Request $request)
+{
+    $exists = User::where('phone', $request->phone)->exists();
+    return response()->json(['exists' => $exists]);
 }
 
 

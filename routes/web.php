@@ -78,14 +78,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::delete('passenger-report/{id}', [PassengersReportController::class, 'destroy'])->name('passenger-report.destroy');
     Route::put('passenger-report/{id}/refund', [PassengersReportController::class, 'refund'])->name('passenger-report.refund');
     Route::get('passenger-report/print-all', [PassengerReportController::class, 'printAll'])->name('passenger.report.print-all');
+    
 });
 
 // Mahberat Management
 Route::middleware(['auth',])->prefix('admin')->name('admin.')->group(function () {
 });
 
-
-
+Route::get('/admin/users/check-phone', [\App\Http\Controllers\Admin\UserController::class, 'checkPhone']);
+Route::get('/ticketer/tickets/check-phone', [TicketController::class, 'checkPhone']);
+Route::get('/ticketer/tickets/check-fayda-id', [TicketController::class, 'checkFaydaId']);
 // Backup
     // admin-only routes 
 
