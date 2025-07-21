@@ -45,12 +45,12 @@
                                         class="bg-[#f4c542] hover:bg-[#e5b729] text-white px-3 py-1 rounded-md text-xs sm:text-sm transition duration-300 text-center">
                                         Edit
                                     </a>
-                                    <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Are you sure?');">
+                                    {{-- <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Are you sure?');">
     @csrf
     @method('DELETE')
     <button type="submit" class="bg-[#e63946] hover:bg-[#c92d3b] text-white px-3 py-1 rounded-md text-xs sm:text-sm transition duration-300 text-center">
         Delete
-    </button>
+    </button> --}}
 </form>
                                 </div>
                             </td>

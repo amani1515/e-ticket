@@ -1,15 +1,4 @@
-{{--
-    User Edit Form (Admin Panel)
-    ---------------------------
-    This Blade file provides a form for administrators to edit an existing user's information.
-    Features:
-    - Allows editing of user details: name, email, phone, user type, birth date, and national ID
-    - Supports uploading a new profile picture and PDF file
-    - Uses CSRF protection and PUT method for update
-    - Pre-fills form fields with the current user's data
-    - Styled with Tailwind CSS classes
-    - Data for the user is injected from the controller
---}}
+{{-- filepath: d:\My comany\e-ticket\resources\views\admin\users\edit.blade.php --}}
 @extends('admin.layout.app')
 
 @section('content')
@@ -36,7 +25,8 @@
             <!-- Phone: User's phone number -->
             <div>
                 <label>Phone</label>
-                <input type="text" name="phone" value="{{ $user->phone }}" class="w-full border p-2 rounded">
+                <input type="text" name="phone" id="phone" value="{{ $user->phone }}" class="w-full border p-2 rounded" maxlength="10">
+                <p id="phone-warning" class="text-sm text-red-600 hidden"></p>
             </div>
 
             <!-- User Type: Select the user's role in the system -->
@@ -59,16 +49,19 @@
             </div>
 
             <!-- National ID: User's national identification number -->
-            <div>
-                <label>National ID</label>
-                <input type="text" name="national_id" value="{{ $user->national_id }}"
-                    class="w-full border p-2 rounded">
-            </div>
+           <div>
+              <label>National ID  /FIN/</label>
+                    <input type="text" name="national_id" id="national_id" value="{{ $user->national_id ?? '' }}" class="w-full border p-2 rounded" maxlength="16">
+                    <p id="national-id-warning" class="text-sm text-red-600 hidden"></p>
+                </div>
 
             <!-- Profile Picture: Upload a new profile image -->
-            <div>
+               <div>
                 <label>Profile Picture</label>
-                <input type="file" name="profile_picture" class="w-full">
+                <input type="file" name="profile_photo" class="w-full">
+                @if ($user->profile_photo_path)
+                    <img src="{{ asset('storage/' . $user->profile_photo_path) }}" alt="Profile Photo" class="mt-2 w-24 h-24 rounded-full">
+                @endif
             </div>
 
             <!-- PDF File: Upload a PDF document for the user -->
@@ -82,4 +75,87 @@
             <a href="{{ route('admin.users.index') }}" class="ml-2 bg-gray-500 text-white px-4 py-2 rounded">Cancel</a>
         </form>
     </div>
+
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const phoneInput = document.getElementById('phone');
+    const nationalIdInput = document.getElementById('national_id');
+    const phoneWarning = document.getElementById('phone-warning');
+    const nationalIdWarning = document.getElementById('national-id-warning');
+
+    // Phone Validation
+    phoneInput.addEventListener('blur', function() {
+        const phone = this.value;
+        const userId = "{{ isset($user) ? $user->id : '' }}"; // For edit form
+        let isValid = true;
+        let message = '';
+
+        if (!/^(09|07)\d{8}$/.test(phone) || phone.length !== 10) {
+            isValid = false;
+            message = 'Phone number must start with 09 or 07 and be 10 digits.';
+        }
+
+        if (isValid) {
+            fetch(`/admin/users/check-phone-update?phone=${encodeURIComponent(phone)}&user_id=${userId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.exists) {
+                        isValid = false;
+                        message = 'This phone number is already registered!';
+                    }
+                    displayPhoneWarning(isValid, message);
+                });
+        } else {
+            displayPhoneWarning(isValid, message);
+        }
+    });
+
+    function displayPhoneWarning(isValid, message) {
+        if (!isValid) {
+            phoneWarning.textContent = message;
+            phoneWarning.classList.remove('hidden');
+        } else {
+            phoneWarning.textContent = '';
+            phoneWarning.classList.add('hidden');
+        }
+    }
+
+    // National ID Validation
+    nationalIdInput.addEventListener('blur', function() {
+        const nationalId = this.value;
+        const userId = "{{ isset($user) ? $user->id : '' }}";
+        let isValid = true;
+        let message = '';
+
+        if (nationalId && !/^\d{16}$/.test(nationalId)) {
+            isValid = false;
+            message = 'National ID must be 16 digits.';
+        }
+
+         if (isValid) {
+            fetch(`/admin/users/check-national-id-update?national_id=${encodeURIComponent(nationalId)}&user_id=${userId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.exists) {
+                        isValid = false;
+                        message = 'This National ID is already registered!';
+                    }
+                    displayNationalIdWarning(isValid, message);
+                });
+        } else {
+            displayNationalIdWarning(isValid, message);
+        }
+    });
+
+    function displayNationalIdWarning(isValid, message) {
+        if (!isValid) {
+            nationalIdWarning.textContent = message;
+            nationalIdWarning.classList.remove('hidden');
+        } else {
+            nationalIdWarning.textContent = '';
+            nationalIdWarning.classList.add('hidden');
+        }
+    }
+});
+</script>
 @endsection

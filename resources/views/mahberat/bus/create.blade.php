@@ -296,6 +296,31 @@ document.getElementById('targa').addEventListener('blur', function() {
     }
 });
 </script>
+
+<script>
+function validateFile(input, warningId) {
+    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png'];
+    const file = input.files[0];
+    const warning = document.getElementById(warningId);
+
+    if (file) {
+        if (!allowedTypes.includes(file.type)) {
+            warning.textContent = "Invalid file type. Allowed: PDF, JPG, JPEG, PNG.";
+            warning.classList.remove('hidden');
+            input.value = ''; // Clear the input
+        } else if (file.size > 2 * 1024 * 1024) {
+            warning.textContent = "File is too large (Max 2MB).";
+            warning.classList.remove('hidden');
+            input.value = '';
+        } else {
+            warning.classList.add('hidden');
+        }
+    } else {
+        warning.classList.add('hidden');
+    }
+}
+</script>
+
     {{-- Optional: Add simple fade animation --}}
     <style>
         .animate-fade-in {

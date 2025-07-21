@@ -88,6 +88,8 @@ Route::middleware(['auth',])->prefix('admin')->name('admin.')->group(function ()
 Route::get('/admin/users/check-phone', [\App\Http\Controllers\Admin\UserController::class, 'checkPhone']);
 Route::get('/ticketer/tickets/check-phone', [TicketController::class, 'checkPhone']);
 Route::get('/ticketer/tickets/check-fayda-id', [TicketController::class, 'checkFaydaId']);
+Route::get('/admin/users/check-phone-update', [\App\Http\Controllers\Admin\UserController::class, 'checkPhoneUpdate']);
+Route::get('/admin/users/check-national-id-update', [\App\Http\Controllers\Admin\UserController::class, 'checkNationalIdUpdate']);
 // Backup
     // admin-only routes 
 

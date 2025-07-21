@@ -18,7 +18,7 @@
 @section('content')
     <h1 class="text-2xl font-bold mb-4">Add New User</h1>
 
-    <form action="{{ route('admin.users.store') }}" method="POST" class="space-y-4">
+    <form action="{{ route('admin.users.store') }}" method="POST" class="space-y-4" enctype="multipart/form-data">
         @csrf
 
         <!-- Name: User's full name -->
@@ -102,6 +102,42 @@
             </select>
         </div>
 
+        <!-- Birth Date -->
+<div>
+    <label for="birth_date" class="block font-medium">Birth Date</label>
+    <input type="date" name="birth_date" id="birth_date" value="{{ old('birth_date') }}" class="w-full border p-2 rounded">
+    @error('birth_date')
+        <span class="text-red-500 text-sm">{{ $message }}</span>
+    @enderror
+</div>
+
+<!-- National ID -->
+<div>
+    <label for="national_id" class="block font-medium">National ID</label>
+    <input type="text" name="national_id" id="national_id" value="{{ old('national_id') }}" class="w-full border p-2 rounded">
+    @error('national_id')
+        <span class="text-red-500 text-sm">{{ $message }}</span>
+    @enderror
+</div>
+
+<!-- Profile Picture -->
+<div>
+    <label for="profile_photo" class="block font-medium">Profile Picture</label>
+    <input type="file" name="profile_photo" id="profile_photo" class="w-full">
+    @error('profile_photo')
+        <span class="text-red-500 text-sm">{{ $message }}</span>
+    @enderror
+</div>
+
+<!-- PDF File -->
+<div>
+    <label for="pdf_file" class="block font-medium">PDF File</label>
+    <input type="file" name="pdf_file" id="pdf_file" class="w-full">
+    @error('pdf_file')
+        <span class="text-red-500 text-sm">{{ $message }}</span>
+    @enderror
+</div>
+          
         <!-- Password: Set the user's password -->
         <div>
             <label for="password" class="block font-medium">Password</label>
