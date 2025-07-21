@@ -62,7 +62,12 @@ public function store(Request $request)
             $validatedData = $request->validate([
                 'name' => 'required|string|max:255|unique:users,name',
                 'email' => 'required|email|unique:users',
-                'phone' => ['required', 'regex:/^(09|07)\d{8}$/', 'digits:10', 'unique:users,phone,' . $id],
+'phone' => [
+    'required',
+    'regex:/^(09|07)\d{8}$/',
+    'digits:10',
+    'unique:users,phone',
+],
                 'usertype' => 'required|string',
                 'password' => 'required|string|confirmed',
                 'mahberat_id' => 'nullable|exists:mahberats,id',

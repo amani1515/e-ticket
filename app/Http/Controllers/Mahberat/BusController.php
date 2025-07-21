@@ -54,11 +54,17 @@ class BusController extends Controller
         ]);
 
         // Handle file uploads (store in public disk)
-        foreach (['file1', 'file2', 'file3'] as $fileKey) {
-            if ($request->hasFile($fileKey)) {
-                $validated[$fileKey] = $request->file($fileKey)->store('bus_files', 'public');
-            }
-        }
+        // Handle file uploads (store in public disk)
+foreach (['file1', 'file2', 'file3'] as $fileKey) {
+    if ($request->hasFile($fileKey)) {
+        $file = $request->file($fileKey);
+        $path = $file->store('bus_files', 'public'); // storage/app/public/bus_files
+        $validated[$fileKey] = $path;
+    } else {
+        $validated[$fileKey] = null;
+    }
+}
+
 
         
 
