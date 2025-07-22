@@ -31,7 +31,6 @@ class User extends Authenticatable
     'phone',
     'password',
     'mahberat_id',
-    'usertype',
     'birth_date',
     'national_id',
     'profile_photo_path',
