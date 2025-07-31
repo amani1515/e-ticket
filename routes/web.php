@@ -124,6 +124,7 @@ Route::post('/cargo-settings/departure-fee', [\App\Http\Controllers\Admin\CargoS
 
     // Bus Management
 Route::get('/buses', [BusController::class, 'index'])->name('buses.index');
+Route::get('/buses/{id}', [BusController::class, 'show'])->name('buses.show');
 Route::get('/bus-reports', [BusReportController::class, 'index'])->name('bus.reports');
 Route::get('/buses/banner/{id}', [BusController::class, 'banner'])->name('buses.banner');
     
