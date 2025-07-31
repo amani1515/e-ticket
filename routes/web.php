@@ -120,7 +120,7 @@ Route::post('/cargo-settings/departure-fee', [\App\Http\Controllers\Admin\CargoS
     });
 
     Route::resource('destinations', DestinationController::class);
-    Route::resource('mahberats', controller: MahberatController::class)->only(['index', 'create', 'store']);
+    Route::resource('mahberats', controller: MahberatController::class)->only(['index', 'create', 'store', 'show']);
 
     // Bus Management
 Route::get('/buses', [BusController::class, 'index'])->name('buses.index');
