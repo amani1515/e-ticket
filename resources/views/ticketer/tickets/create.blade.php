@@ -157,12 +157,15 @@
                 <!-- Optional phone number -->
                 <div class="mb-4">
                     <label for="phone_no" class="block font-medium text-gray-700">Phone Number</label>
-                    <input type="tel" name="phone_no" id="phone_no"
-                        class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="09XXXXXXXX" value="{{ old('phone_no') }}" maxlength="10" minlength="10"
-                        pattern="[0-9]{10}" data-validation="phone_number" title="Please enter exactly 10 digits"
-                        autocomplete="tel">
-                        <p id="phone_no_warning" class="text-sm text-red-600 hidden"></p>
+                    <div class="flex">
+                        <span class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 rounded-l-md">+251</span>
+                        <input type="tel" name="phone_no" id="phone_no"
+                            class="w-full p-2 border rounded-r-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="9XXXXXXXX" value="{{ substr(old('phone_no'), 1) }}" maxlength="9" minlength="9"
+                            pattern="[97][0-9]{8}" data-validation="phone_number" title="Please enter exactly 9 digits starting with 9 or 7"
+                            autocomplete="tel">
+                    </div>
+                    <p id="phone_no_warning" class="text-sm text-red-600 hidden"></p>
                     <div class="validation-error text-red-500 text-sm mt-1" id="phone_no_error"></div>
                     @error('phone_no')
                         <span class="text-red-500 text-sm">{{ e($message) }}</span>
@@ -255,7 +258,7 @@
 
                 phone_number: function(value) {
                     if (!value) return true; // Optional field
-                    return /^[0-9]{10}$/.test(value);
+                    return /^[97][0-9]{8}$/.test(value);
                 },
 
                 numeric: function(value) {
@@ -311,7 +314,7 @@
                     max: `${fieldName} cannot exceed ${param} characters.`,
                     alphanumeric: `${fieldName} can only contain letters and numbers.`,
                     alphanumeric_dash: `${fieldName} can only contain letters, numbers, hyphens, and underscores.`,
-                    phone_number: `${fieldName} must be exactly 10 digits.`,
+                    phone_number: `${fieldName} must be exactly 9 digits starting with 9 or 7.`,
                     numeric: `${fieldName} must contain only numbers.`
                 };
                 return messages[rule] || `${fieldName} is invalid.`;
@@ -337,8 +340,14 @@
                 this.value = this.value.replace(/[^a-zA-Z\u1200-\u137F\s./]/g, '');
             });
 
-            document.getElementById('phone_no').addEventListener('input', function() {
-                this.value = this.value.replace(/[^0-9]/g, '').substring(0, 10);
+            const phoneNoInput = document.getElementById('phone_no');
+            
+            phoneNoInput.addEventListener('input', function() {
+                let value = this.value.replace(/[^0-9]/g, '');
+                if (value.length > 0 && value[0] !== '9' && value[0] !== '7') {
+                    value = value.substring(1);
+                }
+                this.value = value.slice(0, 9);
             });
 
             document.getElementById('fayda_id').addEventListener('input', function() {
@@ -540,10 +549,16 @@
                     }
 
                     // Validate phone number if provided
-                    if (phoneNo && !validators.phone_number(phoneNo)) {
+                    const phoneNoValue = document.getElementById('phone_no').value.trim();
+                    if (phoneNoValue && !validators.phone_number(phoneNoValue)) {
                         isFormValid = false;
                         document.getElementById('phone_no_error').textContent =
-                            'Phone number must be exactly 10 digits.';
+                            'Phone number must be exactly 9 digits starting with 9 or 7.';
+                    }
+                    
+                    // Convert phone to backend format before submission
+                    if (phoneNoValue.length === 9 && (phoneNoValue[0] === '9' || phoneNoValue[0] === '7')) {
+                        document.getElementById('phone_no').value = '0' + phoneNoValue;
                     }
 
                     if (!isFormValid) {
@@ -604,8 +619,9 @@
 document.getElementById('phone_no').addEventListener('blur', function() {
     const phone = this.value;
     const warning = document.getElementById('phone_no_warning');
-    if (phone.length === 10) {
-        fetch(`/ticketer/tickets/check-phone?phone_no=${encodeURIComponent(phone)}`)
+    if (phone.length === 9 && (phone[0] === '9' || phone[0] === '7')) {
+        const backendPhone = '0' + phone;
+        fetch(`/ticketer/tickets/check-phone?phone_no=${encodeURIComponent(backendPhone)}`)
             .then(response => response.json())
             .then(data => {
                 if (data.exists) {
@@ -615,6 +631,9 @@ document.getElementById('phone_no').addEventListener('blur', function() {
                     warning.classList.add('hidden');
                 }
             });
+    } else if (phone.length > 0) {
+        warning.textContent = 'Phone number must be 9 digits starting with 9 or 7';
+        warning.classList.remove('hidden');
     } else {
         warning.classList.add('hidden');
     }

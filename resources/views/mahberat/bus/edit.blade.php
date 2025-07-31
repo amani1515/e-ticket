@@ -31,7 +31,11 @@
 
             <div>
                 <label>Driver Phone</label>
-                <input type="text" name="driver_phone" value="{{ old('driver_phone', $bus->driver_phone) }}" class="w-full border p-2" required>
+                <div class="flex">
+                    <span class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 rounded-l-md">+251</span>
+                    <input type="text" name="driver_phone" id="driver_phone" value="{{ substr(old('driver_phone', $bus->driver_phone), 1) }}" class="w-full border p-2 rounded-r-md" maxlength="9" required
+                        oninput="let value = this.value.replace(/[^0-9]/g, ''); if (value.length > 0 && value[0] !== '9' && value[0] !== '7') { value = value.substring(1); } this.value = value.slice(0, 9);">
+                </div>
             </div>
 
             <div>
@@ -122,4 +126,17 @@
         </div>
     </form>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function() {
+        const phoneInput = document.getElementById('driver_phone');
+        const phoneValue = phoneInput.value;
+        if (phoneValue.length === 9 && (phoneValue[0] === '9' || phoneValue[0] === '7')) {
+            phoneInput.value = '0' + phoneValue;
+        }
+    });
+});
+</script>
 @endsection

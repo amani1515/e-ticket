@@ -26,7 +26,10 @@
         <input type="email" name="email" id="editEmail" class="w-full border rounded p-2 mb-2" required>
 
         <label>Phone:</label>
-        <input type="text" name="phone" id="editPhone" class="w-full border rounded p-2 mb-2">
+        <div class="flex mb-2">
+            <span class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 rounded-l-md">+251</span>
+            <input type="text" name="phone" id="editPhone" class="w-full border rounded-r-md p-2" maxlength="9">
+        </div>
 
         <label>User Type:</label>
         <select name="usertype" id="editUserType" class="w-full border rounded p-2 mb-2">
@@ -40,3 +43,29 @@
         </div>
     </form>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const editPhone = document.getElementById('editPhone');
+    if (editPhone) {
+        editPhone.addEventListener('input', function() {
+            let value = this.value.replace(/[^\d]/g, '');
+            if (value.length > 0 && value[0] !== '9' && value[0] !== '7') {
+                value = value.substring(1);
+            }
+            this.value = value.slice(0, 9);
+        });
+        
+        // Before form submission, convert to backend format
+        const form = editPhone.closest('form');
+        if (form) {
+            form.addEventListener('submit', function() {
+                const phoneValue = editPhone.value;
+                if (phoneValue.length === 9 && (phoneValue[0] === '9' || phoneValue[0] === '7')) {
+                    editPhone.value = '0' + phoneValue;
+                }
+            });
+        }
+    }
+});
+</script>

@@ -98,8 +98,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('users/{id}', [UserController::class, 'show'])->name('users.show');
     Route::get('users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
     Route::put('users/{id}', [UserController::class, 'update'])->name('users.update');
-    Route::delete('users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
-Route::get('backup', [BackupController::class, 'backupDownload'])->name('backup');
+    Route::post('users/{user}/block', [UserController::class, 'block'])->name('users.block');
+    Route::post('users/{user}/unblock', [UserController::class, 'unblock'])->name('users.unblock');
+    Route::get('backup', [BackupController::class, 'backupDownload'])->name('backup');
 
 // Schedule Reports
 Route::get('/schedule-reports', [\App\Http\Controllers\Admin\ScheduleReportController::class, 'index'])->name('schedule.reports');

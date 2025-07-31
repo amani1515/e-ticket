@@ -209,8 +209,11 @@
 
                             <div class="mb-2">
                                 <label class="block text-sm">Phone</label>
-                                <input type="text" name="phone_no" id="modal_phone_no"
-                                    class="border p-2 w-full rounded">
+                                <div class="flex">
+                                    <span class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 rounded-l-md">+251</span>
+                                    <input type="text" name="phone_no" id="modal_phone_no"
+                                        class="border p-2 w-full rounded-r-md" maxlength="9">
+                                </div>
                             </div>
 
                             <div class="mb-4">
@@ -251,7 +254,7 @@
             document.getElementById('modal_ticket_id').value = id;
             document.getElementById('modal_passenger_name').value = name;
             document.getElementById('modal_gender').value = gender;
-            document.getElementById('modal_phone_no').value = phone;
+            document.getElementById('modal_phone_no').value = phone ? phone.substring(1) : '';
             document.getElementById('modal_fayda_id').value = faydaId;
             document.getElementById('age_status').value = ageStatus;
             document.getElementById('disability_status').value = disabilityStatus;
@@ -262,6 +265,30 @@
         function closeModal() {
             document.getElementById('editModal').classList.add('hidden');
         }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const modalPhone = document.getElementById('modal_phone_no');
+            const form = document.getElementById('editTicketForm');
+            
+            if (modalPhone) {
+                modalPhone.addEventListener('input', function() {
+                    let value = this.value.replace(/[^\d]/g, '');
+                    if (value.length > 0 && value[0] !== '9' && value[0] !== '7') {
+                        value = value.substring(1);
+                    }
+                    this.value = value.slice(0, 9);
+                });
+            }
+            
+            if (form) {
+                form.addEventListener('submit', function() {
+                    const phoneValue = modalPhone.value;
+                    if (phoneValue.length === 9 && (phoneValue[0] === '9' || phoneValue[0] === '7')) {
+                        modalPhone.value = '0' + phoneValue;
+                    }
+                });
+            }
+        });
     </script>
 
 

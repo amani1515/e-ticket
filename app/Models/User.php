@@ -30,11 +30,13 @@ class User extends Authenticatable
     'email',
     'phone',
     'password',
+    'usertype',
     'mahberat_id',
     'birth_date',
     'national_id',
     'profile_photo_path',
     'pdf_file',
+    'is_blocked',
 ];
 
     /**

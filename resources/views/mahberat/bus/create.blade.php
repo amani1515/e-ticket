@@ -56,10 +56,13 @@
                 <div class="flex flex-col gap-3">
                     <label for="driver_phone" class="font-semibold text-gray-700">Driver Phone <span
                             class="text-red-500">*</span></label>
-                    <input type="text" id="driver_phone" name="driver_phone" placeholder="phone ex 09..." required
-                        class="input-field" maxlength="10" pattern="[0-9]{1,10}"
-                        title="Please enter only numbers (maximum 10 digits)"
-                        oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                    <div class="flex">
+                        <span class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 rounded-l-md">+251</span>
+                        <input type="text" name="driver_phone" id="driver_phone" placeholder="9XXXXXXXX" required
+                            class="input-field rounded-l-none" maxlength="9" pattern="[97][0-9]{8}"
+                            title="Please enter 9 digits starting with 9 or 7"
+                            oninput="let value = this.value.replace(/[^0-9]/g, ''); if (value.length > 0 && value[0] !== '9' && value[0] !== '7') { value = value.substring(1); } this.value = value.slice(0, 9);">
+                    </div>
                 </div>
                 <div class="flex flex-col gap-3">
                     <label for="redat_name" class="font-semibold text-gray-700">Redat Name <span
@@ -249,6 +252,13 @@ function validateFile(input) {
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.getElementById('bus-form').addEventListener('submit', function(event) {
+            // Convert phone to backend format
+            const phoneInput = document.getElementById('driver_phone');
+            const phoneValue = phoneInput.value;
+            if (phoneValue.length === 9 && (phoneValue[0] === '9' || phoneValue[0] === '7')) {
+                phoneInput.value = '0' + phoneValue;
+            }
+            
             // Example validation: Check if required fields are filled
             const requiredFields = ['targa', 'driver_name', 'driver_phone', 'redat_name', 'level', 'sub_level',
                 'distance', 'cargo_capacity'

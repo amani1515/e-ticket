@@ -25,7 +25,10 @@
             <!-- Phone: User's phone number -->
             <div>
                 <label>Phone</label>
-                <input type="text" name="phone" id="phone" value="{{ $user->phone }}" class="w-full border p-2 rounded" maxlength="10">
+                <div class="flex">
+                    <span class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 rounded-l-md">+251</span>
+                    <input type="text" name="phone" id="phone" value="{{ substr($user->phone, 1) }}" class="w-full border p-2 rounded-r-md" maxlength="9">
+                </div>
                 <p id="phone-warning" class="text-sm text-red-600 hidden"></p>
             </div>
 
@@ -84,19 +87,37 @@ document.addEventListener('DOMContentLoaded', function() {
     const nationalIdWarning = document.getElementById('national-id-warning');
 
     // Phone Validation
+    phoneInput.addEventListener('input', function() {
+        let value = this.value.replace(/[^\d]/g, '');
+        if (value.length > 0 && value[0] !== '9' && value[0] !== '7') {
+            value = value.substring(1);
+        }
+        this.value = value.slice(0, 9);
+    });
+    
+    // Before form submission, convert to backend format
+    const form = phoneInput.closest('form');
+    form.addEventListener('submit', function() {
+        const phoneValue = phoneInput.value;
+        if (phoneValue.length === 9 && (phoneValue[0] === '9' || phoneValue[0] === '7')) {
+            phoneInput.value = '0' + phoneValue;
+        }
+    });
+    
     phoneInput.addEventListener('blur', function() {
         const phone = this.value;
         const userId = "{{ isset($user) ? $user->id : '' }}"; // For edit form
         let isValid = true;
         let message = '';
 
-        if (!/^(09|07)\d{8}$/.test(phone) || phone.length !== 10) {
+        if (!/^[97]\d{8}$/.test(phone) || phone.length !== 9) {
             isValid = false;
-            message = 'Phone number must start with 09 or 07 and be 10 digits.';
+            message = 'Phone number must start with 9 or 7 and be 9 digits.';
         }
 
         if (isValid) {
-            fetch(`/admin/users/check-phone-update?phone=${encodeURIComponent(phone)}&user_id=${userId}`)
+            const backendPhone = '0' + phone;
+            fetch(`/admin/users/check-phone-update?phone=${encodeURIComponent(backendPhone)}&user_id=${userId}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.exists) {

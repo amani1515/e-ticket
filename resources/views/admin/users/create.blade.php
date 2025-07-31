@@ -44,9 +44,12 @@
         <!-- Phone: User's phone number -->
         <div>
             <label for="phone" class="block font-medium">Phone</label>
-            <input type="text" name="phone" id="phone" value="{{ old('phone') }}" placeholder="phone ex 09..." 
-                class="w-full px-4 py-2 border rounded">
-                <p id="phone-warning" class="text-sm text-red-600 hidden"></p>
+            <div class="flex">
+                <span class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 rounded-l-md">+251</span>
+                <input type="text" name="phone" id="phone" value="{{ old('phone') }}" placeholder="9XXXXXXXX" 
+                    class="w-full px-4 py-2 border rounded-r-md" maxlength="9">
+            </div>
+            <p id="phone-warning" class="text-sm text-red-600 hidden"></p>
             @error('phone')
                 <span class="text-red-500 text-sm">{{ $message }}</span>
             @enderror
@@ -171,8 +174,16 @@
         function toggleFields() {
             const selected = userTypeSelect.value;
 
-            destinationDiv.style.display = (selected === 'ticketer') ? 'block' : 'none';
-            mahberatDiv.style.display = (selected === 'mahberat') ? 'block' : 'none';
+            if (selected === 'ticketer') {
+                destinationDiv.style.display = 'block';
+                mahberatDiv.style.display = 'none';
+            } else if (selected === 'mahberat') {
+                destinationDiv.style.display = 'none';
+                mahberatDiv.style.display = 'block';
+            } else {
+                destinationDiv.style.display = 'none';
+                mahberatDiv.style.display = 'none';
+            }
         }
 
         userTypeSelect.addEventListener('change', toggleFields);
@@ -182,8 +193,22 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const phoneInput = document.getElementById('phone');
+        
         phoneInput.addEventListener('input', function () {
-            this.value = this.value.replace(/[^\d]/g, '').slice(0, 10); // digits only, max 10
+            let value = this.value.replace(/[^\d]/g, '');
+            if (value.length > 0 && value[0] !== '9' && value[0] !== '7') {
+                value = value.substring(1);
+            }
+            this.value = value.slice(0, 9);
+        });
+        
+        // Before form submission, convert to backend format
+        const form = phoneInput.closest('form');
+        form.addEventListener('submit', function() {
+            const phoneValue = phoneInput.value;
+            if (phoneValue.length === 9 && (phoneValue[0] === '9' || phoneValue[0] === '7')) {
+                phoneInput.value = '0' + phoneValue;
+            }
         });
     });
 </script>
@@ -191,8 +216,9 @@
 document.getElementById('phone').addEventListener('blur', function() {
     const phone = this.value;
     const warning = document.getElementById('phone-warning');
-    if (phone.length === 10) {
-        fetch(`/admin/users/check-phone?phone=${encodeURIComponent(phone)}`)
+    if (phone.length === 9 && (phone[0] === '9' || phone[0] === '7')) {
+        const backendPhone = '0' + phone;
+        fetch(`/admin/users/check-phone?phone=${encodeURIComponent(backendPhone)}`)
             .then(response => response.json())
             .then(data => {
                 if (data.exists) {
@@ -202,6 +228,9 @@ document.getElementById('phone').addEventListener('blur', function() {
                     warning.classList.add('hidden');
                 }
             });
+    } else if (phone.length > 0) {
+        warning.textContent = 'Phone number must be 9 digits starting with 9 or 7';
+        warning.classList.remove('hidden');
     } else {
         warning.classList.add('hidden');
     }

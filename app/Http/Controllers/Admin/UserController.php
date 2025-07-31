@@ -13,15 +13,40 @@ use App\Models\Mahberat;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-
         if(auth::id())
         {
             $usertype = Auth::user()->usertype;
             if($usertype == 'admin' || $usertype == 'headoffice')
             {
-                $users = User::all();
+                $query = User::query();
+                
+                // Search functionality
+                if ($request->filled('search')) {
+                    $search = $request->search;
+                    $query->where(function($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%")
+                          ->orWhere('email', 'like', "%{$search}%")
+                          ->orWhere('phone', 'like', "%{$search}%");
+                    });
+                }
+                
+                // Filter by user type
+                if ($request->filled('usertype')) {
+                    $query->where('usertype', $request->usertype);
+                }
+                
+                // Filter by status
+                if ($request->filled('status')) {
+                    if ($request->status === 'active') {
+                        $query->where('is_blocked', false);
+                    } elseif ($request->status === 'blocked') {
+                        $query->where('is_blocked', true);
+                    }
+                }
+                
+                $users = $query->paginate(15)->withQueryString();
                 return view('admin.users.index', compact('users'));
             }
             else 
@@ -147,11 +172,20 @@ public function checkNationalIdUpdate(Request $request)
 
     return response()->json(['exists' => $exists]);
 }
-public function destroy(User $user)
+public function block(User $user)
 {
     if (auth()->check() && Auth::user()->usertype === 'admin') {
-        $user->delete(); // or $user->forceDelete() if you want permanent deletion
-        return redirect()->route('admin.users.index')->with('success', 'User deleted successfully!');
+        $user->update(['is_blocked' => true]);
+        return redirect()->route('admin.users.index')->with('success', 'User blocked successfully!');
+    }
+    return abort(403);
+}
+
+public function unblock(User $user)
+{
+    if (auth()->check() && Auth::user()->usertype === 'admin') {
+        $user->update(['is_blocked' => false]);
+        return redirect()->route('admin.users.index')->with('success', 'User unblocked successfully!');
     }
     return abort(403);
 }
@@ -196,7 +230,7 @@ public function update(Request $request, $id) {
             $validatedData = $request->validate([
                 'name' => 'required|string|max:255',
                 'email' => 'required|email|unique:users,email,' . $user->id,
-                'phone' => ['required', 'regex:/^(09|07)\d{8}$/', 'digits:10', 'unique:users,phone'],
+                'phone' => ['required', 'regex:/^(09|07)\d{8}$/', 'digits:10', 'unique:users,phone,' . $user->id],
                 'usertype' => 'required|string',
                 'birth_date' => 'nullable|date',
                 'national_id' => 'nullable|digits:16',
