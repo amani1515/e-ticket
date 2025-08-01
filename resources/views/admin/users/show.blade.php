@@ -77,27 +77,157 @@
                                 <label class="text-sm font-medium text-amber-600 uppercase tracking-wide">Birth Date</label>
                                 <p class="text-lg text-amber-900">{{ $user->birth_date ? date('F j, Y', strtotime($user->birth_date)) : 'Not provided' }}</p>
                             </div>
-                            @if($user->usertype === 'ticketer' && $user->destinations->count() > 0)
-                            <div class="space-y-1">
-                                <label class="text-sm font-medium text-amber-600 uppercase tracking-wide">Assigned Destinations</label>
-                                <div class="flex flex-wrap gap-2">
-                                    @foreach($user->destinations as $destination)
-                                        <span class="inline-block px-3 py-1 bg-amber-100 text-amber-800 text-sm font-medium rounded-full">
-                                            {{ $destination->destination_name }}
-                                        </span>
-                                    @endforeach
-                                </div>
-                            </div>
-                            @endif
-                            @if($user->usertype === 'mahberat' && $user->mahberat)
-                            <div class="space-y-1">
-                                <label class="text-sm font-medium text-amber-600 uppercase tracking-wide">Assigned Mahber</label>
-                                <p class="text-lg text-amber-900">{{ $user->mahberat->name }}</p>
-                            </div>
-                            @endif
+
                         </div>
                     </div>
                 </div>
+
+                <!-- Assigned Destinations Card (Ticketers) -->
+                @if($user->usertype === 'ticketer' && $user->destinations && $user->destinations->count() > 0)
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden mt-8">
+                    <div class="px-8 py-6 border-b border-gray-200">
+                        <h3 class="text-2xl font-bold text-amber-900 flex items-center">
+                            <svg class="w-6 h-6 mr-2 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            Assigned Destinations
+                        </h3>
+                        <p class="text-amber-700 mt-2">Routes this ticketer is authorized to sell tickets for</p>
+                    </div>
+                    <div class="px-8 py-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            @foreach($user->destinations as $destination)
+                                <div class="bg-gradient-to-r from-amber-50 to-yellow-50 rounded-xl p-4 border-2 border-amber-200">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex-1">
+                                            <h4 class="font-bold text-amber-900 text-lg">{{ $destination->destination_name }}</h4>
+                                            <p class="text-amber-700 text-sm">From: {{ $destination->start_from }}</p>
+                                            <div class="mt-2 flex items-center space-x-4 text-sm">
+                                                <span class="text-amber-600">
+                                                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4"></path>
+                                                    </svg>
+                                                    {{ $destination->distance ?? 'N/A' }} km
+                                                </span>
+                                                <span class="text-amber-600">
+                                                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                    </svg>
+                                                    {{ number_format($destination->tariff + $destination->tax + $destination->service_fee) }} ETB
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="ml-4">
+                                            <span class="inline-block px-3 py-1 bg-amber-500 text-white text-xs font-medium rounded-full">
+                                                Active
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+                @endif
+
+                <!-- Assigned Mahberat Card (Mahberat Users) -->
+                @if($user->usertype === 'mahberat' && $user->mahberat)
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden mt-8">
+                    <div class="px-8 py-6 border-b border-gray-200">
+                        <h3 class="text-2xl font-bold text-amber-900 flex items-center">
+                            <svg class="w-6 h-6 mr-2 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                            </svg>
+                            Assigned Mahberat
+                        </h3>
+                        <p class="text-amber-700 mt-2">Bus station this user is responsible for managing</p>
+                    </div>
+                    <div class="px-8 py-6">
+                        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border-2 border-blue-200">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
+                                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                    </svg>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="text-2xl font-bold text-blue-900">{{ $user->mahberat->name }}</h4>
+                                    <p class="text-blue-700 mt-1">Bus Station Manager</p>
+                                    @if($user->mahberat->destinations && $user->mahberat->destinations->count() > 0)
+                                        <div class="mt-3">
+                                            <p class="text-sm font-medium text-blue-800 mb-2">Managing {{ $user->mahberat->destinations->count() }} destination(s):</p>
+                                            <div class="flex flex-wrap gap-2">
+                                                @foreach($user->mahberat->destinations->take(3) as $destination)
+                                                    <span class="inline-block px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
+                                                        {{ $destination->destination_name }}
+                                                    </span>
+                                                @endforeach
+                                                @if($user->mahberat->destinations->count() > 3)
+                                                    <span class="inline-block px-2 py-1 bg-blue-200 text-blue-800 text-xs font-medium rounded-full">
+                                                        +{{ $user->mahberat->destinations->count() - 3 }} more
+                                                    </span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    @endif
+                                </div>
+                                <div class="text-right">
+                                    <span class="inline-block px-3 py-1 bg-blue-500 text-white text-sm font-medium rounded-full">
+                                        Manager
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endif
+
+                <!-- Assigned Buses Card (Bus Owners) -->
+                @if(in_array($user->usertype, ['admin', 'busowner']) && isset($user->buses) && $user->buses->count() > 0)
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden mt-8">
+                    <div class="px-8 py-6 border-b border-gray-200">
+                        <h3 class="text-2xl font-bold text-amber-900 flex items-center">
+                            <svg class="w-6 h-6 mr-2 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path>
+                            </svg>
+                            Assigned Buses
+                        </h3>
+                        <p class="text-amber-700 mt-2">Buses owned or managed by this user</p>
+                    </div>
+                    <div class="px-8 py-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            @foreach($user->buses as $bus)
+                                <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 border-2 border-green-200">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center">
+                                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path>
+                                            </svg>
+                                        </div>
+                                        <span class="inline-block px-2 py-1 {{ $bus->status === 'active' ? 'bg-green-500 text-white' : 'bg-gray-400 text-white' }} text-xs font-medium rounded-full">
+                                            {{ ucfirst($bus->status ?? 'Active') }}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-green-900 text-lg">{{ $bus->targa ?? 'N/A' }}</h4>
+                                        <p class="text-green-700 text-sm">Driver: {{ $bus->driver_name ?? 'Not assigned' }}</p>
+                                        <p class="text-green-600 text-xs mt-1">Phone: {{ $bus->driver_phone ?? 'N/A' }}</p>
+                                        @if($bus->mahberat)
+                                            <p class="text-green-600 text-xs">Station: {{ $bus->mahberat->name }}</p>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                        @if($user->buses->count() > 6)
+                            <div class="mt-4 text-center">
+                                <p class="text-amber-600 text-sm">Showing first 6 buses. Total: {{ $user->buses->count() }} buses</p>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+                @endif
 
                 <!-- Documents Card -->
                 @if ($user->pdf_file)

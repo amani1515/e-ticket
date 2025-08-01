@@ -7,14 +7,14 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="//unpkg.com/alpinejs" defer></script>
 </head>
-<body class="bg-gray-100 text-gray-900">
+<body class="bg-gradient-to-br from-amber-50 to-yellow-100 text-gray-900">
     <div class="flex h-screen overflow-hidden">
         @include('admin.layout.adminSidebar')
 
         <div class="flex-1 flex flex-col overflow-auto">
             @include('admin.layout.adminHeader')
 
-            <main class="p-6 bg-gray-50 min-h-screen">
+            <main class="flex-1 overflow-auto">
                 @yield('content')
             </main>
         </div>
