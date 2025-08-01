@@ -1,201 +1,442 @@
 @extends('ticketer.layout.app')
 
 @section('content')
-    <div class="flex min-h-screen">
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div class="container mx-auto px-4 py-6 max-w-md">
+        <!-- Header -->
+        <div class="mb-6 text-center">
+            <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"></path>
+                </svg>
+            </div>
+            <h1 class="text-2xl font-bold text-blue-900 mb-2">🎫 Create New Ticket</h1>
+            <p class="text-blue-700 text-sm">Fill in passenger details to generate ticket</p>
+        </div>
 
-        <!-- Main Content -->
-        <div class="flex-1 bg-gray-100 p-6">
-            <h1 class="text-2xl font-semibold mb-4">Create Ticket</h1>
+        <!-- Success Message -->
+        @if (session('success'))
+            <div class="mb-4 p-4 rounded-xl bg-green-100 text-green-800 border-2 border-green-200 flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                {{ e(session('success')) }}
+            </div>
+        @endif
 
-            @if (session('success'))
-                <div class="mb-4 text-green-600">{{ e(session('success')) }}</div>
-            @endif
-
-            @if ($errors->any())
-                <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-                    <ul class="list-disc list-inside">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ e($error) }}</li>
-                        @endforeach
-                    </ul>
+        <!-- Error Messages -->
+        @if ($errors->any())
+            <div class="mb-4 p-4 bg-red-100 border-2 border-red-200 text-red-800 rounded-xl">
+                <div class="flex items-center mb-2">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span class="font-semibold">Please fix the following errors:</span>
                 </div>
-            @endif
+                <ul class="list-disc list-inside space-y-1 text-sm">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ e($error) }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
-            <form action="{{ route('ticketer.tickets.store') }}" method="POST" id="ticket-form" novalidate>
+        <!-- Form Card -->
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+            <div class="bg-gradient-to-r from-blue-500 to-indigo-600 px-6 py-4">
+                <h2 class="text-lg font-bold text-white flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                    Passenger Information
+                </h2>
+            </div>
+            
+            <form action="{{ route('ticketer.tickets.store') }}" method="POST" id="ticket-form" novalidate class="p-6 space-y-6">
                 @csrf
-                <div class="mb-4">
-                    <label for="passenger_name" class="block font-medium text-gray-700">Passenger Full Name <span
-                            class="text-red-500">*</span></label>
-                    <input type="text" name="passenger_name" id="passenger_name"
-                        class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        value="{{ old('passenger_name') }}" maxlength="30" minlength="2"
-                        pattern="[a-zA-Z\u1200-\u137F\s./]+"
-                        title="Only letters, Amharic characters, spaces, dots (.), and slashes (/) are allowed. Minimum 2 characters."
-                        autocomplete="name" data-validation="required|alpha_spaces|min:2|max:30" required>
+                
+                <!-- Passenger Name -->
+                <div>
+                    <label for="passenger_name" class="block text-sm font-semibold text-blue-800 mb-2 uppercase tracking-wide">
+                        Passenger Full Name <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
+                        <input type="text" name="passenger_name" id="passenger_name"
+                            class="w-full px-4 py-3 border-2 border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-blue-50 text-lg"
+                            value="{{ old('passenger_name') }}" maxlength="30" minlength="2"
+                            pattern="[a-zA-Z\u1200-\u137F\s./]+"
+                            placeholder="Enter passenger full name"
+                            autocomplete="name" data-validation="required|alpha_spaces|min:2|max:30" required>
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
+                        </div>
+                    </div>
                     <div class="validation-error text-red-500 text-sm mt-1" id="passenger_name_error"></div>
                     @error('passenger_name')
-                        <span class="text-red-500 text-sm">{{ e($message) }}</span>
+                        <span class="text-red-500 text-sm flex items-center mt-1">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            {{ e($message) }}
+                        </span>
                     @enderror
                 </div>
 
-                <div class="mb-4">
-                    <label for="age_status" class="block font-medium text-gray-700">Age Status <span
-                            class="text-red-500">*</span></label>
-                    <select name="age_status" id="age_status"
-                        class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        data-validation="required" required>
-
-                        <option value="adult" {{ old('age_status') == 'adult' ? 'selected' : '' }}>ወጣት</option>
-                        <option value="baby" {{ old('age_status') == 'baby' ? 'selected' : '' }}>ታዳጊ</option>
-                        <option value="middle_aged" {{ old('age_status') == 'middle_aged' ? 'selected' : '' }}>ጎልማሳ</option>
-                        <option value="senior" {{ old('age_status') == 'senior' ? 'selected' : '' }}>አዛውንት</option>
-                    </select>
+                <!-- Age Status -->
+                <div>
+                    <label for="age_status" class="block text-sm font-semibold text-blue-800 mb-2 uppercase tracking-wide">
+                        Age Category <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
+                        <select name="age_status" id="age_status"
+                            class="w-full px-4 py-3 border-2 border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-blue-50 text-lg appearance-none"
+                            data-validation="required" required>
+                            <option value="adult" {{ old('age_status') == 'adult' ? 'selected' : '' }}>👨 ወጣት (Adult)</option>
+                            <option value="baby" {{ old('age_status') == 'baby' ? 'selected' : '' }}>👶 ታዳጊ (Child)</option>
+                            <option value="middle_aged" {{ old('age_status') == 'middle_aged' ? 'selected' : '' }}>👩 ጎልማሳ (Middle-aged)</option>
+                            <option value="senior" {{ old('age_status') == 'senior' ? 'selected' : '' }}>👴 አዛውንት (Senior)</option>
+                        </select>
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+                    </div>
                     <div class="validation-error text-red-500 text-sm mt-1" id="age_status_error"></div>
                     @error('age_status')
-                        <span class="text-red-500 text-sm">{{ e($message) }}</span>
+                        <span class="text-red-500 text-sm flex items-center mt-1">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            {{ e($message) }}
+                        </span>
                     @enderror
                 </div>
 
-                <div class="mb-4">
-                    <label for="gender" class="block font-medium text-gray-700">Gender <span
-                            class="text-red-500">*</span></label>
-                    <select name="gender" id="gender"
-                        class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        data-validation="required" required>
 
-                        <option value="male" {{ old('gender') == 'male' ? 'selected' : '' }}>Male</option>
-                        <option value="female" {{ old('gender') == 'female' ? 'selected' : '' }}>Female</option>
-                    </select>
+
+                <!-- Gender -->
+                <div>
+                    <label class="block text-sm font-semibold text-blue-800 mb-2 uppercase tracking-wide">
+                        Gender <span class="text-red-500">*</span>
+                    </label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="relative cursor-pointer">
+                            <input type="radio" name="gender" value="male" {{ old('gender', 'male') == 'male' ? 'checked' : '' }} class="sr-only gender-radio" required>
+                            <div class="gender-option flex items-center justify-center p-4 border-2 border-blue-200 rounded-xl transition duration-200 hover:border-blue-400">
+                                <svg class="w-6 h-6 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                </svg>
+                                <span class="font-medium text-blue-800">👨 Male</span>
+                            </div>
+                        </label>
+                        <label class="relative cursor-pointer">
+                            <input type="radio" name="gender" value="female" {{ old('gender') == 'female' ? 'checked' : '' }} class="sr-only gender-radio" required>
+                            <div class="gender-option flex items-center justify-center p-4 border-2 border-blue-200 rounded-xl transition duration-200 hover:border-blue-400">
+                                <svg class="w-6 h-6 text-pink-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                </svg>
+                                <span class="font-medium text-blue-800">👩 Female</span>
+                            </div>
+                        </label>
+                    </div>
                     <div class="validation-error text-red-500 text-sm mt-1" id="gender_error"></div>
                     @error('gender')
-                        <span class="text-red-500 text-sm">{{ e($message) }}</span>
+                        <span class="text-red-500 text-sm flex items-center mt-1">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            {{ e($message) }}
+                        </span>
                     @enderror
                 </div>
 
-                <div class="mb-4">
-                    <label for="disability_status" class="block font-medium text-gray-700">Disability Status <span
-                            class="text-red-500">*</span></label>
-                    <select name="disability_status" id="disability_status"
-                        class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        data-validation="required" required>
-
-                        <option value="None" {{ old('disability_status') == 'None' ? 'selected' : '' }}>None</option>
-                        <option value="Blind / Visual Impairment"
-                            {{ old('disability_status') == 'Blind / Visual Impairment' ? 'selected' : '' }}>Blind / Visual
-                            Impairment</option>
-                        <option value="Deaf / Hard of Hearing"
-                            {{ old('disability_status') == 'Deaf / Hard of Hearing' ? 'selected' : '' }}>Deaf / Hard of
-                            Hearing</option>
-                        <option value="Speech Impairment"
-                            {{ old('disability_status') == 'Speech Impairment' ? 'selected' : '' }}>Speech Impairment
-                        </option>
-                    </select>
+                <!-- Disability Status -->
+                <div>
+                    <label for="disability_status" class="block text-sm font-semibold text-blue-800 mb-2 uppercase tracking-wide">
+                        Accessibility Needs <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
+                        <select name="disability_status" id="disability_status"
+                            class="w-full px-4 py-3 border-2 border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-blue-50 text-lg appearance-none"
+                            data-validation="required" required>
+                            <option value="None" {{ old('disability_status') == 'None' ? 'selected' : '' }}>✅ None</option>
+                            <option value="Blind / Visual Impairment" {{ old('disability_status') == 'Blind / Visual Impairment' ? 'selected' : '' }}>👁️ Visual Impairment</option>
+                            <option value="Deaf / Hard of Hearing" {{ old('disability_status') == 'Deaf / Hard of Hearing' ? 'selected' : '' }}>👂 Hearing Impairment</option>
+                            <option value="Speech Impairment" {{ old('disability_status') == 'Speech Impairment' ? 'selected' : '' }}>🗣️ Speech Impairment</option>
+                        </select>
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+                    </div>
                     <div class="validation-error text-red-500 text-sm mt-1" id="disability_status_error"></div>
                     @error('disability_status')
-                        <span class="text-red-500 text-sm">{{ e($message) }}</span>
+                        <span class="text-red-500 text-sm flex items-center mt-1">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            {{ e($message) }}
+                        </span>
                     @enderror
                 </div>
 
-                <div class="mb-4">
-                    <label for="destination_id" class="block font-medium text-gray-700">Destination <span
-                            class="text-red-500">*</span></label>
-                    <select name="destination_id" id="destination_id"
-                        class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        data-validation="required" required>
-                        <option value="">Select Destination</option>
-                        @foreach (auth()->user()->destinations as $destination)
-                            <option value="{{ $destination->id }}"
-                                {{ old('destination_id') == $destination->id ? 'selected' : '' }}>
-                                {{ e($destination->destination_name) }}
-                            </option>
-                        @endforeach
-                    </select>
+                <!-- Destination -->
+                <div>
+                    <label for="destination_id" class="block text-sm font-semibold text-blue-800 mb-2 uppercase tracking-wide">
+                        Destination <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
+                        <select name="destination_id" id="destination_id"
+                            class="w-full px-4 py-3 border-2 border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-blue-50 text-lg appearance-none"
+                            data-validation="required" required>
+                            <option value="">Select Destination</option>
+                            @foreach (auth()->user()->destinations as $destination)
+                                <option value="{{ $destination->id }}"
+                                    {{ old('destination_id') == $destination->id ? 'selected' : '' }}>
+                                    📍 {{ e($destination->destination_name) }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+                    </div>
                     <div class="validation-error text-red-500 text-sm mt-1" id="destination_id_error"></div>
                     @error('destination_id')
-                        <span class="text-red-500 text-sm">{{ e($message) }}</span>
+                        <span class="text-red-500 text-sm flex items-center mt-1">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            {{ e($message) }}
+                        </span>
                     @enderror
                 </div>
 
-                <div class="mb-4">
-                    <label for="bus_id" class="block font-medium text-gray-700">Bus ID / Targa No <span
-                            class="text-red-500">*</span></label>
-                    <input type="text" name="bus_id" id="bus_id"
-                        class="w-full p-2 border rounded bg-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        value="{{ old('bus_id') }}" data-validation="required" required readonly>
+                <!-- Bus ID -->
+                <div>
+                    <label for="bus_id" class="block text-sm font-semibold text-blue-800 mb-2 uppercase tracking-wide">
+                        Bus ID / Targa No <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
+                        <input type="text" name="bus_id" id="bus_id"
+                            class="w-full px-4 py-3 border-2 border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-gray-100 text-lg"
+                            value="{{ old('bus_id') }}" data-validation="required" required readonly placeholder="Auto-assigned based on destination">
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path>
+                            </svg>
+                        </div>
+                    </div>
                     <div class="validation-error text-red-500 text-sm mt-1" id="bus_id_error"></div>
                     @error('bus_id')
-                        <span class="text-red-500 text-sm">{{ e($message) }}</span>
+                        <span class="text-red-500 text-sm flex items-center mt-1">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            {{ e($message) }}
+                        </span>
                     @enderror
                 </div>
 
-                <div class="mb-4">
-                    <label for="departure_datetime" class="block font-medium text-gray-700">Departure Date and Time <span
-                            class="text-red-500">*</span></label>
-                    <input type="datetime-local" name="departure_datetime" id="departure_datetime"
-                        class="w-full p-2 border rounded bg-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        value="{{ now()->format('Y-m-d\TH:i') }}" max="{{ now()->addMonths(6)->format('Y-m-d\TH:i') }}"
-                        data-validation="required" required readonly>
+                <!-- Departure DateTime -->
+                <div>
+                    <label for="departure_datetime" class="block text-sm font-semibold text-blue-800 mb-2 uppercase tracking-wide">
+                        Departure Date & Time <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
+                        <input type="datetime-local" name="departure_datetime" id="departure_datetime"
+                            class="w-full px-4 py-3 border-2 border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-gray-100 text-lg"
+                            value="{{ now()->format('Y-m-d\TH:i') }}" max="{{ now()->addMonths(6)->format('Y-m-d\TH:i') }}"
+                            data-validation="required" required readonly>
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3a1 1 0 011-1h6a1 1 0 011 1v4h3a1 1 0 011 1v8a1 1 0 01-1 1H5a1 1 0 01-1-1V8a1 1 0 011-1h3z"></path>
+                            </svg>
+                        </div>
+                    </div>
                     <div class="validation-error text-red-500 text-sm mt-1" id="departure_datetime_error"></div>
                 </div>
 
-                <div class="mb-4">
-                    <label for="cargo_uid" class="block font-medium text-gray-700">Scan/Enter Cargo Ticket
-                        (optional)</label>
-                    <input type="text" id="cargo_uid"
-                        class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Scan or enter cargo ticket barcode" maxlength="50" pattern="[A-Za-z0-9\-_]+"
-                        data-validation="alphanumeric_dash"
-                        title="Only alphanumeric characters, hyphens, and underscores are allowed">
+                <!-- Cargo Ticket -->
+                <div>
+                    <label for="cargo_uid" class="block text-sm font-semibold text-blue-800 mb-2 uppercase tracking-wide">
+                        Cargo Ticket (Optional)
+                    </label>
+                    <div class="relative">
+                        <input type="text" id="cargo_uid"
+                            class="w-full px-4 py-3 border-2 border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-blue-50 text-lg"
+                            placeholder="Scan or enter cargo barcode" maxlength="50" pattern="[A-Za-z0-9\-_]+"
+                            data-validation="alphanumeric_dash">
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                            </svg>
+                        </div>
+                    </div>
                     <input type="hidden" name="cargo_id" id="cargo_id" value="{{ old('cargo_id') }}">
-                    <div id="cargo-info" class="text-sm text-green-700 mt-2"></div>
+                    <div id="cargo-info" class="text-sm text-green-700 mt-2 p-2 bg-green-50 rounded-lg hidden"></div>
                     <div class="validation-error text-red-500 text-sm mt-1" id="cargo_uid_error"></div>
                     @error('cargo_id')
-                        <span class="text-red-500 text-sm">{{ e($message) }}</span>
+                        <span class="text-red-500 text-sm flex items-center mt-1">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            {{ e($message) }}
+                        </span>
                     @enderror
                 </div>
 
-                <!-- Optional phone number -->
-                <div class="mb-4">
-                    <label for="phone_no" class="block font-medium text-gray-700">Phone Number</label>
+                <!-- Phone Number -->
+                <div>
+                    <label for="phone_no" class="block text-sm font-semibold text-blue-800 mb-2 uppercase tracking-wide">
+                        Phone Number (Optional)
+                    </label>
                     <div class="flex">
-                        <span class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 rounded-l-md">+251</span>
+                        <span class="inline-flex items-center px-4 text-sm font-medium text-blue-800 bg-blue-200 border-2 border-r-0 border-blue-200 rounded-l-xl">🇪🇹 +251</span>
                         <input type="tel" name="phone_no" id="phone_no"
-                            class="w-full p-2 border rounded-r-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            class="w-full px-4 py-3 border-2 border-blue-200 rounded-r-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-blue-50 text-lg"
                             placeholder="9XXXXXXXX" value="{{ substr(old('phone_no'), 1) }}" maxlength="9" minlength="9"
-                            pattern="[97][0-9]{8}" data-validation="phone_number" title="Please enter exactly 9 digits starting with 9 or 7"
-                            autocomplete="tel">
+                            pattern="[97][0-9]{8}" data-validation="phone_number" autocomplete="tel">
                     </div>
-                    <p id="phone_no_warning" class="text-sm text-red-600 hidden"></p>
+                    <p id="phone_no_warning" class="text-sm text-red-600 hidden mt-1 flex items-center">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </p>
                     <div class="validation-error text-red-500 text-sm mt-1" id="phone_no_error"></div>
                     @error('phone_no')
-                        <span class="text-red-500 text-sm">{{ e($message) }}</span>
+                        <span class="text-red-500 text-sm flex items-center mt-1">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            {{ e($message) }}
+                        </span>
                     @enderror
                 </div>
 
-                <!-- Optional Fayda ID -->
-                <div class="mb-4">
-                    <label for="fayda_id" class="block font-medium text-gray-700">Fayda ID</label>
-                    <input type="text" name="fayda_id" id="fayda_id"
-                        class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Fayda ID" value="{{ old('fayda_id') }}" maxlength="20" pattern="[A-Za-z0-9]+"
-                        data-validation="alphanumeric" title="Only letters and numbers allowed" autocomplete="off">
-                        <p id="fayda_id_warning" class="text-sm text-red-600 hidden"></p>
+                <!-- National ID (Fayda ID) -->
+                <div>
+                    <label for="fayda_id" class="block text-sm font-semibold text-blue-800 mb-2 uppercase tracking-wide">
+                        National ID (Optional)
+                    </label>
+                    <div class="relative">
+                        <input type="text" name="fayda_id" id="fayda_id"
+                            class="w-full px-4 py-3 border-2 border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-blue-50 text-lg"
+                            placeholder="Enter 16-digit National ID" value="{{ old('fayda_id') }}" maxlength="16" minlength="16"
+                            pattern="[0-9]{16}" data-validation="national_id" autocomplete="off">
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <p id="fayda_id_warning" class="text-sm text-red-600 hidden mt-1 flex items-center">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </p>
                     <div class="validation-error text-red-500 text-sm mt-1" id="fayda_id_error"></div>
                     @error('fayda_id')
-                        <span class="text-red-500 text-sm">{{ e($message) }}</span>
+                        <span class="text-red-500 text-sm flex items-center mt-1">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            {{ e($message) }}
+                        </span>
                     @enderror
                 </div>
 
-                <div class="mb-4">
+                <!-- Submit Button -->
+                <div class="pt-4">
                     <button type="submit" id="submit-btn"
-                        class="w-full bg-blue-500 hover:bg-blue-600 text-white p-2 rounded transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
-                        <span id="submit-text">Create Ticket</span>
-                        <span id="submit-loading" class="hidden">Creating...</span>
+                        class="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-bold py-4 px-6 rounded-xl transition duration-200 transform hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center text-lg">
+                        <svg id="submit-icon" class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"></path>
+                        </svg>
+                        <span id="submit-text">🎫 Create Ticket</span>
+                        <span id="submit-loading" class="hidden flex items-center">
+                            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Creating Ticket...
+                        </span>
                     </button>
                 </div>
             </form>
         </div>
+        
+        <!-- Quick Actions -->
+        <div class="mt-6 grid grid-cols-2 gap-4">
+            <a href="{{ route('ticketer.tickets.scan') }}" class="flex items-center justify-center p-4 bg-white rounded-xl shadow-lg border-2 border-green-200 hover:border-green-400 transition duration-200">
+                <svg class="w-6 h-6 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path>
+                </svg>
+                <span class="font-medium text-green-800">Scan Ticket</span>
+            </a>
+            <a href="{{ route('ticketer.tickets.report') }}" class="flex items-center justify-center p-4 bg-white rounded-xl shadow-lg border-2 border-purple-200 hover:border-purple-400 transition duration-200">
+                <svg class="w-6 h-6 text-purple-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                </svg>
+                <span class="font-medium text-purple-800">View Reports</span>
+            </a>
+        </div>
     </div>
+</div>
+
+    <style>
+        /* Gender radio button styling */
+        .gender-radio:checked + .gender-option {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            border-color: #1d4ed8;
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+        
+        .gender-radio:checked + .gender-option svg {
+            color: white;
+        }
+        
+        .gender-radio:checked + .gender-option span {
+            color: white;
+        }
+        
+        /* Mobile optimizations */
+        @media (max-width: 640px) {
+            .container {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+        }
+        
+        /* Loading animation */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        /* Smooth transitions */
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        input, select, button {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+    </style>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -261,6 +502,11 @@
                     return /^[97][0-9]{8}$/.test(value);
                 },
 
+                national_id: function(value) {
+                    if (!value) return true; // Optional field
+                    return /^[0-9]{16}$/.test(value);
+                },
+
                 numeric: function(value) {
                     return /^[0-9]+$/.test(value);
                 }
@@ -315,6 +561,7 @@
                     alphanumeric: `${fieldName} can only contain letters and numbers.`,
                     alphanumeric_dash: `${fieldName} can only contain letters, numbers, hyphens, and underscores.`,
                     phone_number: `${fieldName} must be exactly 9 digits starting with 9 or 7.`,
+                    national_id: `${fieldName} must be exactly 16 digits.`,
                     numeric: `${fieldName} must contain only numbers.`
                 };
                 return messages[rule] || `${fieldName} is invalid.`;
@@ -340,6 +587,11 @@
                 this.value = this.value.replace(/[^a-zA-Z\u1200-\u137F\s./]/g, '');
             });
 
+            // National ID (Fayda ID) input filtering
+            document.getElementById('fayda_id').addEventListener('input', function() {
+                this.value = this.value.replace(/[^0-9]/g, '').slice(0, 16);
+            });
+
             const phoneNoInput = document.getElementById('phone_no');
             
             phoneNoInput.addEventListener('input', function() {
@@ -350,9 +602,7 @@
                 this.value = value.slice(0, 9);
             });
 
-            document.getElementById('fayda_id').addEventListener('input', function() {
-                this.value = this.value.replace(/[^A-Za-z0-9]/g, '');
-            });
+
 
             document.getElementById('cargo_uid').addEventListener('input', function() {
                 this.value = this.value.replace(/[^A-Za-z0-9\-_]/g, '');
@@ -492,20 +742,43 @@
                             })
                             .then(data => {
                                 if (data && data.id) {
-                                    infoDiv.textContent =
-                                        `Cargo found: Weight: ${escapeHtml(data.weight)} kg - ${escapeHtml(data.destination)}`;
-                                    infoDiv.className = 'text-sm text-green-700 mt-2';
+                                    infoDiv.innerHTML = `
+                                        <div class="flex items-center">
+                                            <svg class="w-4 h-4 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                            <span>Cargo found: Weight: ${escapeHtml(data.weight)} kg - ${escapeHtml(data.destination)}</span>
+                                        </div>
+                                    `;
+                                    infoDiv.className = 'text-sm text-green-700 mt-2 p-2 bg-green-50 rounded-lg';
+                                    infoDiv.classList.remove('hidden');
                                     cargoIdInput.value = sanitizeInput(data.id);
                                 } else {
-                                    infoDiv.textContent = 'Cargo not found!';
-                                    infoDiv.className = 'text-sm text-red-700 mt-2';
+                                    infoDiv.innerHTML = `
+                                        <div class="flex items-center">
+                                            <svg class="w-4 h-4 text-red-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                            </svg>
+                                            <span>Cargo not found!</span>
+                                        </div>
+                                    `;
+                                    infoDiv.className = 'text-sm text-red-700 mt-2 p-2 bg-red-50 rounded-lg';
+                                    infoDiv.classList.remove('hidden');
                                     cargoIdInput.value = '';
                                 }
                             })
                             .catch(error => {
                                 console.error('Error fetching cargo data:', error);
-                                infoDiv.textContent = 'Error fetching cargo information!';
-                                infoDiv.className = 'text-sm text-red-700 mt-2';
+                                infoDiv.innerHTML = `
+                                    <div class="flex items-center">
+                                        <svg class="w-4 h-4 text-red-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        <span>Error fetching cargo information!</span>
+                                    </div>
+                                `;
+                                infoDiv.className = 'text-sm text-red-700 mt-2 p-2 bg-red-50 rounded-lg';
+                                infoDiv.classList.remove('hidden');
                                 cargoIdInput.value = '';
                             });
                     }, 500); // 500ms debounce
@@ -574,9 +847,11 @@
                         return false;
                     }
 
-                    // Prevent double submission
+                    // Prevent double submission with enhanced UI feedback
                     isSubmitting = true;
                     submitBtn.disabled = true;
+                    submitBtn.classList.add('animate-pulse');
+                    document.getElementById('submit-icon').classList.add('hidden');
                     submitText.classList.add('hidden');
                     submitLoading.classList.remove('hidden');
 
@@ -603,6 +878,23 @@
                 }
             });
 
+            // Gender radio button functionality
+            document.querySelectorAll('.gender-radio').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    // Clear any previous gender validation errors
+                    document.getElementById('gender_error').textContent = '';
+                    
+                    // Update visual state
+                    document.querySelectorAll('.gender-option').forEach(option => {
+                        option.classList.remove('selected');
+                    });
+                    
+                    if (this.checked) {
+                        this.nextElementSibling.classList.add('selected');
+                    }
+                });
+            });
+
             // Security: Clear form data on page unload
             window.addEventListener('beforeunload', function() {
                 const sensitiveInputs = form.querySelectorAll('input[type="text"], input[type="tel"]');
@@ -612,6 +904,12 @@
                     }
                 });
             });
+
+            // Initialize gender selection on page load
+            const checkedGender = document.querySelector('.gender-radio:checked');
+            if (checkedGender) {
+                checkedGender.nextElementSibling.classList.add('selected');
+            }
         });
     </script>
 
@@ -643,16 +941,24 @@ document.getElementById('fayda_id').addEventListener('blur', function() {
     const faydaId = this.value;
     const warning = document.getElementById('fayda_id_warning');
     if (faydaId.length > 0) {
-        fetch(`/ticketer/tickets/check-fayda-id?fayda_id=${encodeURIComponent(faydaId)}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.exists) {
-                    warning.textContent = '🚫 This Fayda ID is already registered!';
-                    warning.classList.remove('hidden');
-                } else {
+        if (faydaId.length !== 16 || !/^[0-9]{16}$/.test(faydaId)) {
+            warning.textContent = 'National ID must be exactly 16 digits';
+            warning.classList.remove('hidden');
+        } else {
+            fetch(`/ticketer/tickets/check-fayda-id?fayda_id=${encodeURIComponent(faydaId)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.exists) {
+                        warning.textContent = '🚫 This National ID is already registered!';
+                        warning.classList.remove('hidden');
+                    } else {
+                        warning.classList.add('hidden');
+                    }
+                })
+                .catch(() => {
                     warning.classList.add('hidden');
-                }
-            });
+                });
+        }
     } else {
         warning.classList.add('hidden');
     }

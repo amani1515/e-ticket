@@ -12,14 +12,12 @@ class Ticket extends Model
 
     protected $fillable = [
         'passenger_name',
-        'gender', // <-- Make sure this is here!
-        'cargo_id', // <-- Add this line!
-
+        'gender',
+        'cargo_id',
         'age_status',
         'destination_id',
         'bus_id',
-            'schedule_id', // <-- make sure this is here!
-
+        'schedule_id',
         'departure_datetime',
         'ticket_code',
         'ticket_status',
@@ -27,8 +25,8 @@ class Ticket extends Model
         'tax',
         'service_fee',
         'fayda_id',
-        'phone_no', // <-- Add this line if you have a phone number field
-        'disability_status', // <-- Add this line if you have a disability status field
+        'phone_no',
+        'disability_status',
     ];
 
     // Relationship with Destination

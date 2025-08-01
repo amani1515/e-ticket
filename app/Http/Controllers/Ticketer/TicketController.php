@@ -67,7 +67,7 @@ public function store(Request $request)
         'bus_id' => 'required|string|max:255', // This is targa from the form!
         'departure_datetime' => 'required|date',
         'phone_no' => 'nullable|digits:10|unique:tickets,phone_no',
-        'fayda_id' => 'nullable|string|max:20|unique:tickets,fayda_id',
+        'fayda_id' => 'nullable|digits:16|unique:tickets,fayda_id',
         'disability_status' => 'required|in:None,Blind / Visual Impairment,Deaf / Hard of Hearing,Speech Impairment',
     ]);
 
@@ -219,20 +219,39 @@ public function processScan(Request $request)
         'ticket_code' => 'required|string'
     ]);
 
-    $ticket = Ticket::where('ticket_code', $request->ticket_code)->first();
+    $inputCode = $request->ticket_code;
+    
+    // Try exact match first
+    $ticket = Ticket::where('ticket_code', $inputCode)->first();
+    
+    // If not found, try partial match (input might be truncated)
+    if (!$ticket) {
+        $ticket = Ticket::where('ticket_code', 'LIKE', $inputCode . '%')->first();
+    }
+    
+    // If still not found, try reverse partial match (database might be truncated)
+    if (!$ticket) {
+        $ticket = Ticket::where('ticket_code', 'LIKE', '%' . $inputCode)->first();
+    }
 
     if (!$ticket) {
-        return redirect()->back()->with('error', 'Ticket not found.');
+        return redirect()->back()->with('error', 'Ticket not found: ' . $inputCode);
     }
 
     if ($ticket->ticket_status !== 'created') {
-        return redirect()->back()->with('error', 'Ticket is not in a scannable state.');
+        return redirect()->back()->with('error', 'Ticket already processed. Status: ' . $ticket->ticket_status);
     }
 
     $ticket->ticket_status = 'confirmed';
     $ticket->save();
 
-    return redirect()->back()->with('success', 'Ticket confirmed successfully.');
+    return redirect()->back()->with('success', 'Ticket confirmed! Passenger: ' . $ticket->passenger_name);
+}
+
+public function debugTickets()
+{
+    $tickets = Ticket::latest()->take(10)->get(['id', 'ticket_code', 'ticket_status', 'passenger_name']);
+    return response()->json($tickets);
 }
 
 
