@@ -25,9 +25,13 @@ class PassengersReportController extends Controller
          {
         $query = Ticket::query()->with('destination');
 
-        // Search by Ticket ID
+        // Search by Ticket ID or Passenger Name
         if ($request->filled('search')) {
-            $query->where('id', $request->search);
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('id', $search)
+                  ->orWhere('passenger_name', 'like', '%' . $search . '%');
+            });
         }
 
         // Filter by gender
@@ -38,6 +42,11 @@ class PassengersReportController extends Controller
         // Filter by destination
         if ($request->filled('destination_id')) {
             $query->where('destination_id', $request->destination_id);
+        }
+
+        // Filter by age status
+        if ($request->filled('age_status')) {
+            $query->where('age_status', $request->age_status);
         }
 
         // Filter by date
