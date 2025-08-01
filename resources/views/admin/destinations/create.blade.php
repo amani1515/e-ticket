@@ -1,96 +1,200 @@
-{{-- filepath: resources/views/admin/destinations/create.blade.php --}}
 @extends('admin.layout.app')
 
 @section('content')
-<div class="max-w-lg mx-auto p-6 bg-white shadow-md rounded">
-    <h2 class="text-2xl font-semibold text-yellow-600 mb-6">Add Destination</h2>
-
-    <form method="POST" action="{{ route('admin.destinations.store') }}" class="space-y-5">
-        @csrf
-
-        <!-- Destination Name -->
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Destination Name</label>
-            <input 
-                type="text" 
-                name="destination_name" 
-                id="destination_name"
-                maxlength="100"
-                onpaste="return false"
-                class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                required>
+<div class="min-h-screen bg-gradient-to-br from-yellow-50 to-amber-100 py-8">
+    <div class="container mx-auto px-4">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold text-amber-900 mb-2">🗺️ Create New Destination</h1>
+            <p class="text-amber-700">Add a new destination route to the system</p>
         </div>
 
-        <!-- Start From -->
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Start From</label>
-            <input 
-                type="text" 
-                name="start_from" 
-                id="start_from"
-                maxlength="100"
-                onpaste="return false"
-                class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                required>
-        </div>
+        <div class="max-w-2xl mx-auto">
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+                <!-- Header Section -->
+                <div class="bg-gradient-to-r from-amber-500 to-yellow-500 px-8 py-6">
+                    <h2 class="text-2xl font-bold text-white flex items-center">
+                        <svg class="w-8 h-8 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                        Destination Information
+                    </h2>
+                    <p class="text-amber-100 mt-2">Fill in the details for the new destination route</p>
+                </div>
 
-        <!-- Distance -->
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Distance (km)</label>
-            <input 
-                type="number" 
-                step="0.01"
-                name="distance" 
-                id="distance"
-                class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-yellow-500" 
-                required>
-        </div>
+                <!-- Form Section -->
+                <div class="px-8 py-8">
+                    <form method="POST" action="{{ route('admin.destinations.store') }}" class="space-y-6">
+                        @csrf
 
-        <!-- Tariff -->
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Tariff</label>
-            <input 
-                type="number" 
-                step="0.01"
-                name="tariff" 
-                id="tariff"
-                class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-yellow-500" 
-                required>
-        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Destination Name -->
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-semibold text-amber-800 mb-2 uppercase tracking-wide">Destination Name</label>
+                                <div class="relative">
+                                    <input 
+                                        type="text" 
+                                        name="destination_name" 
+                                        id="destination_name"
+                                        maxlength="100"
+                                        onpaste="return false"
+                                        class="w-full px-4 py-3 border-2 border-amber-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition duration-200 bg-amber-50"
+                                        placeholder="Enter destination name"
+                                        required>
+                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                        <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
 
-        <!-- Tax -->
-        <div>
-            <label for="tax" class="block text-sm font-medium text-gray-700 mb-1">Tax (%)</label>
-            <input 
-                type="number" 
-                step="0.01" 
-                name="tax" 
-                id="tax" 
-                class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-yellow-500" 
-                required>
-        </div>
+                            <!-- Start From -->
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-semibold text-amber-800 mb-2 uppercase tracking-wide">Start From</label>
+                                <div class="relative">
+                                    <input 
+                                        type="text" 
+                                        name="start_from" 
+                                        id="start_from"
+                                        maxlength="100"
+                                        onpaste="return false"
+                                        class="w-full px-4 py-3 border-2 border-amber-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition duration-200 bg-amber-50"
+                                        placeholder="Enter starting point"
+                                        required>
+                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                        <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3a1 1 0 011-1h6a1 1 0 011 1v4h3a1 1 0 011 1v8a1 1 0 01-1 1H5a1 1 0 01-1-1V8a1 1 0 011-1h3z"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
 
-        <!-- Service Fee -->
-        <div>
-            <label for="service_fee" class="block text-sm font-medium text-gray-700 mb-1">Service Fee</label>
-            <input 
-                type="number" 
-                step="0.01" 
-                name="service_fee" 
-                id="service_fee" 
-                class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-yellow-500" 
-                required>
-        </div>
+                            <!-- Distance -->
+                            <div>
+                                <label class="block text-sm font-semibold text-amber-800 mb-2 uppercase tracking-wide">Distance (km)</label>
+                                <div class="relative">
+                                    <input 
+                                        type="number" 
+                                        step="0.01"
+                                        name="distance" 
+                                        id="distance"
+                                        class="w-full px-4 py-3 border-2 border-amber-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition duration-200 bg-amber-50"
+                                        placeholder="0.00"
+                                        required>
+                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                        <span class="text-amber-600 text-sm font-medium">km</span>
+                                    </div>
+                                </div>
+                            </div>
 
-        <!-- Submit Button -->
-        <div class="pt-4">
-            <button 
-                type="submit" 
-                class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 rounded transition duration-200">
-                Save Destination
-            </button>
+                            <!-- Tariff -->
+                            <div>
+                                <label class="block text-sm font-semibold text-amber-800 mb-2 uppercase tracking-wide">Base Tariff</label>
+                                <div class="relative">
+                                    <input 
+                                        type="number" 
+                                        step="0.01"
+                                        name="tariff" 
+                                        id="tariff"
+                                        class="w-full px-4 py-3 border-2 border-amber-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition duration-200 bg-amber-50"
+                                        placeholder="0.00"
+                                        required>
+                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                        <span class="text-amber-600 text-sm font-medium">ETB</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tax -->
+                            <div>
+                                <label class="block text-sm font-semibold text-amber-800 mb-2 uppercase tracking-wide">Tax</label>
+                                <div class="relative">
+                                    <input 
+                                        type="number" 
+                                        step="0.01" 
+                                        name="tax" 
+                                        id="tax" 
+                                        class="w-full px-4 py-3 border-2 border-amber-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition duration-200 bg-amber-50"
+                                        placeholder="0.00"
+                                        required>
+                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                        <span class="text-amber-600 text-sm font-medium">ETB</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Service Fee -->
+                            <div>
+                                <label class="block text-sm font-semibold text-amber-800 mb-2 uppercase tracking-wide">Service Fee</label>
+                                <div class="relative">
+                                    <input 
+                                        type="number" 
+                                        step="0.01" 
+                                        name="service_fee" 
+                                        id="service_fee" 
+                                        class="w-full px-4 py-3 border-2 border-amber-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition duration-200 bg-amber-50"
+                                        placeholder="0.00"
+                                        required>
+                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                        <span class="text-amber-600 text-sm font-medium">ETB</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cost Preview -->
+                        <div class="mt-8 p-6 bg-gradient-to-r from-amber-50 to-yellow-50 rounded-xl border-2 border-amber-200">
+                            <h3 class="text-lg font-bold text-amber-900 mb-4 flex items-center">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                </svg>
+                                Total Cost Preview
+                            </h3>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                                <div class="bg-white rounded-lg p-3 border border-amber-200">
+                                    <div class="text-sm text-amber-600 font-medium">Base Tariff</div>
+                                    <div class="text-lg font-bold text-amber-900" id="preview-tariff">0.00 ETB</div>
+                                </div>
+                                <div class="bg-white rounded-lg p-3 border border-amber-200">
+                                    <div class="text-sm text-amber-600 font-medium">Tax</div>
+                                    <div class="text-lg font-bold text-amber-900" id="preview-tax">0.00 ETB</div>
+                                </div>
+                                <div class="bg-white rounded-lg p-3 border border-amber-200">
+                                    <div class="text-sm text-amber-600 font-medium">Service Fee</div>
+                                    <div class="text-lg font-bold text-amber-900" id="preview-service">0.00 ETB</div>
+                                </div>
+                                <div class="bg-amber-500 text-white rounded-lg p-3">
+                                    <div class="text-sm font-medium opacity-90">Total Cost</div>
+                                    <div class="text-lg font-bold" id="preview-total">0.00 ETB</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex flex-col sm:flex-row gap-4 pt-6">
+                            <button 
+                                type="submit" 
+                                class="flex-1 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-white font-bold py-4 px-6 rounded-xl transition duration-200 transform hover:scale-105 shadow-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                Create Destination
+                            </button>
+                            <a href="{{ route('admin.destinations.index') }}" 
+                               class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-bold py-4 px-6 rounded-xl transition duration-200 text-center flex items-center justify-center">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-    </form>
+    </div>
 </div>
 
 <script>
@@ -106,25 +210,27 @@
         safeInput(document.getElementById('start_from'));
 
         // Numeric input restrictions with alert
-        const numericFields = [
-            'distance',
-            'tariff',
-            'tax',
-            'service_fee'
-        ];
+        const numericFields = ['distance', 'tariff', 'tax', 'service_fee'];
 
         // Create alert box
         let alertBox = document.createElement('div');
-        alertBox.style.display = 'none';
-        alertBox.style.color = '#fff';
-        alertBox.style.background = '#e63946';
-        alertBox.style.padding = '8px';
-        alertBox.style.margin = '10px 0';
-        alertBox.style.borderRadius = '4px';
+        alertBox.className = 'hidden bg-red-500 text-white p-3 rounded-lg mb-4 border border-red-600';
         alertBox.textContent = "Negative numbers are not allowed!";
-        // Insert alert box at the top of the form
         const form = document.querySelector('form');
         if (form) form.prepend(alertBox);
+
+        // Cost preview update function
+        const updatePreview = () => {
+            const tariff = parseFloat(document.getElementById('tariff').value) || 0;
+            const tax = parseFloat(document.getElementById('tax').value) || 0;
+            const serviceFee = parseFloat(document.getElementById('service_fee').value) || 0;
+            const total = tariff + tax + serviceFee;
+
+            document.getElementById('preview-tariff').textContent = tariff.toFixed(2) + ' ETB';
+            document.getElementById('preview-tax').textContent = tax.toFixed(2) + ' ETB';
+            document.getElementById('preview-service').textContent = serviceFee.toFixed(2) + ' ETB';
+            document.getElementById('preview-total').textContent = total.toFixed(2) + ' ETB';
+        };
 
         numericFields.forEach(id => {
             const el = document.getElementById(id);
@@ -133,17 +239,22 @@
                     let num = parseFloat(this.value);
                     if (isNaN(num)) num = 0;
                     if (num < 0) {
-                        alertBox.style.display = 'block';
+                        alertBox.classList.remove('hidden');
                         this.value = 0;
+                        setTimeout(() => alertBox.classList.add('hidden'), 3000);
                     } else {
-                        alertBox.style.display = 'none';
+                        alertBox.classList.add('hidden');
                     }
                     if (num > 10000) {
                         this.value = 10000;
                     }
+                    updatePreview();
                 });
             }
         });
+
+        // Initial preview update
+        updatePreview();
     });
 </script>
 @endsection

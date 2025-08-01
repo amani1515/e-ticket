@@ -42,10 +42,10 @@
                             <span class="text-amber-700">Total Schedules</span>
                             <span class="font-bold text-amber-900">{{ $destination->schedules->count() ?? 0 }}</span>
                         </div>
-                        <div class="flex justify-between items-center">
+                        {{-- <div class="flex justify-between items-center">
                             <span class="text-amber-700">Total Tickets</span>
                             <span class="font-bold text-amber-900">{{ $destination->tickets->count() ?? 0 }}</span>
-                        </div>
+                        </div> --}}
                         <div class="flex justify-between items-center">
                             <span class="text-amber-700">Distance</span>
                             <span class="font-bold text-amber-900">{{ $destination->distance ?? 'N/A' }} km</span>
