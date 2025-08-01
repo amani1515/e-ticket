@@ -13,6 +13,7 @@ class Destination extends Model
         'destination_name',
         'start_from',
         'tariff',
+        'distance',
         'tax',
         'service_fee',
     ];
