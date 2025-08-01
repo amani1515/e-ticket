@@ -9,19 +9,56 @@ use Illuminate\Http\Request;
 // Ticketers can view their schedules and mark them as paid.
 class ScheduleController extends Controller
 {
-    // Show a report of all schedules created by the current ticketer (except queued)
-    public function report()
+    // Show a report of all schedules created by the current ticketer with filters
+    public function report(Request $request)
     {
         $user = auth()->user();
+        $query = \App\Models\Schedule::with(['bus', 'destination'])
+            ->where('ticket_created_by', $user->id);
 
-        // Fetch schedules with related bus and destination, filtered by creator and status
-        $schedules = \App\Models\Schedule::with(['bus', 'destination'])
-            ->where('ticket_created_by', $user->id)
-            ->where('status', '!=', 'queued')
-            ->orderByDesc('scheduled_at')
-            ->get();
+        // Filter by destination
+        if ($request->filled('destination_id')) {
+            $query->where('destination_id', $request->destination_id);
+        }
 
-        // Show the report view with the schedules
+        // Filter by bus targa
+        if ($request->filled('bus_targa')) {
+            $query->whereHas('bus', function($q) use ($request) {
+                $q->where('targa', 'like', '%' . $request->bus_targa . '%');
+            });
+        }
+
+        // Filter by schedule ID
+        if ($request->filled('schedule_id')) {
+            $query->where('id', $request->schedule_id);
+        }
+
+        // Filter by status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // Filter by date
+        if ($request->filled('date_filter')) {
+            switch ($request->date_filter) {
+                case 'today':
+                    $query->whereDate('scheduled_at', now()->toDateString());
+                    break;
+                case 'yesterday':
+                    $query->whereDate('scheduled_at', now()->subDay()->toDateString());
+                    break;
+                case 'this_week':
+                    $query->whereBetween('scheduled_at', [now()->startOfWeek(), now()->endOfWeek()]);
+                    break;
+                case 'this_month':
+                    $query->whereMonth('scheduled_at', now()->month)
+                          ->whereYear('scheduled_at', now()->year);
+                    break;
+            }
+        }
+
+        $schedules = $query->orderByDesc('scheduled_at')->paginate(15);
+
         return view('ticketer.schedule.report', compact('schedules'));
     }
 
