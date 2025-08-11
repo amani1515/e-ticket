@@ -9,10 +9,12 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
+use App\Traits\Syncable;
 
 class User extends Authenticatable
 {
     use HasApiTokens;
+    use Syncable;
 
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory;
@@ -37,6 +39,10 @@ class User extends Authenticatable
     'profile_photo_path',
     'pdf_file',
     'is_blocked',
+    'uuid',
+    'synced',
+    'synced_at',
+    'last_modified',
 ];
 
     /**
@@ -91,5 +97,11 @@ public function mahberat()
     return $this->belongsTo(Mahberat::class);
 }
 
+protected function getUuidData(): array
+{
+    return [
+        'usertype' => $this->usertype ?? 'general',
+    ];
+}
 
 }

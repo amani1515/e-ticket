@@ -31,6 +31,7 @@ use App\Http\Controllers\HisabShum\PaidReportController;
 use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\BackupController;
 use App\Http\Controllers\Admin\SmsTemplateController;
+use App\Http\Controllers\Admin\SyncController;
 use App\Http\Controllers\Balehabt\BusController as BalehabtBusController;
 
 // --------------------
@@ -130,6 +131,11 @@ Route::get('/buses/banner/{id}', [BusController::class, 'banner'])->name('buses.
     
 // route for sms
 Route::resource('sms-template', SmsTemplateController::class);
+
+// Sync routes
+Route::get('/sync', [SyncController::class, 'index'])->name('sync.index');
+Route::post('/sync/now', [SyncController::class, 'sync'])->name('sync.now');
+Route::get('/sync/status', [SyncController::class, 'status'])->name('sync.status');
 
 });
 

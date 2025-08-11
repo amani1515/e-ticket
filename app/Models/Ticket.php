@@ -4,11 +4,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Destination;
+use App\Traits\Syncable;
 
 
 class Ticket extends Model
 {
     use HasFactory;
+    use Syncable;
 
     protected $fillable = [
         'passenger_name',
@@ -27,6 +29,10 @@ class Ticket extends Model
         'fayda_id',
         'phone_no',
         'disability_status',
+        'uuid',
+        'synced',
+        'synced_at',
+        'last_modified',
     ];
 
     // Relationship with Destination
@@ -65,5 +71,12 @@ public function mahberat()
 public function balehabt()
 {
     return $this->belongsTo(User::class, 'balehabt_id');
+}
+
+protected function getUuidData(): array
+{
+    return [
+        'destination' => $this->destination->destination_name ?? 'unknown',
+    ];
 }
 }

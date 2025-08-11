@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\CashReport;
 use App\Models\Ticket;
 use Carbon\Carbon;
+use App\Services\UuidService;
 
 // CashReportController handles cash reporting for ticketers and admin review.
 // Ticketers can view, calculate, and submit daily cash reports for their tickets.
@@ -70,6 +71,7 @@ class CashReportController extends Controller
         if ($reportData->total_amount > 0) {
             // Create a new cash report for today
             $cashReport = CashReport::create([
+                'uuid' => UuidService::generate('cash_report', ['user_name' => $user->name]),
                 'user_id' => $user->id,
                 'report_date' => $today,
                 'total_amount' => $reportData->total_amount,
