@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Services\SyncService;
 use App\Models\SyncQueue;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Exception;
 
 class SyncController extends Controller
 {
@@ -15,15 +17,26 @@ class SyncController extends Controller
             return view('errors.403');
         }
 
-        $syncService = new SyncService();
-        $status = $syncService->getSyncStatus();
-        
-        $recentSync = SyncQueue::with('model')
-            ->latest()
-            ->limit(20)
-            ->get();
+        try {
+            $syncService = new SyncService();
+            $status = $syncService->getSyncStatus();
+            
+            $recentSync = SyncQueue::latest()
+                ->limit(20)
+                ->get();
 
-        return view('admin.sync.index', compact('status', 'recentSync'));
+            return view('admin.sync.index', compact('status', 'recentSync'));
+        } catch (\Exception $e) {
+            return view('admin.sync.index', [
+                'status' => [
+                    'online' => false,
+                    'pending' => 0,
+                    'failed' => 0,
+                    'last_sync' => 'Error: ' . $e->getMessage()
+                ],
+                'recentSync' => collect([])
+            ]);
+        }
     }
 
     public function sync(Request $request)

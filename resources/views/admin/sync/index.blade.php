@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('admin.layout.app')
 
 @section('content')
 <div class="container-fluid">
@@ -49,31 +49,61 @@
                         <table class="table table-striped">
                             <thead>
                                 <tr>
+                                    <th>UUID</th>
                                     <th>Model</th>
                                     <th>Action</th>
                                     <th>Status</th>
                                     <th>Attempts</th>
                                     <th>Created</th>
                                     <th>Last Attempt</th>
+                                    <th>Error</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($recentSync as $item)
-                                <tr>
+                                @forelse($recentSync ?? [] as $item)
+                                <tr class="{{ $item->synced ? '' : ($item->retry_count >= 3 ? 'table-danger' : 'table-warning') }}">
+                                    <td>
+                                        <code class="small">{{ substr($item->model_uuid, 0, 20) }}...</code>
+                                    </td>
                                     <td>{{ class_basename($item->model_type) }}</td>
                                     <td>
-                                        <span class="badge badge-secondary">{{ $item->action }}</span>
-                                    </td>
-                                    <td>
-                                        <span class="badge badge-{{ $item->synced ? 'success' : 'warning' }}">
-                                            {{ $item->synced ? 'Synced' : 'Pending' }}
+                                        <span class="badge badge-{{ $item->action === 'create' ? 'primary' : ($item->action === 'update' ? 'info' : 'danger') }}">
+                                            {{ ucfirst($item->action) }}
                                         </span>
                                     </td>
-                                    <td>{{ $item->retry_count }}</td>
+                                    <td>
+                                        @if($item->synced)
+                                            <span class="badge badge-success">✓ Synced</span>
+                                        @elseif($item->retry_count >= 3)
+                                            <span class="badge badge-danger">✗ Failed</span>
+                                        @else
+                                            <span class="badge badge-warning">⏳ Pending</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <span class="badge badge-{{ $item->retry_count > 0 ? 'warning' : 'light' }}">
+                                            {{ $item->retry_count }}
+                                        </span>
+                                    </td>
                                     <td>{{ $item->created_at->format('M d, H:i') }}</td>
                                     <td>{{ $item->last_attempt ? $item->last_attempt->format('M d, H:i') : 'Never' }}</td>
+                                    <td>
+                                        @if($item->error_message)
+                                            <span class="text-danger small" title="{{ $item->error_message }}">
+                                                {{ Str::limit($item->error_message, 30) }}
+                                            </span>
+                                        @else
+                                            <span class="text-muted">-</span>
+                                        @endif
+                                    </td>
                                 </tr>
-                                @endforeach
+                                @empty
+                                <tr>
+                                    <td colspan="8" class="text-center text-muted py-4">
+                                        No sync activity yet
+                                    </td>
+                                </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>

@@ -15,8 +15,8 @@ class SyncService
 
     public function __construct()
     {
-        $this->remoteUrl = config('sync.remote_url', 'https://eticket.capitalltechs.com');
-        $this->apiToken = config('sync.api_token', 'your-api-token');
+        $this->remoteUrl = config('sync.remote_url') ?? env('SYNC_REMOTE_URL', 'https://eticket.capitalltechs.com');
+        $this->apiToken = config('sync.api_token') ?? env('SYNC_API_TOKEN', 'your-api-token');
     }
 
     public function isOnline(): bool
@@ -73,12 +73,13 @@ class SyncService
 
     private function syncItem(SyncQueue $item): void
     {
-        $endpoint = $this->getEndpoint($item->model_type, $item->action);
+        $endpoint = $this->getEndpoint($item->model_type);
         
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $this->apiToken,
-            'Content-Type' => 'application/json'
-        ])->post($this->remoteUrl . $endpoint, [
+            'Content-Type' => 'application/json',
+            'Accept' => 'application/json'
+        ])->timeout(30)->post($this->remoteUrl . $endpoint, [
             'uuid' => $item->model_uuid,
             'action' => $item->action,
             'data' => $item->data,
@@ -86,28 +87,63 @@ class SyncService
         ]);
 
         if (!$response->successful()) {
-            throw new Exception('API request failed: ' . $response->body());
+            throw new Exception('API request failed: ' . $response->status() . ' - ' . $response->body());
         }
     }
 
-    private function getEndpoint(string $modelType, string $action): string
+    private function getEndpoint(string $modelType): string
     {
         $model = strtolower(class_basename($modelType));
         return "/api/sync/{$model}";
     }
+    
+    public function syncBatch(array $items): array
+    {
+        if (!$this->isOnline()) {
+            return ['success' => false, 'message' => 'No internet connection'];
+        }
+
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer ' . $this->apiToken,
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json'
+            ])->timeout(60)->post($this->remoteUrl . '/api/sync/batch', [
+                'items' => $items
+            ]);
+
+            if (!$response->successful()) {
+                throw new Exception('Batch sync failed: ' . $response->status() . ' - ' . $response->body());
+            }
+
+            return $response->json();
+        } catch (Exception $e) {
+            Log::error('Batch sync error: ' . $e->getMessage());
+            return ['success' => false, 'message' => $e->getMessage()];
+        }
+    }
 
     public function getSyncStatus(): array
     {
-        $pending = SyncQueue::where('synced', false)->count();
-        $failed = SyncQueue::where('synced', false)
-            ->where('retry_count', '>=', 3)
-            ->count();
-        
-        return [
-            'online' => $this->isOnline(),
-            'pending' => $pending,
-            'failed' => $failed,
-            'last_sync' => SyncSettings::get('last_sync_attempt', 'Never')
-        ];
+        try {
+            $pending = SyncQueue::where('synced', false)->count();
+            $failed = SyncQueue::where('synced', false)
+                ->where('retry_count', '>=', 3)
+                ->count();
+            
+            return [
+                'online' => $this->isOnline(),
+                'pending' => $pending,
+                'failed' => $failed,
+                'last_sync' => SyncSettings::get('last_sync_attempt', 'Never')
+            ];
+        } catch (Exception $e) {
+            return [
+                'online' => false,
+                'pending' => 0,
+                'failed' => 0,
+                'last_sync' => 'Error: ' . $e->getMessage()
+            ];
+        }
     }
 }

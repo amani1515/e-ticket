@@ -16,8 +16,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'prevent.caching' => \App\Http\Middleware\PreventCaching::class,
             'security.headers' => \App\Http\Middleware\SecurityHeaders::class,
-            'role' => \App\Http\Middleware\RoleMiddleware::class, // <-- Add this line
-
+            'role' => \App\Http\Middleware\RoleMiddleware::class,
+            'auth.api.token' => \App\Http\Middleware\ApiTokenAuth::class,
         ]);
         
         // Apply security headers globally
