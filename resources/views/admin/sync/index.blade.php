@@ -37,118 +37,160 @@
         </div>
     </div>
 
-    <!-- Stats Cards -->
+    <!-- Beautiful Stats Cards -->
     <div class="row mb-4">
-        <div class="col-xl-2 col-md-4 col-sm-6">
-            <div class="card border-0 shadow-sm h-100 stats-card" data-filter="all">
-                <div class="card-body text-center">
-                    <div class="bg-primary bg-gradient rounded-circle p-3 mx-auto mb-2" style="width: 60px; height: 60px;">
-                        <i class="fas fa-database text-white fa-lg"></i>
+        <div class="col-xl-2 col-md-4 col-sm-6 mb-3">
+            <div class="card border-0 shadow-lg h-100 stats-card gradient-card-1" data-filter="all">
+                <div class="card-body text-center text-white position-relative">
+                    <div class="icon-circle mb-3">
+                        <i class="fas fa-database fa-2x"></i>
                     </div>
-                    <h3 class="mb-0 text-primary">{{ $summaryStats['total'] }}</h3>
-                    <p class="text-muted mb-0 small">Total Items</p>
+                    <h2 class="mb-1 font-weight-bold">{{ $summaryStats['total'] }}</h2>
+                    <p class="mb-0 opacity-75">Total Items</p>
+                    <div class="card-glow"></div>
                 </div>
             </div>
         </div>
-        <div class="col-xl-2 col-md-4 col-sm-6">
-            <div class="card border-0 shadow-sm h-100 stats-card" data-filter="pending">
-                <div class="card-body text-center">
-                    <div class="bg-warning bg-gradient rounded-circle p-3 mx-auto mb-2" style="width: 60px; height: 60px;">
-                        <i class="fas fa-clock text-white fa-lg"></i>
+        <div class="col-xl-2 col-md-4 col-sm-6 mb-3">
+            <div class="card border-0 shadow-lg h-100 stats-card gradient-card-2" data-filter="pending">
+                <div class="card-body text-center text-white position-relative">
+                    <div class="icon-circle mb-3">
+                        <i class="fas fa-clock fa-2x"></i>
                     </div>
-                    <h3 class="mb-0 text-warning" id="pending-count">{{ $summaryStats['pending'] }}</h3>
-                    <p class="text-muted mb-0 small">Pending</p>
+                    <h2 class="mb-1 font-weight-bold" id="pending-count">{{ $summaryStats['pending'] }}</h2>
+                    <p class="mb-0 opacity-75">Pending</p>
+                    <div class="card-glow"></div>
                 </div>
             </div>
         </div>
-        <div class="col-xl-2 col-md-4 col-sm-6">
-            <div class="card border-0 shadow-sm h-100 stats-card" data-filter="synced">
-                <div class="card-body text-center">
-                    <div class="bg-success bg-gradient rounded-circle p-3 mx-auto mb-2" style="width: 60px; height: 60px;">
-                        <i class="fas fa-check-circle text-white fa-lg"></i>
+        <div class="col-xl-2 col-md-4 col-sm-6 mb-3">
+            <div class="card border-0 shadow-lg h-100 stats-card gradient-card-3" data-filter="synced">
+                <div class="card-body text-center text-white position-relative">
+                    <div class="icon-circle mb-3">
+                        <i class="fas fa-check-circle fa-2x"></i>
                     </div>
-                    <h3 class="mb-0 text-success">{{ $summaryStats['synced'] }}</h3>
-                    <p class="text-muted mb-0 small">Synced</p>
+                    <h2 class="mb-1 font-weight-bold">{{ $summaryStats['synced'] }}</h2>
+                    <p class="mb-0 opacity-75">Synced</p>
+                    <div class="card-glow"></div>
                 </div>
             </div>
         </div>
-        <div class="col-xl-2 col-md-4 col-sm-6">
-            <div class="card border-0 shadow-sm h-100 stats-card" data-filter="failed">
-                <div class="card-body text-center">
-                    <div class="bg-danger bg-gradient rounded-circle p-3 mx-auto mb-2" style="width: 60px; height: 60px;">
-                        <i class="fas fa-exclamation-triangle text-white fa-lg"></i>
+        <div class="col-xl-2 col-md-4 col-sm-6 mb-3">
+            <div class="card border-0 shadow-lg h-100 stats-card gradient-card-4" data-filter="failed">
+                <div class="card-body text-center text-white position-relative">
+                    <div class="icon-circle mb-3">
+                        <i class="fas fa-exclamation-triangle fa-2x"></i>
                     </div>
-                    <h3 class="mb-0 text-danger" id="failed-count">{{ $summaryStats['failed'] }}</h3>
-                    <p class="text-muted mb-0 small">Failed</p>
+                    <h2 class="mb-1 font-weight-bold" id="failed-count">{{ $summaryStats['failed'] }}</h2>
+                    <p class="mb-0 opacity-75">Failed</p>
+                    <div class="card-glow"></div>
                 </div>
             </div>
         </div>
-        <div class="col-xl-2 col-md-4 col-sm-6">
-            <div class="card border-0 shadow-sm h-100 stats-card" data-filter="today">
-                <div class="card-body text-center">
-                    <div class="bg-info bg-gradient rounded-circle p-3 mx-auto mb-2" style="width: 60px; height: 60px;">
-                        <i class="fas fa-calendar-day text-white fa-lg"></i>
+        <div class="col-xl-2 col-md-4 col-sm-6 mb-3">
+            <div class="card border-0 shadow-lg h-100 stats-card gradient-card-5" data-filter="today">
+                <div class="card-body text-center text-white position-relative">
+                    <div class="icon-circle mb-3">
+                        <i class="fas fa-calendar-day fa-2x"></i>
                     </div>
-                    <h3 class="mb-0 text-info">{{ $summaryStats['today'] }}</h3>
-                    <p class="text-muted mb-0 small">Today</p>
+                    <h2 class="mb-1 font-weight-bold">{{ $summaryStats['today'] }}</h2>
+                    <p class="mb-0 opacity-75">Today</p>
+                    <div class="card-glow"></div>
                 </div>
             </div>
         </div>
-        <div class="col-xl-2 col-md-4 col-sm-6">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body text-center">
-                    <div class="bg-secondary bg-gradient rounded-circle p-3 mx-auto mb-2" style="width: 60px; height: 60px;">
-                        <i class="fas fa-history text-white fa-lg"></i>
+        <div class="col-xl-2 col-md-4 col-sm-6 mb-3">
+            <div class="card border-0 shadow-lg h-100 gradient-card-6">
+                <div class="card-body text-center text-white position-relative">
+                    <div class="icon-circle mb-3">
+                        <i class="fas fa-history fa-2x"></i>
                     </div>
-                    <h6 class="mb-0 text-secondary small">Last Sync</h6>
-                    <p class="text-muted mb-0 small" id="last-sync">{{ $status['last_sync'] }}</p>
+                    <h6 class="mb-1 font-weight-bold">Last Sync</h6>
+                    <p class="mb-0 opacity-75 small" id="last-sync">{{ $status['last_sync'] }}</p>
+                    <div class="card-glow"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Filters Section -->
+    <!-- Enhanced Filters & Auto-Sync Section -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="card border-0 shadow-sm">
+            <div class="card border-0 shadow-lg filter-card">
+                <div class="card-header bg-gradient-light border-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0 text-primary"><i class="fas fa-filter mr-2"></i>Filters & Settings</h6>
+                        <div class="d-flex align-items-center">
+                            <span class="text-muted small mr-3">Auto Sync:</span>
+                            <div class="custom-control custom-switch mr-3">
+                                <input type="checkbox" class="custom-control-input" id="autoSyncToggle">
+                                <label class="custom-control-label" for="autoSyncToggle"></label>
+                            </div>
+                            <select id="autoSyncInterval" class="form-select form-select-sm" style="width: 120px;" disabled>
+                                <option value="10">10 sec</option>
+                                <option value="30">30 sec</option>
+                                <option value="60">1 min</option>
+                                <option value="180" selected>3 min</option>
+                                <option value="300">5 min</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
                 <div class="card-body">
                     <form method="GET" id="filter-form" class="row g-3">
-                        <div class="col-md-3">
-                            <label class="form-label small text-muted">Status Filter</label>
-                            <select name="status" class="form-select form-select-sm" onchange="applyFilters()">
-                                <option value="all" {{ $statusFilter == 'all' ? 'selected' : '' }}>All Status</option>
-                                <option value="pending" {{ $statusFilter == 'pending' ? 'selected' : '' }}>Pending</option>
-                                <option value="synced" {{ $statusFilter == 'synced' ? 'selected' : '' }}>Synced</option>
-                                <option value="failed" {{ $statusFilter == 'failed' ? 'selected' : '' }}>Failed</option>
+                        <div class="col-md-2">
+                            <label class="form-label small text-muted font-weight-bold">Status Filter</label>
+                            <select name="status" class="form-select form-select-sm custom-select" onchange="applyFilters()">
+                                <option value="all" {{ $statusFilter == 'all' ? 'selected' : '' }}>🔄 All Status</option>
+                                <option value="pending" {{ $statusFilter == 'pending' ? 'selected' : '' }}>⏳ Pending</option>
+                                <option value="synced" {{ $statusFilter == 'synced' ? 'selected' : '' }}>✅ Synced</option>
+                                <option value="failed" {{ $statusFilter == 'failed' ? 'selected' : '' }}>❌ Failed</option>
                             </select>
                         </div>
-                        <div class="col-md-3">
-                            <label class="form-label small text-muted">Date Filter</label>
-                            <select name="date" class="form-select form-select-sm" onchange="applyFilters()">
-                                <option value="all" {{ $dateFilter == 'all' ? 'selected' : '' }}>All Time</option>
-                                <option value="today" {{ $dateFilter == 'today' ? 'selected' : '' }}>Today</option>
-                                <option value="week" {{ $dateFilter == 'week' ? 'selected' : '' }}>This Week</option>
-                                <option value="month" {{ $dateFilter == 'month' ? 'selected' : '' }}>This Month</option>
+                        <div class="col-md-2">
+                            <label class="form-label small text-muted font-weight-bold">Date Filter</label>
+                            <select name="date" class="form-select form-select-sm custom-select" onchange="applyFilters()">
+                                <option value="all" {{ $dateFilter == 'all' ? 'selected' : '' }}>📅 All Time</option>
+                                <option value="today" {{ $dateFilter == 'today' ? 'selected' : '' }}>📆 Today</option>
+                                <option value="week" {{ $dateFilter == 'week' ? 'selected' : '' }}>📊 This Week</option>
+                                <option value="month" {{ $dateFilter == 'month' ? 'selected' : '' }}>📈 This Month</option>
                             </select>
                         </div>
-                        <div class="col-md-3">
-                            <label class="form-label small text-muted">Model Filter</label>
-                            <select name="model" class="form-select form-select-sm" onchange="applyFilters()">
-                                <option value="all" {{ $modelFilter == 'all' ? 'selected' : '' }}>All Models</option>
+                        <div class="col-md-2">
+                            <label class="form-label small text-muted font-weight-bold">Model Filter</label>
+                            <select name="model" class="form-select form-select-sm custom-select" onchange="applyFilters()">
+                                <option value="all" {{ $modelFilter == 'all' ? 'selected' : '' }}>🗂️ All Models</option>
                                 @foreach($availableModels as $model)
-                                    <option value="{{ $model }}" {{ $modelFilter == $model ? 'selected' : '' }}>{{ $model }}</option>
+                                    <option value="{{ $model }}" {{ $modelFilter == $model ? 'selected' : '' }}>📋 {{ $model }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-3">
-                            <label class="form-label small text-muted">Per Page</label>
-                            <select name="per_page" class="form-select form-select-sm" onchange="applyFilters()">
-                                <option value="20" {{ $perPage == 20 ? 'selected' : '' }}>20 per page</option>
-                                <option value="30" {{ $perPage == 30 ? 'selected' : '' }}>30 per page</option>
-                                <option value="40" {{ $perPage == 40 ? 'selected' : '' }}>40 per page</option>
-                                <option value="50" {{ $perPage == 50 ? 'selected' : '' }}>50 per page</option>
-                                <option value="100" {{ $perPage == 100 ? 'selected' : '' }}>100 per page</option>
+                        <div class="col-md-2">
+                            <label class="form-label small text-muted font-weight-bold">Per Page</label>
+                            <select name="per_page" class="form-select form-select-sm custom-select" onchange="applyFilters()">
+                                <option value="20" {{ $perPage == 20 ? 'selected' : '' }}>📄 20 per page</option>
+                                <option value="30" {{ $perPage == 30 ? 'selected' : '' }}>📄 30 per page</option>
+                                <option value="40" {{ $perPage == 40 ? 'selected' : '' }}>📄 40 per page</option>
+                                <option value="50" {{ $perPage == 50 ? 'selected' : '' }}>📄 50 per page</option>
+                                <option value="100" {{ $perPage == 100 ? 'selected' : '' }}>📄 100 per page</option>
                             </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-muted font-weight-bold">Quick Actions</label>
+                            <div class="btn-group w-100" role="group">
+                                <button type="button" class="btn btn-outline-primary btn-sm" onclick="refreshTable()">
+                                    <i class="fas fa-refresh mr-1"></i>Refresh
+                                </button>
+                                <button type="button" class="btn btn-outline-success btn-sm" onclick="syncNow()">
+                                    <i class="fas fa-sync mr-1"></i>Sync
+                                </button>
+                                <button type="button" class="btn btn-outline-warning btn-sm" onclick="retryFailedItems()">
+                                    <i class="fas fa-redo mr-1"></i>Retry
+                                </button>
+                                <button type="button" class="btn btn-outline-danger btn-sm" onclick="clearFailedItems()">
+                                    <i class="fas fa-trash mr-1"></i>Clear
+                                </button>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -246,14 +288,17 @@
                     </div>
                 </div>
                 
-                <!-- Pagination -->
+                <!-- Beautiful Pagination -->
                 @if($syncData->hasPages())
-                <div class="card-footer bg-white border-top">
+                <div class="card-footer bg-gradient-light border-top">
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="text-muted small">
-                            Showing {{ $syncData->firstItem() }} to {{ $syncData->lastItem() }} of {{ $syncData->total() }} results
+                            <i class="fas fa-info-circle mr-1"></i>
+                            Showing <span class="font-weight-bold text-primary">{{ $syncData->firstItem() }}</span> to 
+                            <span class="font-weight-bold text-primary">{{ $syncData->lastItem() }}</span> of 
+                            <span class="font-weight-bold text-primary">{{ $syncData->total() }}</span> results
                         </div>
-                        <div>
+                        <div class="pagination-wrapper">
                             {{ $syncData->links('pagination::bootstrap-4') }}
                         </div>
                     </div>
@@ -268,19 +313,133 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <style>
+/* Beautiful Gradient Cards */
+.gradient-card-1 {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+.gradient-card-2 {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+.gradient-card-3 {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+.gradient-card-4 {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+}
+.gradient-card-5 {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+}
+.gradient-card-6 {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+}
+
 .stats-card {
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border-radius: 15px;
+    overflow: hidden;
 }
+
 .stats-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    transform: translateY(-10px) scale(1.05);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2) !important;
 }
+
+.icon-circle {
+    width: 70px;
+    height: 70px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.card-glow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+    transform: translateX(-100%);
+    transition: transform 0.6s;
+}
+
+.stats-card:hover .card-glow {
+    transform: translateX(100%);
+}
+
 .bg-gradient-primary {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
+
+.bg-gradient-light {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.filter-card {
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.custom-select {
+    border-radius: 10px;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.custom-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
 .table-hover tbody tr:hover {
-    background-color: rgba(0,123,255,.075);
+    background: linear-gradient(90deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    transform: scale(1.01);
+    transition: all 0.3s ease;
+}
+
+.pagination-wrapper .page-link {
+    border-radius: 10px;
+    margin: 0 2px;
+    border: none;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.pagination-wrapper .page-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.pagination-wrapper .page-item.active .page-link {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    border: none;
+}
+
+.custom-control-label::before {
+    border-radius: 10px;
+    border: 2px solid #667eea;
+}
+
+.custom-control-input:checked ~ .custom-control-label::before {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-color: #667eea;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(102, 126, 234, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(102, 126, 234, 0); }
+}
+
+.auto-sync-active {
+    animation: pulse 2s infinite;
 }
 </style>
 
@@ -533,15 +692,132 @@ setInterval(() => {
         });
 }, 30000);
 
-// Initialize tooltips
+// Auto-Sync Functionality
+let autoSyncInterval = null;
+let autoSyncEnabled = false;
+
+function toggleAutoSync() {
+    const toggle = document.getElementById('autoSyncToggle');
+    const intervalSelect = document.getElementById('autoSyncInterval');
+    
+    autoSyncEnabled = toggle.checked;
+    intervalSelect.disabled = !autoSyncEnabled;
+    
+    if (autoSyncEnabled) {
+        startAutoSync();
+        document.querySelector('.custom-control-label').classList.add('auto-sync-active');
+        Toast.fire({
+            icon: 'success',
+            title: 'Auto-sync enabled!'
+        });
+    } else {
+        stopAutoSync();
+        document.querySelector('.custom-control-label').classList.remove('auto-sync-active');
+        Toast.fire({
+            icon: 'info',
+            title: 'Auto-sync disabled'
+        });
+    }
+    
+    // Save preference
+    localStorage.setItem('autoSyncEnabled', autoSyncEnabled);
+    localStorage.setItem('autoSyncInterval', intervalSelect.value);
+}
+
+function startAutoSync() {
+    stopAutoSync(); // Clear any existing interval
+    
+    const intervalSeconds = parseInt(document.getElementById('autoSyncInterval').value);
+    
+    autoSyncInterval = setInterval(() => {
+        if (autoSyncEnabled) {
+            // Silent sync without showing loading dialog
+            fetch('/admin/sync/now', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update counts without full page reload
+                    updateSyncCounts();
+                    
+                    // Show subtle notification
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'Auto-sync completed',
+                        timer: 1500
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Auto-sync failed:', error);
+            });
+        }
+    }, intervalSeconds * 1000);
+}
+
+function stopAutoSync() {
+    if (autoSyncInterval) {
+        clearInterval(autoSyncInterval);
+        autoSyncInterval = null;
+    }
+}
+
+function updateAutoSyncInterval() {
+    if (autoSyncEnabled) {
+        startAutoSync(); // Restart with new interval
+        
+        const intervalSeconds = parseInt(document.getElementById('autoSyncInterval').value);
+        Toast.fire({
+            icon: 'info',
+            title: `Auto-sync interval updated to ${intervalSeconds}s`
+        });
+        
+        localStorage.setItem('autoSyncInterval', intervalSeconds);
+    }
+}
+
+function updateSyncCounts() {
+    fetch('/admin/sync/status')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('pending-count').textContent = data.pending;
+            document.getElementById('failed-count').textContent = data.failed;
+            document.getElementById('last-sync').textContent = data.last_sync;
+        })
+        .catch(error => {
+            console.error('Failed to update counts:', error);
+        });
+}
+
+// Initialize tooltips and auto-sync
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize Bootstrap tooltips if available
-    if (typeof $!== 'undefined' && $.fn.tooltip) {
+    if (typeof $ !== 'undefined' && $.fn.tooltip) {
         $('[data-toggle="tooltip"]').tooltip();
     }
     
     // Set initial online status
     window.wasOnline = {{ $status['online'] ? 'true' : 'false' }};
+    
+    // Restore auto-sync preferences
+    const savedAutoSync = localStorage.getItem('autoSyncEnabled') === 'true';
+    const savedInterval = localStorage.getItem('autoSyncInterval') || '180';
+    
+    document.getElementById('autoSyncToggle').checked = savedAutoSync;
+    document.getElementById('autoSyncInterval').value = savedInterval;
+    
+    if (savedAutoSync) {
+        toggleAutoSync();
+    }
+    
+    // Add event listeners
+    document.getElementById('autoSyncToggle').addEventListener('change', toggleAutoSync);
+    document.getElementById('autoSyncInterval').addEventListener('change', updateAutoSyncInterval);
     
     @if($summaryStats['pending'] > 0)
         Toast.fire({
@@ -549,6 +825,17 @@ document.addEventListener('DOMContentLoaded', function() {
             title: '{{ $summaryStats["pending"] }} items waiting to sync'
         });
     @endif
+    
+    // Add card hover effects
+    document.querySelectorAll('.stats-card').forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-10px) scale(1.05)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
+        });
+    });
 });
 </script>
 @endsection

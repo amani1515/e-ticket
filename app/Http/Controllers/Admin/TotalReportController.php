@@ -116,7 +116,7 @@ public function exportToTelegram(Request $request)
         $dateRange = ' (' . ($from ? 'From: ' . $from : '') . ($from && $to ? ' - ' : '') . ($to ? 'To: ' . $to : '') . ')';
     }
 
-    $message = "🚌 *E-Ticket Total Report*" . $dateRange . "\n\n";
+    $message = "🚌 *Sevastopol technologies plc  Report*" . $dateRange . "\n\n";
     $message .= "📊 *SUMMARY*\n";
     $message .= "━━━━━━━━━━━━━━━━━━━━\n";
     $message .= "👥 Total Passengers: *{$totalTickets}*\n";
