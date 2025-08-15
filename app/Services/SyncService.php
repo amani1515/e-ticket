@@ -95,6 +95,34 @@ class SyncService
             $data = json_decode($data, true);
         }
         
+        // Convert datetime fields to proper format
+        $dateTimeFields = ['submitted_at', 'departure_datetime', 'scheduled_at', 'wellgo_at', 'cancelled_at', 'received_at'];
+        $dateOnlyFields = ['report_date', 'birth_date'];
+        
+        // Handle datetime fields (Y-m-d H:i:s format)
+        foreach ($dateTimeFields as $field) {
+            if (isset($data[$field]) && $data[$field]) {
+                try {
+                    $date = \Carbon\Carbon::parse($data[$field]);
+                    $data[$field] = $date->format('Y-m-d H:i:s');
+                } catch (Exception $e) {
+                    unset($data[$field]);
+                }
+            }
+        }
+        
+        // Handle date-only fields (Y-m-d format)
+        foreach ($dateOnlyFields as $field) {
+            if (isset($data[$field]) && $data[$field]) {
+                try {
+                    $date = \Carbon\Carbon::parse($data[$field]);
+                    $data[$field] = $date->format('Y-m-d');
+                } catch (Exception $e) {
+                    unset($data[$field]);
+                }
+            }
+        }
+        
         // Remove problematic fields
         $fieldsToRemove = [
             'created_at', 'updated_at', 'synced', 'synced_at', 'last_modified',
@@ -117,7 +145,18 @@ class SyncService
             
             // Ensure required fields exist
             if (empty($data['email_verified_at'])) {
-                $data['email_verified_at'] = now()->toDateTimeString();
+                $data['email_verified_at'] = now()->format('Y-m-d H:i:s');
+            }
+        }
+        
+        // Handle CashReport model specific requirements
+        if (strpos($item->model_type, 'CashReport') !== false) {
+            // Ensure report_date is in correct format
+            if (isset($data['report_date'])) {
+                $data['report_date'] = \Carbon\Carbon::parse($data['report_date'])->format('Y-m-d');
+            }
+            if (isset($data['submitted_at'])) {
+                $data['submitted_at'] = \Carbon\Carbon::parse($data['submitted_at'])->format('Y-m-d H:i:s');
             }
         }
         
