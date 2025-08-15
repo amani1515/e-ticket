@@ -40,8 +40,19 @@
     <div class="p-8">
         <h2 class="text-2xl font-bold mb-6">Total Report</h2>
 
+        <!-- Quick Filter Buttons -->
+        <div class="mb-4 flex flex-wrap gap-2">
+            <button onclick="setDateFilter('today')" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm transition">Today</button>
+            <button onclick="setDateFilter('yesterday')" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm transition">Yesterday</button>
+            <button onclick="setDateFilter('thisweek')" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm transition">This Week</button>
+            <button onclick="setDateFilter('thismonth')" class="bg-purple-500 hover:bg-purple-600 text-white px-3 py-1 rounded text-sm transition">This Month</button>
+            <button onclick="setDateFilter('last3months')" class="bg-orange-500 hover:bg-orange-600 text-white px-3 py-1 rounded text-sm transition">Last 3 Months</button>
+            <button onclick="setDateFilter('thisyear')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm transition">This Year</button>
+            <button onclick="setDateFilter('lastyear')" class="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm transition">Last Year</button>
+        </div>
+
         <!-- Date Filter Form -->
-        <form method="GET" class="mb-6 flex flex-wrap gap-4 items-end bg-yellow-50 p-4 rounded shadow">
+        <form id="filterForm" method="GET" class="mb-6 flex flex-wrap gap-4 items-end bg-yellow-50 p-4 rounded shadow">
             <div>
                 <label for="from_date" class="block text-sm font-medium text-gray-700">From</label>
                 <input type="date" id="from_date" name="from_date" value="{{ request('from_date') }}"
@@ -160,5 +171,54 @@
                 });
             });
         });
+
+        function setDateFilter(period) {
+            const today = new Date();
+            let fromDate, toDate;
+            
+            switch(period) {
+                case 'today':
+                    fromDate = toDate = today.toISOString().split('T')[0];
+                    break;
+                case 'yesterday':
+                    const yesterday = new Date(today);
+                    yesterday.setDate(yesterday.getDate() - 1);
+                    fromDate = toDate = yesterday.toISOString().split('T')[0];
+                    break;
+                case 'thisweek':
+                    const startOfWeek = new Date(today);
+                    startOfWeek.setDate(today.getDate() - today.getDay());
+                    fromDate = startOfWeek.toISOString().split('T')[0];
+                    toDate = today.toISOString().split('T')[0];
+                    break;
+                case 'thismonth':
+                    fromDate = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0];
+                    toDate = today.toISOString().split('T')[0];
+                    break;
+                case 'last3months':
+                    const threeMonthsAgo = new Date(today);
+                    threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+                    fromDate = threeMonthsAgo.toISOString().split('T')[0];
+                    toDate = today.toISOString().split('T')[0];
+                    break;
+                case 'thisyear':
+                    fromDate = new Date(today.getFullYear(), 0, 1).toISOString().split('T')[0];
+                    toDate = today.toISOString().split('T')[0];
+                    break;
+                case 'lastyear':
+                    fromDate = new Date(today.getFullYear() - 1, 0, 1).toISOString().split('T')[0];
+                    toDate = new Date(today.getFullYear() - 1, 11, 31).toISOString().split('T')[0];
+                    break;
+            }
+            
+            document.getElementById('from_date').value = fromDate;
+            document.getElementById('to_date').value = toDate;
+            
+            // Use window.location to navigate with GET parameters
+            const url = new URL(window.location.href);
+            url.searchParams.set('from_date', fromDate);
+            url.searchParams.set('to_date', toDate);
+            window.location.href = url.toString();
+        }
     </script>
 @endsection
