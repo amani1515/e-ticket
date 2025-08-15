@@ -136,6 +136,8 @@ Route::resource('sms-template', SmsTemplateController::class);
 Route::get('/sync', [SyncController::class, 'index'])->name('sync.index');
 Route::post('/sync/now', [SyncController::class, 'sync'])->name('sync.now');
 Route::get('/sync/status', [SyncController::class, 'status'])->name('sync.status');
+Route::delete('/sync/clear-failed', [SyncController::class, 'clearFailed'])->name('sync.clear-failed');
+Route::post('/sync/retry-failed', [SyncController::class, 'retryFailed'])->name('sync.retry-failed');
 
 });
 

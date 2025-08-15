@@ -80,6 +80,9 @@ class CashReportController extends Controller
                 'status' => 'pending',
                 'submitted_at' => now(),
             ]);
+            
+            // Manually trigger sync since this is created without Syncable events
+            $cashReport->addToSyncQueue('create');
 
             // Mark the tickets as reported so they are not included in future reports
             Ticket::where('creator_user_id', $user->id)

@@ -151,6 +151,9 @@ foreach (['file1', 'file2', 'file3'] as $fileKey) {
         }
 
         $bus->update($validated);
+        
+        // Trigger sync for update
+        $bus->syncUpdate();
 
         return redirect()->route('mahberat.bus.index')->with('success', 'Bus updated successfully!');
     }
@@ -168,6 +171,9 @@ foreach (['file1', 'file2', 'file3'] as $fileKey) {
             }
         }
 
+        // Trigger sync for delete before deleting
+        $bus->syncDelete();
+        
         $bus->delete();
 
         return redirect()->route('mahberat.bus.index')->with('success', 'Bus deleted successfully.');

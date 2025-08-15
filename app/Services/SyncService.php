@@ -32,41 +32,55 @@ class SyncService
     public function syncPendingData(): array
     {
         if (!$this->isOnline()) {
-            return ['success' => false, 'message' => 'No internet connection'];
+            return ['success' => false, 'message' => 'Remote server is not reachable'];
         }
 
         $pendingItems = SyncQueue::where('synced', false)
             ->where('retry_count', '<', 3)
             ->orderBy('created_at')
-            ->limit(50)
+            ->limit(10) // Reduce batch size for testing
             ->get();
 
+        if ($pendingItems->isEmpty()) {
+            return ['success' => true, 'message' => 'No pending items to sync', 'total' => 0, 'synced' => 0, 'failed' => 0];
+        }
+
         $results = [
-            'success' => 0,
+            'success' => true,
+            'total' => $pendingItems->count(),
+            'synced' => 0,
             'failed' => 0,
-            'total' => $pendingItems->count()
+            'errors' => []
         ];
 
         foreach ($pendingItems as $item) {
             try {
                 $this->syncItem($item);
-                $item->update([
+                $item->updateQuietly([
                     'synced' => true,
-                    'last_attempt' => now()
+                    'last_attempt' => now(),
+                    'error_message' => null
                 ]);
-                $results['success']++;
+                $results['synced']++;
             } catch (Exception $e) {
-                $item->update([
+                $item->updateQuietly([
                     'retry_count' => $item->retry_count + 1,
                     'last_attempt' => now(),
                     'error_message' => $e->getMessage()
                 ]);
                 $results['failed']++;
+                $results['errors'][] = $e->getMessage();
                 Log::error('Sync failed for item ' . $item->id . ': ' . $e->getMessage());
             }
         }
 
         SyncSettings::set('last_sync_attempt', now()->toDateTimeString());
+        
+        $message = "Synced {$results['synced']} items";
+        if ($results['failed'] > 0) {
+            $message .= ", {$results['failed']} failed";
+        }
+        $results['message'] = $message;
         
         return $results;
     }
@@ -75,26 +89,79 @@ class SyncService
     {
         $endpoint = $this->getEndpoint($item->model_type);
         
+        // Clean and prepare data
+        $data = $item->data;
+        if (is_string($data)) {
+            $data = json_decode($data, true);
+        }
+        
+        // Remove problematic fields
+        $fieldsToRemove = [
+            'created_at', 'updated_at', 'synced', 'synced_at', 'last_modified',
+            'email_verified_at', 'two_factor_secret', 'two_factor_recovery_codes',
+            'remember_token', 'profile_photo_path', 'current_team_id'
+        ];
+        
+        foreach ($fieldsToRemove as $field) {
+            unset($data[$field]);
+        }
+        
+        // Handle User model specific requirements
+        if (strpos($item->model_type, 'User') !== false) {
+            // Ensure password exists for User creation
+            if ($item->action === 'create' && empty($data['password'])) {
+                $data['password'] = bcrypt('password123'); // Default password
+            } elseif (isset($data['password']) && strlen($data['password']) < 60) {
+                $data['password'] = bcrypt($data['password']);
+            }
+            
+            // Ensure required fields exist
+            if (empty($data['email_verified_at'])) {
+                $data['email_verified_at'] = now()->toDateTimeString();
+            }
+        }
+        
+        $payload = [
+            'uuid' => $item->model_uuid,
+            'action' => $item->action,
+            'data' => $data,
+            'model_type' => $item->model_type
+        ];
+        
+        Log::info('Syncing item', [
+            'endpoint' => $endpoint, 
+            'model' => class_basename($item->model_type),
+            'uuid' => $item->model_uuid,
+            'action' => $item->action
+        ]);
+        
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $this->apiToken,
             'Content-Type' => 'application/json',
             'Accept' => 'application/json'
-        ])->timeout(30)->post($this->remoteUrl . $endpoint, [
-            'uuid' => $item->model_uuid,
-            'action' => $item->action,
-            'data' => $item->data,
-            'model_type' => $item->model_type
-        ]);
+        ])->timeout(30)->post($this->remoteUrl . $endpoint, $payload);
 
         if (!$response->successful()) {
-            throw new Exception('API request failed: ' . $response->status() . ' - ' . $response->body());
+            $errorBody = $response->body();
+            Log::error('Sync API Error', ['status' => $response->status(), 'body' => $errorBody]);
+            throw new Exception('API Error ' . $response->status() . ': ' . $errorBody);
         }
+        
+        Log::info('Sync successful', ['response' => $response->json()]);
     }
 
     private function getEndpoint(string $modelType): string
     {
         $model = strtolower(class_basename($modelType));
-        return "/api/sync/{$model}";
+        
+        // Map model names to correct endpoints
+        $endpointMap = [
+            'cashreport' => 'cash_report',
+            'syncqueue' => 'sync_queue'
+        ];
+        
+        $endpoint = $endpointMap[$model] ?? $model;
+        return "/api/sync/{$endpoint}";
     }
     
     public function syncBatch(array $items): array

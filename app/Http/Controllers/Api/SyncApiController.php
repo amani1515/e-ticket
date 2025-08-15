@@ -107,15 +107,25 @@ class SyncApiController extends Controller
         // Check if record already exists
         $existing = $modelClass::where('uuid', $uuid)->first();
         if ($existing) {
-            // Update if remote is newer
-            if (isset($data['last_modified']) && $data['last_modified'] > $existing->last_modified) {
-                $existing->update($data);
-            }
+            // Update if remote is newer or force update
+            $existing->update($data);
             return;
         }
 
         // Create new record
-        $modelClass::create($data);
+        try {
+            $modelClass::create($data);
+        } catch (\Exception $e) {
+            // If creation fails, try to find by other unique fields and update
+            if (strpos($modelClass, 'User') !== false && isset($data['email'])) {
+                $existing = $modelClass::where('email', $data['email'])->first();
+                if ($existing) {
+                    $existing->update(array_merge($data, ['uuid' => $uuid]));
+                    return;
+                }
+            }
+            throw $e;
+        }
     }
 
     private function handleUpdate(string $modelClass, string $uuid, array $data)
@@ -123,15 +133,22 @@ class SyncApiController extends Controller
         $record = $modelClass::where('uuid', $uuid)->first();
         
         if (!$record) {
-            // Create if doesn't exist
-            $modelClass::create($data);
-            return;
+            // Try to find by other unique fields
+            if (strpos($modelClass, 'User') !== false && isset($data['email'])) {
+                $record = $modelClass::where('email', $data['email'])->first();
+            } elseif (strpos($modelClass, 'Ticket') !== false && isset($data['ticket_code'])) {
+                $record = $modelClass::where('ticket_code', $data['ticket_code'])->first();
+            }
+            
+            if (!$record) {
+                // Create if doesn't exist
+                $modelClass::create($data);
+                return;
+            }
         }
 
-        // Update if remote is newer
-        if (isset($data['last_modified']) && $data['last_modified'] > $record->last_modified) {
-            $record->update($data);
-        }
+        // Always update (remove timestamp check for now)
+        $record->update($data);
     }
 
     private function handleDelete(string $modelClass, string $uuid)

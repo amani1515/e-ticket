@@ -375,6 +375,9 @@ public function update(Request $request, $id)
     $ticket->departure_datetime = $request->departure_datetime;
     // Add validation as needed
     $ticket->save();
+    
+    // Trigger sync for update
+    $ticket->syncUpdate();
 
     return redirect()->back()->with('success', 'Ticket updated successfully.');
 }
@@ -407,6 +410,9 @@ public function cancel($id)
             }
             $schedule->save();
         }
+        
+        // Trigger sync for cancellation
+        $ticket->syncUpdate();
     }
 
     return back()->with('success', 'Ticket cancelled successfully.');

@@ -2,9 +2,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\Syncable;
 
 class Cargo extends Model
 {
+    use Syncable;
     protected $fillable = [
         'cargo_uid',
         'bus_id',
@@ -16,6 +18,10 @@ class Cargo extends Model
         'tax',
         'total_amount',
         'status',
+        'uuid',
+        'synced',
+        'synced_at',
+        'last_modified',
     ];
 
     // Add these relationships
@@ -32,5 +38,12 @@ class Cargo extends Model
     public function destination()
     {
         return $this->belongsTo(\App\Models\Destination::class);
+    }
+
+    protected function getUuidData(): array
+    {
+        return [
+            'destination' => $this->destination->destination_name ?? 'unknown',
+        ];
     }
 }

@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\Syncable;
 
 class Bus extends Model
 {
+    use Syncable;
     //
 
 protected $fillable = [
@@ -28,9 +30,12 @@ protected $fillable = [
     'file1',
     'file2',
     'file3',
-    'mahberat_id',   // <- Add this!
+    'mahberat_id',
     'unique_bus_id',
-    
+    'uuid',
+    'synced',
+    'synced_at',
+    'last_modified',
 ];
 
 
@@ -56,6 +61,11 @@ public function mahberat()
     return $this->belongsTo(Mahberat::class);
 }
 
-
+protected function getUuidData(): array
+{
+    return [
+        'level' => $this->level ?? 'level1',
+    ];
+}
 
 }

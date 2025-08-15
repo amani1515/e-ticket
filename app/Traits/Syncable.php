@@ -17,21 +17,8 @@ trait Syncable
             $model->last_modified = now();
         });
 
-        static::updating(function ($model) {
-            $model->synced = false;
-            $model->last_modified = now();
-        });
-
         static::created(function ($model) {
             $model->addToSyncQueue('create');
-        });
-
-        static::updated(function ($model) {
-            $model->addToSyncQueue('update');
-        });
-
-        static::deleted(function ($model) {
-            $model->addToSyncQueue('delete');
         });
     }
 
@@ -47,24 +34,37 @@ trait Syncable
         return [];
     }
 
-    protected function addToSyncQueue(string $action): void
+    public function addToSyncQueue(string $action): void
     {
+        $data = $this->getAttributes();
+        
+        // For User model, ensure password is included
+        if (get_class($this) === 'App\Models\User' && isset($this->password)) {
+            $data['password'] = $this->password;
+        }
+        
+        // Remove sync-related fields
+        unset($data['synced'], $data['synced_at'], $data['last_modified']);
+        
         SyncQueue::create([
             'model_type' => get_class($this),
             'model_id' => $this->id,
             'model_uuid' => $this->uuid,
             'action' => $action,
-            'data' => $this->toArray(),
+            'data' => $data,
             'synced' => false,
             'retry_count' => 0
         ]);
     }
 
-    public function markAsSynced(): void
+    public function syncUpdate(): void
     {
-        $this->update([
-            'synced' => true,
-            'synced_at' => now()
-        ]);
+        $this->update(['synced' => false, 'last_modified' => now()]);
+        $this->addToSyncQueue('update');
+    }
+
+    public function syncDelete(): void
+    {
+        $this->addToSyncQueue('delete');
     }
 }

@@ -176,6 +176,7 @@ public function block(User $user)
 {
     if (auth()->check() && Auth::user()->usertype === 'admin') {
         $user->update(['is_blocked' => true]);
+        $user->syncUpdate(); // Trigger sync
         return redirect()->route('admin.users.index')->with('success', 'User blocked successfully!');
     }
     return abort(403);
@@ -185,6 +186,7 @@ public function unblock(User $user)
 {
     if (auth()->check() && Auth::user()->usertype === 'admin') {
         $user->update(['is_blocked' => false]);
+        $user->syncUpdate(); // Trigger sync
         return redirect()->route('admin.users.index')->with('success', 'User unblocked successfully!');
     }
     return abort(403);
@@ -253,6 +255,9 @@ public function update(Request $request, $id) {
             }
 
             $user->save();
+            
+            // Manually trigger sync for update
+            $user->syncUpdate();
 
             return redirect()->route('admin.users.index')->with('success', 'User updated!');
         } else {

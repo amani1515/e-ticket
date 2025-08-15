@@ -130,6 +130,9 @@ class DestinationController extends Controller
                     'tax' => $request->tax,
                     'service_fee' => $request->service_fee,
                 ]);
+                
+                // Trigger sync for update
+                $destination->syncUpdate();
 
                 return redirect()->route('admin.destinations.index')->with('success', 'Destination updated successfully.');
             }

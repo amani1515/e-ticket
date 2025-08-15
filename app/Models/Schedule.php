@@ -3,28 +3,30 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\Syncable;
 
 class Schedule extends Model
 {
+    use Syncable;
     //
     protected $fillable = [
         'bus_id',
-            'schedule_uid',
-
+        'schedule_uid',
         'destination_id',
         'scheduled_by',
         'scheduled_at',
         'status',
-        'created_at',
-        'mahberat_id',  // Make sure this is here
-        'updated_at',
+        'mahberat_id',
         'capacity',
         'boarding',
         'wellgo_at',
         'mewucha_fee',
         'mewucha_status',
         'traffic_name',
-        // add any other fields you are submitting
+        'uuid',
+        'synced',
+        'synced_at',
+        'last_modified',
     ];
     public function bus()
 {
@@ -62,5 +64,12 @@ public function mahberat()
 public function departedBy()
 {
     return $this->belongsTo(\App\Models\User::class, 'departed_by');
+}
+
+protected function getUuidData(): array
+{
+    return [
+        'mahberat' => $this->mahberat->name ?? 'unknown',
+    ];
 }
 }

@@ -116,6 +116,9 @@ public function cardView()
             ->where('mahberat_id', auth()->user()->mahberat_id)
             ->firstOrFail();
 
+        // Trigger sync for delete before deleting
+        $schedule->syncDelete();
+        
         $schedule->delete();
 
         return redirect()->route('mahberat.schedule.index')->with('success', 'Schedule removed successfully.');

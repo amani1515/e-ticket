@@ -3,10 +3,18 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\Syncable;
 
 class Mahberat extends Model
 {
-    protected $fillable = ['name'];
+    use Syncable;
+    protected $fillable = [
+        'name',
+        'uuid',
+        'synced',
+        'synced_at',
+        'last_modified',
+    ];
 
     public function users()
     {
@@ -20,6 +28,13 @@ class Mahberat extends Model
     public function schedules()
 {
     return $this->hasMany(Schedule::class);
+}
+
+protected function getUuidData(): array
+{
+    return [
+        'name' => $this->name ?? 'unknown',
+    ];
 }
 
 }
