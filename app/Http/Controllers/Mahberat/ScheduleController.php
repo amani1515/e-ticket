@@ -44,6 +44,9 @@ class ScheduleController extends Controller
     // Store a new schedule for a bus
     public function store(Request $request)
     {
+        // Debug: Log the request data
+        \Log::info('Schedule store request data:', $request->all());
+        
         $request->validate([
             'unique_bus_id' => 'required|string',
             'destination_id' => 'required|exists:destinations,id',
@@ -52,16 +55,13 @@ class ScheduleController extends Controller
         $user = Auth::user();
         $mahberatId = $user->mahberat_id;
 
-        // Normalize: remove any slashes or spaces
-        $cleanUniqueId = trim($request->unique_bus_id, "/ ");
-
-        // Lookup the bus using unique_bus_id and mahberat_id
-        $bus = Bus::where('unique_bus_id', $cleanUniqueId)
+        // Get the bus using unique_bus_id (sent from frontend after targa selection)
+        $bus = Bus::where('unique_bus_id', $request->unique_bus_id)
             ->where('mahberat_id', $mahberatId)
             ->first();
 
         if (!$bus) {
-            return back()->withErrors(['unique_bus_id' => 'Bus not found for your Mahberat.']);
+            return back()->withErrors(['unique_bus_id' => 'Selected bus not found or not available.']);
         }
 
         // Prevent scheduling the same bus if already queued or loading

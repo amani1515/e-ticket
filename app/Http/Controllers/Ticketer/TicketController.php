@@ -125,6 +125,9 @@ public function store(Request $request)
             $schedule->status = 'on loading';
         }
         $schedule->save();
+        
+        // Trigger sync for schedule update
+        $schedule->syncUpdate();
     }
 
     return redirect()->route('ticketer.tickets.receipt', $ticket->id);
@@ -244,6 +247,9 @@ public function processScan(Request $request)
 
     $ticket->ticket_status = 'confirmed';
     $ticket->save();
+    
+    // Trigger sync for ticket confirmation
+    $ticket->syncUpdate();
 
     return redirect()->back()->with('success', 'Ticket confirmed! Passenger: ' . $ticket->passenger_name);
 }
@@ -409,6 +415,9 @@ public function cancel($id)
                 $schedule->status = 'on loading';
             }
             $schedule->save();
+            
+            // Trigger sync for schedule update
+            $schedule->syncUpdate();
         }
         
         // Trigger sync for cancellation
