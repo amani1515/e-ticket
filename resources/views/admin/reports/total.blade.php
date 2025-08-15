@@ -55,6 +55,12 @@
             <button type="submit" class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded transition duration-300">
                 Filter
             </button>
+            <button type="button" id="exportTelegram" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition duration-300 flex items-center gap-2">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 0C5.374 0 0 5.373 0 12s5.374 12 12 12 12-5.373 12-12S18.626 0 12 0zm5.568 8.16l-1.61 7.59c-.12.54-.44.67-.89.42l-2.46-1.81-1.19 1.14c-.13.13-.24.24-.49.24l.17-2.43 4.47-4.03c.19-.17-.04-.27-.3-.1L8.95 12.48l-2.38-.75c-.52-.16-.53-.52.11-.77l9.28-3.57c.43-.16.81.11.67.77z"/>
+                </svg>
+                Export to Telegram
+            </button>
         </form>
 
         <!-- Total Summary Card -->
@@ -96,4 +102,63 @@
             @endforeach
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.getElementById('exportTelegram').addEventListener('click', function() {
+            const fromDate = document.getElementById('from_date').value;
+            const toDate = document.getElementById('to_date').value;
+            
+            // Show loading
+            Swal.fire({
+                title: 'Exporting to Telegram...',
+                text: 'Please wait while we send the report',
+                icon: 'info',
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
+            // Send request
+            fetch('{{ route("admin.total.reports.telegram") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    from_date: fromDate,
+                    to_date: toDate
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: data.message,
+                        icon: 'success',
+                        confirmButtonColor: '#10B981'
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: data.error || 'Failed to export to Telegram',
+                        icon: 'error',
+                        confirmButtonColor: '#EF4444'
+                    });
+                }
+            })
+            .catch(error => {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Network error occurred',
+                    icon: 'error',
+                    confirmButtonColor: '#EF4444'
+                });
+            });
+        });
+    </script>
 @endsection

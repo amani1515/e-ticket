@@ -107,6 +107,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 Route::get('/schedule-reports', [\App\Http\Controllers\Admin\ScheduleReportController::class, 'index'])->name('schedule.reports');
 Route::get('/reports/transactions', [TransactionController::class, 'index'])->name('reports.transactions')->middleware('auth');
 Route::get('/total-reports', [\App\Http\Controllers\Admin\TotalReportController::class, 'index'])->name('total.reports');
+Route::post('/total-reports/export-telegram', [\App\Http\Controllers\Admin\TotalReportController::class, 'exportToTelegram'])->name('total.reports.telegram');
 
 // Cargo Settings
   Route::resource('cargo-settings', \App\Http\Controllers\Admin\CargoSettingsController::class)
