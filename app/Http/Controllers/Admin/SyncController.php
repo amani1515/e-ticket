@@ -81,9 +81,10 @@ class SyncController extends Controller
                 ->sort()
                 ->values();
 
+            $recentSync = SyncQueue::latest()->limit(20)->get();
+            
             return view('admin.sync.index', compact(
-                'status', 'syncData', 'summaryStats', 'availableModels',
-                'statusFilter', 'dateFilter', 'modelFilter', 'perPage'
+                'status', 'recentSync'
             ));
         } catch (\Exception $e) {
             return view('admin.sync.index', [
@@ -106,18 +107,36 @@ class SyncController extends Controller
 
     public function sync(Request $request)
     {
-        if (auth()->user()->usertype !== 'admin') {
-            return response()->json(['error' => 'Unauthorized'], 403);
+        try {
+            if (auth()->user()->usertype !== 'admin') {
+                return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+            }
+
+            $syncService = new SyncService();
+            $results = $syncService->syncPendingData();
+
+            if (isset($results['total']) && $results['total'] == 0) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'No pending items to sync - all data is up to date',
+                    'results' => $results
+                ]);
+            }
+
+            $successCount = $results['success'] ?? $results['synced'] ?? 0;
+            $failedCount = $results['failed'] ?? 0;
+
+            return response()->json([
+                'success' => true,
+                'message' => "Sync completed: {$successCount} successful, {$failedCount} failed",
+                'results' => $results
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sync failed: ' . $e->getMessage()
+            ], 500);
         }
-
-        $syncService = new SyncService();
-        $results = $syncService->syncPendingData();
-
-        return response()->json([
-            'success' => true,
-            'message' => "Sync completed: {$results['success']} successful, {$results['failed']} failed",
-            'results' => $results
-        ]);
     }
 
     public function status()

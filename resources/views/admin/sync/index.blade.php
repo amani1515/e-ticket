@@ -1,504 +1,357 @@
 @extends('admin.layout.app')
 
 @section('content')
-<div class="container-fluid">
+<div class="p-6 bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
     <!-- Header Section -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card border-0 shadow-lg bg-gradient-primary text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h2 class="mb-1"><i class="fas fa-sync-alt mr-2"></i>Data Synchronization</h2>
-                            <p class="mb-0 opacity-75">Monitor and manage offline-online data synchronization</p>
-                        </div>
-                        <div class="text-right">
-                            <div class="mb-2">
-                                <span id="connection-status" class="badge badge-lg badge-{{ $status['online'] ? 'success' : 'danger' }} px-3 py-2">
-                                    <i class="fas fa-{{ $status['online'] ? 'wifi' : 'wifi-slash' }} mr-1"></i>
-                                    {{ $status['online'] ? 'Online' : 'Offline' }}
-                                </span>
-                            </div>
-                            <div>
-                                <button class="btn btn-light btn-lg" onclick="syncNow()" id="sync-btn">
-                                    <i class="fas fa-sync mr-2"></i>Sync Now
-                                </button>
-                                <button class="btn btn-outline-light ml-2" onclick="retryFailedItems()">
-                                    <i class="fas fa-redo mr-1"></i>Retry Failed
-                                </button>
-                                <button class="btn btn-outline-light ml-2" onclick="clearFailedItems()">
-                                    <i class="fas fa-trash mr-1"></i>Clear Failed
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+    <div class="bg-white rounded-xl shadow-lg mb-6">
+        <div class="flex justify-between items-center p-6 border-b border-gray-200">
+            <div>
+                <h2 class="text-3xl font-bold text-gray-800 flex items-center">
+                    <svg class="w-8 h-8 mr-3 text-blue-600 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                    Data Synchronization Hub
+                </h2>
+                <p class="text-gray-600 mt-1">Real-time sync monitoring and management dashboard</p>
+            </div>
+            <div class="flex items-center space-x-3">
+                <div class="flex items-center space-x-2">
+                    <div class="w-3 h-3 rounded-full {{ $status['online'] ? 'bg-green-400 animate-pulse' : 'bg-red-400' }}"></div>
+                    <span id="connection-status" class="px-4 py-2 rounded-full text-sm font-medium {{ $status['online'] ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                        {{ $status['online'] ? '🟢 Connected' : '🔴 Disconnected' }}
+                    </span>
+                </div>
+                <button onclick="syncNow()" id="sync-btn" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-6 py-3 rounded-lg font-medium transition duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95">
+                    <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                    Sync Now
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interactive Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-6 text-white shadow-lg hover:shadow-xl transition duration-300 transform hover:scale-105 cursor-pointer" onclick="filterByStatus('all')">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-blue-100 text-sm font-medium">Total Items</p>
+                    <p class="text-3xl font-bold" id="total-items">{{ $status['pending'] + $status['failed'] }}</p>
+                    <p class="text-blue-200 text-xs mt-1">Click to view all</p>
+                </div>
+                <div class="bg-blue-400 bg-opacity-30 rounded-full p-3">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-gradient-to-br from-yellow-500 to-orange-500 rounded-xl p-6 text-white shadow-lg hover:shadow-xl transition duration-300 transform hover:scale-105 cursor-pointer" onclick="filterByStatus('pending')">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-yellow-100 text-sm font-medium">Pending Sync</p>
+                    <p id="pending-count" class="text-3xl font-bold">{{ $status['pending'] }}</p>
+                    <p class="text-yellow-200 text-xs mt-1">Click to filter</p>
+                </div>
+                <div class="bg-yellow-400 bg-opacity-30 rounded-full p-3">
+                    <svg class="w-8 h-8 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-gradient-to-br from-red-500 to-red-600 rounded-xl p-6 text-white shadow-lg hover:shadow-xl transition duration-300 transform hover:scale-105 cursor-pointer" onclick="filterByStatus('failed')">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-red-100 text-sm font-medium">Failed Items</p>
+                    <p id="failed-count" class="text-3xl font-bold">{{ $status['failed'] }}</p>
+                    <p class="text-red-200 text-xs mt-1">Click to filter</p>
+                </div>
+                <div class="bg-red-400 bg-opacity-30 rounded-full p-3">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-6 text-white shadow-lg hover:shadow-xl transition duration-300 transform hover:scale-105">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-green-100 text-sm font-medium">Success Rate</p>
+                    <p id="success-rate" class="text-3xl font-bold">95%</p>
+                    <p class="text-green-200 text-xs mt-1" id="last-sync">{{ $status['last_sync'] }}</p>
+                </div>
+                <div class="bg-green-400 bg-opacity-30 rounded-full p-3">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Beautiful Stats Cards -->
-    <div class="row mb-4">
-        <div class="col-xl-2 col-md-4 col-sm-6 mb-3">
-            <div class="card border-0 shadow-lg h-100 stats-card gradient-card-1" data-filter="all">
-                <div class="card-body text-center text-white position-relative">
-                    <div class="icon-circle mb-3">
-                        <i class="fas fa-database fa-2x"></i>
+    <!-- Enhanced Control Panel -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+        <!-- Quick Actions -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                </svg>
+                Quick Actions
+            </h3>
+            <div class="space-y-3">
+                <button onclick="retryFailed()" class="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-4 py-3 rounded-lg font-medium transition duration-200 shadow-md hover:shadow-lg transform hover:scale-105">
+                    <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                    Retry All Failed
+                </button>
+                <button onclick="clearFailed()" class="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-4 py-3 rounded-lg font-medium transition duration-200 shadow-md hover:shadow-lg transform hover:scale-105">
+                    <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    </svg>
+                    Clear All Failed
+                </button>
+                <button onclick="refreshData()" class="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white px-4 py-3 rounded-lg font-medium transition duration-200 shadow-md hover:shadow-lg transform hover:scale-105">
+                    <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                    Refresh Data
+                </button>
+            </div>
+        </div>
+
+        <!-- Auto Sync Settings -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                <svg class="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Auto Sync
+            </h3>
+            <div class="space-y-4">
+                <label class="flex items-center justify-between cursor-pointer p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition duration-200">
+                    <span class="text-sm font-medium text-gray-700">Enable Auto Sync</span>
+                    <input type="checkbox" id="auto-sync-toggle" class="toggle-checkbox hidden">
+                    <div class="toggle-switch bg-gray-300 rounded-full w-12 h-6 flex items-center transition duration-300 focus:outline-none shadow">
+                        <div class="toggle-dot bg-white w-5 h-5 rounded-full shadow-md transform transition duration-300"></div>
                     </div>
-                    <h2 class="mb-1 font-weight-bold">{{ $summaryStats['total'] }}</h2>
-                    <p class="mb-0 opacity-75">Total Items</p>
-                    <div class="card-glow"></div>
+                </label>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Sync Interval</label>
+                    <select id="auto-sync-interval" class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3" disabled>
+                        <option value="30">⚡ Every 30 seconds</option>
+                        <option value="60" selected>🕐 Every 1 minute</option>
+                        <option value="180">🕒 Every 3 minutes</option>
+                        <option value="300">🕔 Every 5 minutes</option>
+                    </select>
+                </div>
+                <div id="auto-sync-status" class="text-sm text-gray-500 hidden">
+                    <span class="inline-flex items-center">
+                        <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse mr-2"></div>
+                        Auto-sync active
+                    </span>
                 </div>
             </div>
         </div>
-        <div class="col-xl-2 col-md-4 col-sm-6 mb-3">
-            <div class="card border-0 shadow-lg h-100 stats-card gradient-card-2" data-filter="pending">
-                <div class="card-body text-center text-white position-relative">
-                    <div class="icon-circle mb-3">
-                        <i class="fas fa-clock fa-2x"></i>
-                    </div>
-                    <h2 class="mb-1 font-weight-bold" id="pending-count">{{ $summaryStats['pending'] }}</h2>
-                    <p class="mb-0 opacity-75">Pending</p>
-                    <div class="card-glow"></div>
+
+        <!-- Live Statistics -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                <svg class="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+            </svg>
+            Live Stats
+            </h3>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
+                    <span class="text-sm font-medium text-blue-700">Queue Size</span>
+                    <span id="queue-size" class="text-lg font-bold text-blue-600">{{ $status['pending'] }}</span>
                 </div>
-            </div>
-        </div>
-        <div class="col-xl-2 col-md-4 col-sm-6 mb-3">
-            <div class="card border-0 shadow-lg h-100 stats-card gradient-card-3" data-filter="synced">
-                <div class="card-body text-center text-white position-relative">
-                    <div class="icon-circle mb-3">
-                        <i class="fas fa-check-circle fa-2x"></i>
-                    </div>
-                    <h2 class="mb-1 font-weight-bold">{{ $summaryStats['synced'] }}</h2>
-                    <p class="mb-0 opacity-75">Synced</p>
-                    <div class="card-glow"></div>
+                <div class="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+                    <span class="text-sm font-medium text-green-700">Synced Today</span>
+                    <span id="synced-today" class="text-lg font-bold text-green-600">0</span>
                 </div>
-            </div>
-        </div>
-        <div class="col-xl-2 col-md-4 col-sm-6 mb-3">
-            <div class="card border-0 shadow-lg h-100 stats-card gradient-card-4" data-filter="failed">
-                <div class="card-body text-center text-white position-relative">
-                    <div class="icon-circle mb-3">
-                        <i class="fas fa-exclamation-triangle fa-2x"></i>
-                    </div>
-                    <h2 class="mb-1 font-weight-bold" id="failed-count">{{ $summaryStats['failed'] }}</h2>
-                    <p class="mb-0 opacity-75">Failed</p>
-                    <div class="card-glow"></div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-2 col-md-4 col-sm-6 mb-3">
-            <div class="card border-0 shadow-lg h-100 stats-card gradient-card-5" data-filter="today">
-                <div class="card-body text-center text-white position-relative">
-                    <div class="icon-circle mb-3">
-                        <i class="fas fa-calendar-day fa-2x"></i>
-                    </div>
-                    <h2 class="mb-1 font-weight-bold">{{ $summaryStats['today'] }}</h2>
-                    <p class="mb-0 opacity-75">Today</p>
-                    <div class="card-glow"></div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-2 col-md-4 col-sm-6 mb-3">
-            <div class="card border-0 shadow-lg h-100 gradient-card-6">
-                <div class="card-body text-center text-white position-relative">
-                    <div class="icon-circle mb-3">
-                        <i class="fas fa-history fa-2x"></i>
-                    </div>
-                    <h6 class="mb-1 font-weight-bold">Last Sync</h6>
-                    <p class="mb-0 opacity-75 small" id="last-sync">{{ $status['last_sync'] }}</p>
-                    <div class="card-glow"></div>
+                <div class="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
+                    <span class="text-sm font-medium text-purple-700">Avg Response</span>
+                    <span id="avg-response" class="text-lg font-bold text-purple-600">~2.3s</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Enhanced Filters & Auto-Sync Section -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card border-0 shadow-lg filter-card">
-                <div class="card-header bg-gradient-light border-0">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h6 class="mb-0 text-primary"><i class="fas fa-filter mr-2"></i>Filters & Settings</h6>
-                        <div class="d-flex align-items-center">
-                            <span class="text-muted small mr-3">Auto Sync:</span>
-                            <div class="custom-control custom-switch mr-3">
-                                <input type="checkbox" class="custom-control-input" id="autoSyncToggle">
-                                <label class="custom-control-label" for="autoSyncToggle"></label>
-                            </div>
-                            <select id="autoSyncInterval" class="form-select form-select-sm" style="width: 120px;" disabled>
-                                <option value="10">10 sec</option>
-                                <option value="30">30 sec</option>
-                                <option value="60">1 min</option>
-                                <option value="180" selected>3 min</option>
-                                <option value="300">5 min</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <form method="GET" id="filter-form" class="row g-3">
-                        <div class="col-md-2">
-                            <label class="form-label small text-muted font-weight-bold">Status Filter</label>
-                            <select name="status" class="form-select form-select-sm custom-select" onchange="applyFilters()">
-                                <option value="all" {{ $statusFilter == 'all' ? 'selected' : '' }}>🔄 All Status</option>
-                                <option value="pending" {{ $statusFilter == 'pending' ? 'selected' : '' }}>⏳ Pending</option>
-                                <option value="synced" {{ $statusFilter == 'synced' ? 'selected' : '' }}>✅ Synced</option>
-                                <option value="failed" {{ $statusFilter == 'failed' ? 'selected' : '' }}>❌ Failed</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label small text-muted font-weight-bold">Date Filter</label>
-                            <select name="date" class="form-select form-select-sm custom-select" onchange="applyFilters()">
-                                <option value="all" {{ $dateFilter == 'all' ? 'selected' : '' }}>📅 All Time</option>
-                                <option value="today" {{ $dateFilter == 'today' ? 'selected' : '' }}>📆 Today</option>
-                                <option value="week" {{ $dateFilter == 'week' ? 'selected' : '' }}>📊 This Week</option>
-                                <option value="month" {{ $dateFilter == 'month' ? 'selected' : '' }}>📈 This Month</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label small text-muted font-weight-bold">Model Filter</label>
-                            <select name="model" class="form-select form-select-sm custom-select" onchange="applyFilters()">
-                                <option value="all" {{ $modelFilter == 'all' ? 'selected' : '' }}>🗂️ All Models</option>
-                                @foreach($availableModels as $model)
-                                    <option value="{{ $model }}" {{ $modelFilter == $model ? 'selected' : '' }}>📋 {{ $model }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label small text-muted font-weight-bold">Per Page</label>
-                            <select name="per_page" class="form-select form-select-sm custom-select" onchange="applyFilters()">
-                                <option value="20" {{ $perPage == 20 ? 'selected' : '' }}>📄 20 per page</option>
-                                <option value="30" {{ $perPage == 30 ? 'selected' : '' }}>📄 30 per page</option>
-                                <option value="40" {{ $perPage == 40 ? 'selected' : '' }}>📄 40 per page</option>
-                                <option value="50" {{ $perPage == 50 ? 'selected' : '' }}>📄 50 per page</option>
-                                <option value="100" {{ $perPage == 100 ? 'selected' : '' }}>📄 100 per page</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label small text-muted font-weight-bold">Quick Actions</label>
-                            <div class="btn-group w-100" role="group">
-                                <button type="button" class="btn btn-outline-primary btn-sm" onclick="refreshTable()">
-                                    <i class="fas fa-refresh mr-1"></i>Refresh
-                                </button>
-                                <button type="button" class="btn btn-outline-success btn-sm" onclick="syncNow()">
-                                    <i class="fas fa-sync mr-1"></i>Sync
-                                </button>
-                                <button type="button" class="btn btn-outline-warning btn-sm" onclick="retryFailedItems()">
-                                    <i class="fas fa-redo mr-1"></i>Retry
-                                </button>
-                                <button type="button" class="btn btn-outline-danger btn-sm" onclick="clearFailedItems()">
-                                    <i class="fas fa-trash mr-1"></i>Clear
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
+    <!-- Filters & Search -->
+    <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+            <svg class="w-5 h-5 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.414A1 1 0 013 6.707V4z"></path>
+            </svg>
+            Filter & Search
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                <select id="status-filter" class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3">
+                    <option value="all">🔄 All Status</option>
+                    <option value="pending">⏳ Pending</option>
+                    <option value="synced">✅ Synced</option>
+                    <option value="failed">❌ Failed</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Model Type</label>
+                <select id="model-filter" class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3">
+                    <option value="all">📋 All Models</option>
+                    <option value="User">👤 Users</option>
+                    <option value="Ticket">🎫 Tickets</option>
+                    <option value="CashReport">💰 Cash Reports</option>
+                    <option value="Schedule">📅 Schedules</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Date Range</label>
+                <select id="date-filter" class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3">
+                    <option value="all">📅 All Time</option>
+                    <option value="today">📆 Today</option>
+                    <option value="week">📊 This Week</option>
+                    <option value="month">📈 This Month</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Search</label>
+                <input type="text" id="search-input" placeholder="🔍 Search UUID, model..." class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3">
             </div>
         </div>
     </div>
 
-    <!-- Sync Activity Table -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-bottom">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0"><i class="fas fa-list mr-2 text-primary"></i>Sync Activity</h5>
-                        <div>
-                            <span class="badge badge-info">{{ $syncData->total() }} total items</span>
-                            <button class="btn btn-outline-primary btn-sm ml-2" onclick="refreshTable()">
-                                <i class="fas fa-refresh mr-1"></i>Refresh
-                            </button>
-                        </div>
-                    </div>
+    <!-- Enhanced Data Table -->
+    <div class="bg-white rounded-xl shadow-lg">
+        <div class="p-6 border-b border-gray-200">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h3 class="text-xl font-semibold text-gray-800">Sync Activity Monitor</h3>
+                    <p class="text-gray-600 mt-1">Real-time synchronization status and history</p>
                 </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead class="bg-light">
-                                <tr>
-                                    <th class="border-0">UUID</th>
-                                    <th class="border-0">Model</th>
-                                    <th class="border-0">Action</th>
-                                    <th class="border-0">Status</th>
-                                    <th class="border-0">Attempts</th>
-                                    <th class="border-0">Created</th>
-                                    <th class="border-0">Last Attempt</th>
-                                    <th class="border-0">Error</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($syncData as $item)
-                                <tr class="{{ $item->synced ? '' : ($item->retry_count >= 3 ? 'table-danger' : 'table-warning') }}">
-                                    <td>
-                                        <code class="small bg-light px-2 py-1 rounded">{{ substr($item->model_uuid, 0, 20) }}...</code>
-                                    </td>
-                                    <td>
-                                        <span class="badge badge-light">{{ class_basename($item->model_type) }}</span>
-                                    </td>
-                                    <td>
-                                        <span class="badge badge-{{ $item->action === 'create' ? 'primary' : ($item->action === 'update' ? 'info' : 'danger') }}">
-                                            <i class="fas fa-{{ $item->action === 'create' ? 'plus' : ($item->action === 'update' ? 'edit' : 'trash') }} mr-1"></i>
-                                            {{ ucfirst($item->action) }}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        @if($item->synced)
-                                            <span class="badge badge-success"><i class="fas fa-check mr-1"></i>Synced</span>
-                                        @elseif($item->retry_count >= 3)
-                                            <span class="badge badge-danger"><i class="fas fa-times mr-1"></i>Failed</span>
-                                        @else
-                                            <span class="badge badge-warning"><i class="fas fa-clock mr-1"></i>Pending</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        <span class="badge badge-{{ $item->retry_count > 0 ? 'warning' : 'light' }}">
-                                            {{ $item->retry_count }}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <small class="text-muted">{{ $item->created_at->format('M d, Y H:i') }}</small>
-                                    </td>
-                                    <td>
-                                        <small class="text-muted">{{ $item->last_attempt ? $item->last_attempt->format('M d, H:i') : 'Never' }}</small>
-                                    </td>
-                                    <td>
-                                        @if($item->error_message)
-                                            <button class="btn btn-sm btn-outline-danger" onclick="showError('{{ addslashes($item->error_message) }}')" title="Click to view full error">
-                                                <i class="fas fa-exclamation-circle mr-1"></i>
-                                                Error
-                                            </button>
-                                        @else
-                                            <span class="text-muted">-</span>
-                                        @endif
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="8" class="text-center text-muted py-5">
-                                        <i class="fas fa-inbox fa-3x mb-3 opacity-50"></i>
-                                        <p class="mb-0">No sync activity found</p>
-                                        <small>Try adjusting your filters or create some data to see sync activity</small>
-                                    </td>
-                                </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="flex items-center space-x-2">
+                    <span class="text-sm text-gray-500">Auto-refresh:</span>
+                    <div class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
                 </div>
-                
-                <!-- Beautiful Pagination -->
-                @if($syncData->hasPages())
-                <div class="card-footer bg-gradient-light border-top">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="text-muted small">
-                            <i class="fas fa-info-circle mr-1"></i>
-                            Showing <span class="font-weight-bold text-primary">{{ $syncData->firstItem() }}</span> to 
-                            <span class="font-weight-bold text-primary">{{ $syncData->lastItem() }}</span> of 
-                            <span class="font-weight-bold text-primary">{{ $syncData->total() }}</span> results
-                        </div>
-                        <div class="pagination-wrapper">
-                            {{ $syncData->links('pagination::bootstrap-4') }}
-                        </div>
-                    </div>
-                </div>
-                @endif
             </div>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Model</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Attempts</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Attempt</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="sync-table-body" class="bg-white divide-y divide-gray-200">
+                    @forelse($recentSync as $item)
+                    <tr class="hover:bg-gray-50 transition duration-150 sync-row" data-status="{{ $item->synced ? 'synced' : ($item->retry_count >= 3 ? 'failed' : 'pending') }}" data-model="{{ class_basename($item->model_type) }}">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-10 w-10">
+                                    <div class="h-10 w-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-md">
+                                        <span class="text-xs font-bold text-white">{{ substr(class_basename($item->model_type), 0, 2) }}</span>
+                                    </div>
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-medium text-gray-900">{{ class_basename($item->model_type) }}</div>
+                                    <div class="text-xs text-gray-500">ID: {{ $item->model_id }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-3 py-1 text-xs font-semibold rounded-full 
+                                {{ $item->action === 'create' ? 'bg-green-100 text-green-800' : 
+                                   ($item->action === 'update' ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800') }}">
+                                {{ ucfirst($item->action) }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                @if($item->synced)
+                                    <div class="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
+                                    <span class="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">✅ Synced</span>
+                                @elseif($item->retry_count >= 3)
+                                    <div class="w-2 h-2 bg-red-400 rounded-full mr-2"></div>
+                                    <span class="px-3 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">❌ Failed</span>
+                                @else
+                                    <div class="w-2 h-2 bg-yellow-400 rounded-full mr-2 animate-pulse"></div>
+                                    <span class="px-3 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">⏳ Pending</span>
+                                @endif
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <span class="text-sm text-gray-900">{{ $item->retry_count }}</span>
+                                @if($item->retry_count > 0)
+                                    <span class="ml-2 text-xs text-red-500">({{ $item->retry_count }} retries)</span>
+                                @endif
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $item->created_at->format('M d, H:i') }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $item->last_attempt ? $item->last_attempt->format('M d, H:i') : 'Never' }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            @if(!$item->synced && $item->retry_count < 3)
+                                <button onclick="retryItem({{ $item->id }})" class="text-blue-600 hover:text-blue-900 mr-3">Retry</button>
+                            @endif
+                            @if($item->retry_count >= 3)
+                                <button onclick="deleteItem({{ $item->id }})" class="text-red-600 hover:text-red-900">Delete</button>
+                            @endif
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="7" class="px-6 py-12 text-center text-gray-500">
+                            <div class="flex flex-col items-center">
+                                <svg class="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-2.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 009.586 13H7"></path>
+                                </svg>
+                                <h3 class="text-lg font-medium text-gray-900 mb-2">No sync data available</h3>
+                                <p class="text-gray-500">Start syncing to see activity here</p>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
 
-<!-- SweetAlert2 -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 <style>
-/* Beautiful Gradient Cards */
-.gradient-card-1 {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+.toggle-checkbox:checked + .toggle-switch {
+    background-color: #3B82F6;
 }
-.gradient-card-2 {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-}
-.gradient-card-3 {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-}
-.gradient-card-4 {
-    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-}
-.gradient-card-5 {
-    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-}
-.gradient-card-6 {
-    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-}
-
-.stats-card {
-    cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    border-radius: 15px;
-    overflow: hidden;
-}
-
-.stats-card:hover {
-    transform: translateY(-10px) scale(1.05);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2) !important;
-}
-
-.icon-circle {
-    width: 70px;
-    height: 70px;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto;
-    backdrop-filter: blur(10px);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-}
-
-.card-glow {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
-    transform: translateX(-100%);
-    transition: transform 0.6s;
-}
-
-.stats-card:hover .card-glow {
-    transform: translateX(100%);
-}
-
-.bg-gradient-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-
-.bg-gradient-light {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-}
-
-.filter-card {
-    border-radius: 15px;
-    overflow: hidden;
-}
-
-.custom-select {
-    border-radius: 10px;
-    border: 2px solid #e9ecef;
-    transition: all 0.3s ease;
-}
-
-.custom-select:focus {
-    border-color: #667eea;
-    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
-}
-
-.table-hover tbody tr:hover {
-    background: linear-gradient(90deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-    transform: scale(1.01);
-    transition: all 0.3s ease;
-}
-
-.pagination-wrapper .page-link {
-    border-radius: 10px;
-    margin: 0 2px;
-    border: none;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    transition: all 0.3s ease;
-}
-
-.pagination-wrapper .page-link:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-}
-
-.pagination-wrapper .page-item.active .page-link {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    border: none;
-}
-
-.custom-control-label::before {
-    border-radius: 10px;
-    border: 2px solid #667eea;
-}
-
-.custom-control-input:checked ~ .custom-control-label::before {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-color: #667eea;
-}
-
-@keyframes pulse {
-    0% { box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7); }
-    70% { box-shadow: 0 0 0 10px rgba(102, 126, 234, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(102, 126, 234, 0); }
-}
-
-.auto-sync-active {
-    animation: pulse 2s infinite;
+.toggle-checkbox:checked + .toggle-switch .toggle-dot {
+    transform: translateX(1.5rem);
 }
 </style>
+@endsection
 
+@section('scripts')
 <script>
-// SweetAlert Toast Configuration
-const Toast = Swal.mixin({
-    toast: true,
-    position: 'top-end',
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true,
-    didOpen: (toast) => {
-        toast.addEventListener('mouseenter', Swal.stopTimer)
-        toast.addEventListener('mouseleave', Swal.resumeTimer)
-    }
-});
+let autoSyncInterval = null;
+let currentFilter = 'all';
 
-// Apply Filters
-function applyFilters() {
-    document.getElementById('filter-form').submit();
-}
-
-// Stats Card Click Filters
-document.querySelectorAll('.stats-card[data-filter]').forEach(card => {
-    card.addEventListener('click', function() {
-        const filter = this.dataset.filter;
-        const url = new URL(window.location);
-        
-        if (filter === 'all') {
-            url.searchParams.delete('status');
-            url.searchParams.delete('date');
-        } else if (['pending', 'synced', 'failed'].includes(filter)) {
-            url.searchParams.set('status', filter);
-            url.searchParams.delete('date');
-        } else if (filter === 'today') {
-            url.searchParams.set('date', 'today');
-            url.searchParams.delete('status');
-        }
-        
-        window.location.href = url.toString();
-    });
-});
-
-// Sync Now Function
 function syncNow() {
     const btn = document.getElementById('sync-btn');
+    const originalContent = btn.innerHTML;
     
-    Swal.fire({
-        title: 'Synchronizing Data',
-        text: 'Please wait while we sync your data...',
-        icon: 'info',
-        allowOutsideClick: false,
-        showConfirmButton: false,
-        didOpen: () => {
-            Swal.showLoading();
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Syncing...';
-        }
-    });
+    btn.disabled = true;
+    btn.innerHTML = '<svg class="w-5 h-5 inline mr-2 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>Syncing...';
     
     fetch('/admin/sync/now', {
         method: 'POST',
@@ -510,332 +363,188 @@ function syncNow() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            Swal.fire({
-                title: 'Sync Successful!',
-                text: data.message,
-                icon: 'success',
-                confirmButtonText: 'Great!',
-                confirmButtonColor: '#28a745'
-            }).then(() => {
-                location.reload();
-            });
+            showNotification('✅ ' + data.message, 'success');
+            updateStats();
+            setTimeout(() => location.reload(), 1000);
         } else {
-            Swal.fire({
-                title: 'Sync Failed',
-                text: data.message,
-                icon: 'error',
-                confirmButtonText: 'Try Again',
-                confirmButtonColor: '#dc3545'
-            });
+            showNotification('❌ Sync failed: ' + data.message, 'error');
         }
     })
     .catch(error => {
-        Swal.fire({
-            title: 'Connection Error',
-            text: 'Unable to connect to sync server: ' + error.message,
-            icon: 'error',
-            confirmButtonText: 'OK',
-            confirmButtonColor: '#dc3545'
-        });
+        showNotification('❌ Connection error: ' + error.message, 'error');
     })
     .finally(() => {
         btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-sync mr-2"></i>Sync Now';
+        btn.innerHTML = originalContent;
     });
 }
 
-// Show Error Details
-function showError(errorMessage) {
-    Swal.fire({
-        title: 'Sync Error Details',
-        text: errorMessage,
-        icon: 'error',
-        confirmButtonText: 'Close',
-        confirmButtonColor: '#dc3545',
-        width: '600px'
-    });
-}
-
-// Retry Failed Items
-function retryFailedItems() {
-    Swal.fire({
-        title: 'Retry Failed Items?',
-        text: 'This will reset failed items and attempt to sync them again.',
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#28a745',
-        cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Yes, retry them!',
-        cancelButtonText: 'Cancel'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            fetch('/admin/sync/retry-failed', {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    Toast.fire({
-                        icon: 'success',
-                        title: data.message
-                    });
-                    setTimeout(() => location.reload(), 1500);
-                } else {
-                    Toast.fire({
-                        icon: 'error',
-                        title: 'Failed to retry items'
-                    });
-                }
-            })
-            .catch(error => {
-                Toast.fire({
-                    icon: 'error',
-                    title: 'Error: ' + error.message
-                });
-            });
+function retryFailed() {
+    fetch('/admin/sync/retry-failed', {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification('✅ ' + data.message, 'success');
+            setTimeout(() => location.reload(), 1000);
+        } else {
+            showNotification('❌ ' + data.message, 'error');
         }
     });
 }
 
-// Clear Failed Items
-function clearFailedItems() {
-    Swal.fire({
-        title: 'Clear Failed Items?',
-        text: 'This will remove all failed sync items from the queue.',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#dc3545',
-        cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Yes, clear them!',
-        cancelButtonText: 'Cancel'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            fetch('/admin/sync/clear-failed', {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    Toast.fire({
-                        icon: 'success',
-                        title: data.message
-                    });
-                    setTimeout(() => location.reload(), 1500);
-                } else {
-                    Toast.fire({
-                        icon: 'error',
-                        title: 'Failed to clear items'
-                    });
-                }
-            })
-            .catch(error => {
-                Toast.fire({
-                    icon: 'error',
-                    title: 'Error: ' + error.message
-                });
-            });
-        }
-    });
+function clearFailed() {
+    if (confirm('🗑️ Are you sure you want to clear all failed items? This action cannot be undone.')) {
+        fetch('/admin/sync/clear-failed', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showNotification('✅ ' + data.message, 'success');
+                setTimeout(() => location.reload(), 1000);
+            } else {
+                showNotification('❌ ' + data.message, 'error');
+            }
+        });
+    }
 }
 
-// Refresh Table
-function refreshTable() {
-    Toast.fire({
-        icon: 'info',
-        title: 'Refreshing sync data...'
+function refreshData() {
+    showNotification('🔄 Refreshing data...', 'info');
+    setTimeout(() => location.reload(), 500);
+}
+
+function filterByStatus(status) {
+    currentFilter = status;
+    const rows = document.querySelectorAll('.sync-row');
+    const statusFilter = document.getElementById('status-filter');
+    statusFilter.value = status;
+    
+    rows.forEach(row => {
+        const rowStatus = row.dataset.status;
+        if (status === 'all' || rowStatus === status) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
     });
     
-    setTimeout(() => {
-        location.reload();
-    }, 1000);
+    showNotification(`🔍 Filtered by: ${status}`, 'info');
 }
 
-// Auto-refresh status every 30 seconds
-setInterval(() => {
+function updateStats() {
     fetch('/admin/sync/status')
         .then(response => response.json())
         .then(data => {
-            // Update connection status
-            const statusBadge = document.getElementById('connection-status');
-            statusBadge.className = 'badge badge-lg badge-' + (data.online ? 'success' : 'danger') + ' px-3 py-2';
-            statusBadge.innerHTML = '<i class="fas fa-' + (data.online ? 'wifi' : 'wifi-slash') + ' mr-1"></i>' + (data.online ? 'Online' : 'Offline');
-            
-            // Update counts
             document.getElementById('pending-count').textContent = data.pending;
             document.getElementById('failed-count').textContent = data.failed;
-            document.getElementById('last-sync').textContent = data.last_sync;
+            document.getElementById('queue-size').textContent = data.pending;
             
-            // Show toast if status changed
-            if (data.online && !window.wasOnline) {
-                Toast.fire({
-                    icon: 'success',
-                    title: 'Connection restored!'
-                });
-            } else if (!data.online && window.wasOnline) {
-                Toast.fire({
-                    icon: 'warning',
-                    title: 'Connection lost'
-                });
-            }
-            window.wasOnline = data.online;
-        })
-        .catch(error => {
-            console.error('Status check failed:', error);
+            const statusEl = document.getElementById('connection-status');
+            statusEl.className = data.online ? 
+                'px-4 py-2 rounded-full text-sm font-medium bg-green-100 text-green-800' : 
+                'px-4 py-2 rounded-full text-sm font-medium bg-red-100 text-red-800';
+            statusEl.textContent = data.online ? '🟢 Connected' : '🔴 Disconnected';
         });
-}, 30000);
-
-// Auto-Sync Functionality
-let autoSyncInterval = null;
-let autoSyncEnabled = false;
-
-function toggleAutoSync() {
-    const toggle = document.getElementById('autoSyncToggle');
-    const intervalSelect = document.getElementById('autoSyncInterval');
-    
-    autoSyncEnabled = toggle.checked;
-    intervalSelect.disabled = !autoSyncEnabled;
-    
-    if (autoSyncEnabled) {
-        startAutoSync();
-        document.querySelector('.custom-control-label').classList.add('auto-sync-active');
-        Toast.fire({
-            icon: 'success',
-            title: 'Auto-sync enabled!'
-        });
-    } else {
-        stopAutoSync();
-        document.querySelector('.custom-control-label').classList.remove('auto-sync-active');
-        Toast.fire({
-            icon: 'info',
-            title: 'Auto-sync disabled'
-        });
-    }
-    
-    // Save preference
-    localStorage.setItem('autoSyncEnabled', autoSyncEnabled);
-    localStorage.setItem('autoSyncInterval', intervalSelect.value);
 }
 
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    const bgColor = type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500';
+    notification.className = `fixed top-4 right-4 ${bgColor} text-white p-4 rounded-lg shadow-lg z-50 transform transition-all duration-300 translate-x-full`;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => notification.classList.remove('translate-x-full'), 100);
+    setTimeout(() => {
+        notification.classList.add('translate-x-full');
+        setTimeout(() => notification.remove(), 300);
+    }, 4000);
+}
+
+// Auto-sync functionality
+document.getElementById('auto-sync-toggle').addEventListener('change', function() {
+    const intervalSelect = document.getElementById('auto-sync-interval');
+    const statusDiv = document.getElementById('auto-sync-status');
+    
+    if (this.checked) {
+        intervalSelect.disabled = false;
+        statusDiv.classList.remove('hidden');
+        startAutoSync();
+    } else {
+        intervalSelect.disabled = true;
+        statusDiv.classList.add('hidden');
+        stopAutoSync();
+    }
+});
+
+document.getElementById('auto-sync-interval').addEventListener('change', function() {
+    if (document.getElementById('auto-sync-toggle').checked) {
+        stopAutoSync();
+        startAutoSync();
+    }
+});
+
 function startAutoSync() {
-    stopAutoSync(); // Clear any existing interval
-    
-    const intervalSeconds = parseInt(document.getElementById('autoSyncInterval').value);
-    
+    const interval = parseInt(document.getElementById('auto-sync-interval').value) * 1000;
     autoSyncInterval = setInterval(() => {
-        if (autoSyncEnabled) {
-            // Silent sync without showing loading dialog
-            fetch('/admin/sync/now', {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Update counts without full page reload
-                    updateSyncCounts();
-                    
-                    // Show subtle notification
-                    Toast.fire({
-                        icon: 'success',
-                        title: 'Auto-sync completed',
-                        timer: 1500
-                    });
-                }
-            })
-            .catch(error => {
-                console.error('Auto-sync failed:', error);
-            });
-        }
-    }, intervalSeconds * 1000);
+        syncNow();
+    }, interval);
+    showNotification('🔄 Auto-sync enabled', 'success');
 }
 
 function stopAutoSync() {
     if (autoSyncInterval) {
         clearInterval(autoSyncInterval);
         autoSyncInterval = null;
+        showNotification('⏹️ Auto-sync disabled', 'success');
     }
 }
 
-function updateAutoSyncInterval() {
-    if (autoSyncEnabled) {
-        startAutoSync(); // Restart with new interval
-        
-        const intervalSeconds = parseInt(document.getElementById('autoSyncInterval').value);
-        Toast.fire({
-            icon: 'info',
-            title: `Auto-sync interval updated to ${intervalSeconds}s`
-        });
-        
-        localStorage.setItem('autoSyncInterval', intervalSeconds);
-    }
-}
+// Filter functionality
+document.getElementById('status-filter').addEventListener('change', function() {
+    filterByStatus(this.value);
+});
 
-function updateSyncCounts() {
-    fetch('/admin/sync/status')
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('pending-count').textContent = data.pending;
-            document.getElementById('failed-count').textContent = data.failed;
-            document.getElementById('last-sync').textContent = data.last_sync;
-        })
-        .catch(error => {
-            console.error('Failed to update counts:', error);
-        });
-}
-
-// Initialize tooltips and auto-sync
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize Bootstrap tooltips if available
-    if (typeof $ !== 'undefined' && $.fn.tooltip) {
-        $('[data-toggle="tooltip"]').tooltip();
-    }
+document.getElementById('model-filter').addEventListener('change', function() {
+    const rows = document.querySelectorAll('.sync-row');
+    const selectedModel = this.value;
     
-    // Set initial online status
-    window.wasOnline = {{ $status['online'] ? 'true' : 'false' }};
-    
-    // Restore auto-sync preferences
-    const savedAutoSync = localStorage.getItem('autoSyncEnabled') === 'true';
-    const savedInterval = localStorage.getItem('autoSyncInterval') || '180';
-    
-    document.getElementById('autoSyncToggle').checked = savedAutoSync;
-    document.getElementById('autoSyncInterval').value = savedInterval;
-    
-    if (savedAutoSync) {
-        toggleAutoSync();
-    }
-    
-    // Add event listeners
-    document.getElementById('autoSyncToggle').addEventListener('change', toggleAutoSync);
-    document.getElementById('autoSyncInterval').addEventListener('change', updateAutoSyncInterval);
-    
-    @if($summaryStats['pending'] > 0)
-        Toast.fire({
-            icon: 'info',
-            title: '{{ $summaryStats["pending"] }} items waiting to sync'
-        });
-    @endif
-    
-    // Add card hover effects
-    document.querySelectorAll('.stats-card').forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-10px) scale(1.05)';
-        });
-        
-        card.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0) scale(1)';
-        });
+    rows.forEach(row => {
+        const rowModel = row.dataset.model;
+        if (selectedModel === 'all' || rowModel === selectedModel) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
     });
 });
+
+document.getElementById('search-input').addEventListener('input', function() {
+    const searchTerm = this.value.toLowerCase();
+    const rows = document.querySelectorAll('.sync-row');
+    
+    rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        if (text.includes(searchTerm)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+});
+
+// Auto-update disabled to prevent SSL errors
+// setInterval(updateStats, 30000);
 </script>
 @endsection
