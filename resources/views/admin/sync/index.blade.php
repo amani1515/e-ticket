@@ -476,22 +476,49 @@ function showNotification(message, type) {
 document.getElementById('auto-sync-toggle').addEventListener('change', function() {
     const intervalSelect = document.getElementById('auto-sync-interval');
     const statusDiv = document.getElementById('auto-sync-status');
+    const enabled = this.checked;
+    const interval = parseInt(intervalSelect.value);
     
-    if (this.checked) {
-        intervalSelect.disabled = false;
-        statusDiv.classList.remove('hidden');
-        startAutoSync();
-    } else {
-        intervalSelect.disabled = true;
-        statusDiv.classList.add('hidden');
-        stopAutoSync();
-    }
+    fetch('/admin/sync/auto-toggle', {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ enabled, interval })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            intervalSelect.disabled = !enabled;
+            if (enabled) {
+                statusDiv.classList.remove('hidden');
+                startAutoSync();
+            } else {
+                statusDiv.classList.add('hidden');
+                stopAutoSync();
+            }
+            showNotification(data.message, 'success');
+        }
+    });
 });
 
 document.getElementById('auto-sync-interval').addEventListener('change', function() {
-    if (document.getElementById('auto-sync-toggle').checked) {
-        stopAutoSync();
-        startAutoSync();
+    const toggle = document.getElementById('auto-sync-toggle');
+    if (toggle.checked) {
+        const interval = parseInt(this.value);
+        fetch('/admin/sync/auto-toggle', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ enabled: true, interval })
+        })
+        .then(() => {
+            stopAutoSync();
+            startAutoSync();
+        });
     }
 });
 
@@ -500,16 +527,32 @@ function startAutoSync() {
     autoSyncInterval = setInterval(() => {
         syncNow();
     }, interval);
-    showNotification('🔄 Auto-sync enabled', 'success');
 }
 
 function stopAutoSync() {
     if (autoSyncInterval) {
         clearInterval(autoSyncInterval);
         autoSyncInterval = null;
-        showNotification('⏹️ Auto-sync disabled', 'success');
     }
 }
+
+// Load auto-sync status on page load
+fetch('/admin/sync/auto-status')
+    .then(response => response.json())
+    .then(data => {
+        const toggle = document.getElementById('auto-sync-toggle');
+        const intervalSelect = document.getElementById('auto-sync-interval');
+        const statusDiv = document.getElementById('auto-sync-status');
+        
+        toggle.checked = data.enabled;
+        intervalSelect.value = data.interval;
+        intervalSelect.disabled = !data.enabled;
+        
+        if (data.enabled) {
+            statusDiv.classList.remove('hidden');
+            startAutoSync();
+        }
+    });
 
 // Filter functionality
 document.getElementById('status-filter').addEventListener('change', function() {

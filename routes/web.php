@@ -139,6 +139,8 @@ Route::post('/sync/now', [SyncController::class, 'sync'])->name('sync.now');
 Route::get('/sync/status', [SyncController::class, 'status'])->name('sync.status');
 Route::delete('/sync/clear-failed', [SyncController::class, 'clearFailed'])->name('sync.clear-failed');
 Route::post('/sync/retry-failed', [SyncController::class, 'retryFailed'])->name('sync.retry-failed');
+Route::post('/sync/auto-toggle', [SyncController::class, 'toggleAutoSync'])->name('sync.auto-toggle');
+Route::get('/sync/auto-status', [SyncController::class, 'getAutoSyncStatus'])->name('sync.auto-status');
 
 });
 

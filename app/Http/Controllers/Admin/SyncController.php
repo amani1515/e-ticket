@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Services\SyncService;
 use App\Models\SyncQueue;
+use App\Models\SyncSettings;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Exception;
@@ -195,5 +196,36 @@ class SyncController extends Controller
                 'message' => 'Failed to retry items: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    public function toggleAutoSync(Request $request)
+    {
+        if (auth()->user()->usertype !== 'admin') {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $enabled = $request->input('enabled', false);
+        $interval = $request->input('interval', 300);
+
+        SyncSettings::set('auto_sync_enabled', $enabled);
+        SyncSettings::set('auto_sync_interval', $interval);
+
+        return response()->json([
+            'success' => true,
+            'message' => $enabled ? 'Auto-sync enabled' : 'Auto-sync disabled',
+            'enabled' => $enabled,
+            'interval' => $interval
+        ]);
+    }
+
+    public function getAutoSyncStatus()
+    {
+        $enabled = SyncSettings::get('auto_sync_enabled', false);
+        $interval = SyncSettings::get('auto_sync_interval', 300);
+
+        return response()->json([
+            'enabled' => $enabled,
+            'interval' => $interval
+        ]);
     }
 }
