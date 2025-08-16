@@ -94,7 +94,7 @@ public function store(Request $request)
     'unique:users,phone',
 ],
                 'usertype' => 'required|string',
-                'password' => 'required|string|confirmed',
+                'password' => 'required|string|min:8|confirmed',
                 'mahberat_id' => 'nullable|exists:mahberats,id',
                 'assigned_destinations' => 'nullable|array',
                 'assigned_destinations.*' => 'exists:destinations,id',
