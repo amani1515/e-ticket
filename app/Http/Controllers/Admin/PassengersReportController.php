@@ -21,7 +21,7 @@ class PassengersReportController extends Controller
         if(auth::id())
         {
          $usertype = Auth::user()->usertype;
-         if($usertype == 'admin')
+         if($usertype == 'admin' || $usertype == 'headoffice')
          {
         $query = Ticket::query()->with('destination');
 

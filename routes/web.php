@@ -57,7 +57,7 @@ Route::middleware([
 // --------------------
 // Admin Routes
 // --------------------
-Route::get('/home', [AdminController::class, 'index']);
+Route::middleware(['auth', 'role:admin,headoffice'])->get('/home', [AdminController::class, 'index'])->name('admin.dashboard');
 Route::get('/admin', [DashboardReportsController::class, 'index'])->name('admin.index');
 
 // User Management
@@ -71,15 +71,30 @@ Route::prefix('admin')->name('admin.')->group(function () {
 });
 
 
-// Passenger Reports
-Route::prefix('admin')->name('admin.')->group(function () {
+// Reports accessible by both admin and headoffice
+Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('passenger-report', [PassengersReportController::class, 'index'])->name('passenger-report');
     Route::get('passenger-report/export', [PassengersReportController::class, 'export'])->name('passenger.report.export');
     Route::get('passenger-report/{id}', [PassengersReportController::class, 'show'])->name('passenger-report.show');
+    Route::get('passenger-report/print-all', [PassengerReportController::class, 'printAll'])->name('passenger.report.print-all');
+    Route::get('/buses', [BusController::class, 'index'])->name('buses.index');
+    Route::get('/buses/{id}', [BusController::class, 'show'])->name('buses.show');
+    Route::get('/bus-reports', [BusReportController::class, 'index'])->name('bus.reports');
+    Route::get('/schedule-reports', [\App\Http\Controllers\Admin\ScheduleReportController::class, 'index'])->name('schedule.reports');
+    Route::get('/reports/transactions', [TransactionController::class, 'index'])->name('reports.transactions');
+    Route::get('/total-reports', [\App\Http\Controllers\Admin\TotalReportController::class, 'index'])->name('total.reports');
+});
+
+// Cash reports - admin only
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/cash-reports', [AdminCashReportController::class, 'index'])->name('cash.reports');
+});
+
+// Admin-only passenger report actions
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::delete('passenger-report/{id}', [PassengersReportController::class, 'destroy'])->name('passenger-report.destroy');
     Route::put('passenger-report/{id}/refund', [PassengersReportController::class, 'refund'])->name('passenger-report.refund');
-    Route::get('passenger-report/print-all', [PassengerReportController::class, 'printAll'])->name('passenger.report.print-all');
-    
+    Route::post('/cash-reports/{id}/mark-received', [AdminCashReportController::class, 'markAsReceived'])->name('cash.reports.receive');
 });
 
 // Mahberat Management
@@ -94,6 +109,7 @@ Route::get('/admin/users/check-national-id-update', [\App\Http\Controllers\Admin
 // Backup
     // admin-only routes 
 
+// Admin-only routes
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::resource('users', UserController::class)->except(['show', 'edit', 'update', 'destroy']);
     Route::get('users/{id}', [UserController::class, 'show'])->name('users.show');
@@ -103,45 +119,30 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('users/{user}/unblock', [UserController::class, 'unblock'])->name('users.unblock');
     Route::get('backup', [BackupController::class, 'backupDownload'])->name('backup');
 
-// Schedule Reports
-Route::get('/schedule-reports', [\App\Http\Controllers\Admin\ScheduleReportController::class, 'index'])->name('schedule.reports');
-Route::get('/reports/transactions', [TransactionController::class, 'index'])->name('reports.transactions')->middleware('auth');
-Route::get('/total-reports', [\App\Http\Controllers\Admin\TotalReportController::class, 'index'])->name('total.reports');
-Route::post('/total-reports/export-telegram', [\App\Http\Controllers\Admin\TotalReportController::class, 'exportToTelegram'])->name('total.reports.telegram');
+    Route::post('/total-reports/export-telegram', [\App\Http\Controllers\Admin\TotalReportController::class, 'exportToTelegram'])->name('total.reports.telegram');
 
-// Cargo Settings
-  Route::resource('cargo-settings', \App\Http\Controllers\Admin\CargoSettingsController::class)
-        ->only(['index', 'edit', 'update'])
-        ->names('cargo-settings');
-Route::post('/cargo-settings/departure-fee', [\App\Http\Controllers\Admin\CargoSettingsController::class, 'updateDepartureFee'])->name('cargo-settings.departure-fee');
-
-// Cash Reports
-    Route::middleware(['prevent.caching'])->group(function () {
-        Route::get('/cash-reports', [AdminCashReportController::class, 'index'])->name('cash.reports');
-        Route::post('/cash-reports/{id}/mark-received', [AdminCashReportController::class, 'markAsReceived'])->name('cash.reports.receive');
-    });
+    // Cargo Settings
+    Route::resource('cargo-settings', \App\Http\Controllers\Admin\CargoSettingsController::class)
+          ->only(['index', 'edit', 'update'])
+          ->names('cargo-settings');
+    Route::post('/cargo-settings/departure-fee', [\App\Http\Controllers\Admin\CargoSettingsController::class, 'updateDepartureFee'])->name('cargo-settings.departure-fee');
 
     Route::resource('destinations', DestinationController::class);
     Route::resource('mahberats', controller: MahberatController::class)->only(['index', 'create', 'store', 'show']);
 
-    // Bus Management
-Route::get('/buses', [BusController::class, 'index'])->name('buses.index');
-Route::get('/buses/{id}', [BusController::class, 'show'])->name('buses.show');
-Route::get('/bus-reports', [BusReportController::class, 'index'])->name('bus.reports');
-Route::get('/buses/banner/{id}', [BusController::class, 'banner'])->name('buses.banner');
-    
-// route for sms
-Route::resource('sms-template', SmsTemplateController::class);
+    Route::get('/buses/banner/{id}', [BusController::class, 'banner'])->name('buses.banner');
+        
+    // route for sms
+    Route::resource('sms-template', SmsTemplateController::class);
 
-// Sync routes
-Route::get('/sync', [SyncController::class, 'index'])->name('sync.index');
-Route::post('/sync/now', [SyncController::class, 'sync'])->name('sync.now');
-Route::get('/sync/status', [SyncController::class, 'status'])->name('sync.status');
-Route::delete('/sync/clear-failed', [SyncController::class, 'clearFailed'])->name('sync.clear-failed');
-Route::post('/sync/retry-failed', [SyncController::class, 'retryFailed'])->name('sync.retry-failed');
-Route::post('/sync/auto-toggle', [SyncController::class, 'toggleAutoSync'])->name('sync.auto-toggle');
-Route::get('/sync/auto-status', [SyncController::class, 'getAutoSyncStatus'])->name('sync.auto-status');
-
+    // Sync routes
+    Route::get('/sync', [SyncController::class, 'index'])->name('sync.index');
+    Route::post('/sync/now', [SyncController::class, 'sync'])->name('sync.now');
+    Route::get('/sync/status', [SyncController::class, 'status'])->name('sync.status');
+    Route::delete('/sync/clear-failed', [SyncController::class, 'clearFailed'])->name('sync.clear-failed');
+    Route::post('/sync/retry-failed', [SyncController::class, 'retryFailed'])->name('sync.retry-failed');
+    Route::post('/sync/auto-toggle', [SyncController::class, 'toggleAutoSync'])->name('sync.auto-toggle');
+    Route::get('/sync/auto-status', [SyncController::class, 'getAutoSyncStatus'])->name('sync.auto-status');
 });
 
 
