@@ -147,4 +147,18 @@ class AdminController extends Controller
         }
         // If not authenticated, this block is not reached (middleware should handle it)
     }
+
+    public function export(Request $request)
+    {
+        if (!auth()->check() || !in_array(auth()->user()->usertype, ['admin', 'headoffice'])) {
+            abort(403);
+        }
+
+        $startDate = $request->get('start_date');
+        $endDate = $request->get('end_date');
+        
+        $fileName = 'dashboard-export-' . now()->format('Y-m-d-H-i') . '.xlsx';
+        
+        return \Excel::download(new \App\Exports\DashboardExport($startDate, $endDate), $fileName);
+    }
 }

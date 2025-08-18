@@ -79,9 +79,12 @@
                             <input type="date" name="end_date" id="end_date" value="{{ request('end_date') }}"
                                 class="w-full px-4 py-3 border-2 border-amber-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 bg-amber-50">
                         </div>
-                        <div class="flex items-end">
+                        <div class="flex items-end gap-2">
                             <button type="submit" class="bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700 text-white font-bold py-3 px-6 rounded-xl transition duration-200 transform hover:scale-105 shadow-lg">
                                 Apply Filter
+                            </button>
+                            <button type="button" onclick="exportFilteredData()" class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-3 px-6 rounded-xl transition duration-200 transform hover:scale-105 shadow-lg">
+                                Export Excel
                             </button>
                         </div>
                     </form>
@@ -433,6 +436,18 @@
 
                 // Automatically submit the form
                 document.getElementById('filterForm').submit();
+            }
+
+            // Export filtered data
+            window.exportFilteredData = function() {
+                const startDate = document.getElementById('start_date').value;
+                const endDate = document.getElementById('end_date').value;
+                
+                let url = '/admin/dashboard/export?';
+                if (startDate) url += 'start_date=' + startDate + '&';
+                if (endDate) url += 'end_date=' + endDate;
+                
+                window.location.href = url;
             }
         });
     </script>
