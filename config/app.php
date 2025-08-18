@@ -15,6 +15,7 @@ return [
 
     // bar code generator 
     'DNS1D' => Milon\Barcode\Facades\DNS1DFacade::class,
+    'PDF' => Barryvdh\DomPDF\Facade\Pdf::class,
 
 
     'name' => env('APP_NAME', 'Laravel'),

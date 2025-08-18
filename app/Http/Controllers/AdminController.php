@@ -161,4 +161,56 @@ class AdminController extends Controller
         
         return \Excel::download(new \App\Exports\DashboardExport($startDate, $endDate), $fileName);
     }
+
+    public function exportPDF(Request $request)
+    {
+        if (!auth()->check() || !in_array(auth()->user()->usertype, ['admin', 'headoffice'])) {
+            abort(403);
+        }
+
+        $startDate = $request->get('start_date');
+        $endDate = $request->get('end_date');
+        
+        // Get filtered tickets
+        $query = \App\Models\Ticket::with('destination');
+        if ($startDate && $endDate) {
+            $query->whereDate('created_at', '>=', $startDate)
+                  ->whereDate('created_at', '<=', $endDate);
+        } else {
+            $query->whereDate('created_at', \Carbon\Carbon::today());
+        }
+        $tickets = $query->get();
+
+        // Calculate statistics
+        $passengersToday = $tickets->count();
+        $totalUsers = \App\Models\User::count();
+        $totalDestinations = \App\Models\Destination::count();
+        $taxTotal = $tickets->sum(function($t) {
+            return $t->tax ?? $t->destination->tax ?? 0;
+        });
+        $serviceFeeTotal = $tickets->sum(function($t) {
+            return $t->service_fee ?? $t->destination->service_fee ?? 0;
+        });
+        $tariffTotal = $tickets->sum(function($t) {
+            return $t->destination->tariff ?? 0;
+        });
+        $totalRevenue = $taxTotal + $serviceFeeTotal + $tariffTotal;
+
+        // Get distribution data
+        $genderData = $tickets->groupBy('gender')->map->count();
+        $ageData = $tickets->groupBy('age_status')->map->count();
+        $disabilityData = $tickets->groupBy('disability_status')->map->count();
+        $destinationData = $tickets->groupBy('destination.destination_name')->map->count()->sortDesc();
+
+        $data = compact(
+            'startDate', 'endDate', 'passengersToday', 'totalUsers', 'totalDestinations',
+            'taxTotal', 'serviceFeeTotal', 'totalRevenue', 'genderData', 'ageData', 
+            'disabilityData', 'destinationData'
+        );
+
+        $pdf = \PDF::loadView('admin.dashboard-pdf', $data);
+        $fileName = 'dashboard-report-' . now()->format('Y-m-d-H-i') . '.pdf';
+        
+        return $pdf->download($fileName);
+    }
 }

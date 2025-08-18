@@ -59,6 +59,7 @@ Route::middleware([
 // --------------------
 Route::middleware(['auth', 'role:admin,headoffice'])->get('/home', [AdminController::class, 'index'])->name('admin.dashboard');
 Route::middleware(['auth', 'role:admin,headoffice'])->get('/admin/dashboard/export', [AdminController::class, 'export'])->name('admin.dashboard.export');
+Route::middleware(['auth', 'role:admin,headoffice'])->get('/admin/dashboard/export-pdf', [AdminController::class, 'exportPDF'])->name('admin.dashboard.export-pdf');
 Route::get('/admin', [DashboardReportsController::class, 'index'])->name('admin.index');
 
 // User Management

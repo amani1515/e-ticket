@@ -86,6 +86,9 @@
                             <button type="button" onclick="exportFilteredData()" class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-3 px-6 rounded-xl transition duration-200 transform hover:scale-105 shadow-lg">
                                 Export Excel
                             </button>
+                            <button type="button" onclick="exportPDF()" class="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-3 px-6 rounded-xl transition duration-200 transform hover:scale-105 shadow-lg">
+                                Export PDF
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -444,6 +447,18 @@
                 const endDate = document.getElementById('end_date').value;
                 
                 let url = '/admin/dashboard/export?';
+                if (startDate) url += 'start_date=' + startDate + '&';
+                if (endDate) url += 'end_date=' + endDate;
+                
+                window.location.href = url;
+            }
+
+            // Export PDF
+            window.exportPDF = function() {
+                const startDate = document.getElementById('start_date').value;
+                const endDate = document.getElementById('end_date').value;
+                
+                let url = '/admin/dashboard/export-pdf?';
                 if (startDate) url += 'start_date=' + startDate + '&';
                 if (endDate) url += 'end_date=' + endDate;
                 
