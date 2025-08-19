@@ -15,12 +15,12 @@
 
     .receipt {
         background: #fff;
-        width: 80mm;
-        padding: 6px;
-        font-size: 12px;
-        box-shadow: 0 0 3px rgba(0,0,0,0.1);
-        margin: 5px auto;
-        line-height: 1.4em;
+        width: 58mm;
+        padding: 2mm;
+        font-size: 7px;
+        box-shadow: none;
+        margin: 0 auto;
+        line-height: 1.1em;
     }
 
     .center {
@@ -29,12 +29,12 @@
     }
 
     .barcode {
-        margin-top: 8px;
+        margin-top: 4px;
     }
 
     .divider {
         border-top: 1px dashed #000;
-        margin: 6px 0;
+        margin: 3px 0;
     }
 
     .buttons {
@@ -62,16 +62,16 @@
     }
 
     .logo {
-        max-width: 32mm;
+        max-width: 15mm;
         height: auto;
         display: block;
-        margin: 0 auto 6px auto;
+        margin: 0 auto 2px auto;
     }
 
     .footer-info {
-        font-size: 11px;
+        font-size: 6px;
         color: #333;
-        margin-top: 10px;
+        margin-top: 3px;
         text-align: center;
     }
 
@@ -89,11 +89,11 @@
         .receipt {
             box-shadow: none;
             margin: 0;
-            padding: 6px;
-            width: 80mm;
+            padding: 1mm;
+            width: 58mm;
             height: auto !important;
-            font-size: 11px;
-            line-height: 1.4em;
+            font-size: 6px;
+            line-height: 1.0em;
         }
 
         .barcode img {
@@ -103,21 +103,21 @@
         }
 
         .logo {
-            max-width: 30mm;
-            margin-bottom: 5px;
+            max-width: 12mm;
+            margin-bottom: 1px;
         }
 
         h3 {
-            font-size: 15px;
-            margin: 5px 0;
+            font-size: 9px;
+            margin: 1px 0;
         }
 
         p {
-            margin: 3px 0;
+            margin: 0.5px 0;
         }
 
         @page {
-            size: 80mm 210mm;
+            size: 58mm 200mm;
             margin: 0;
         }
     }
