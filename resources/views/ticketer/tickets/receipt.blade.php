@@ -6,26 +6,26 @@
     body {
         margin: 0;
         padding: 0;
-        background: #f0f0f0;
+        background: #fff;
         font-family: monospace;
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
+        width: 100vw;
+        overflow-x: hidden;
     }
 
     .receipt {
         background: #fff;
-        width: 58mm;
+        width: 100%;
         padding: 2mm;
-        font-size: 7px;
+        font-size: 10px;
         box-shadow: none;
-        margin: 0 auto;
+        margin: 0;
         line-height: 1.1em;
     }
 
     .center {
         text-align: center;
         font-weight: bold;
+        font-size: 18px;
     }
 
     .barcode {
@@ -37,29 +37,7 @@
         margin: 3px 0;
     }
 
-    .buttons {
-        margin-top: 12px;
-        text-align: center;
-    }
 
-    .btn {
-        background-color: #4CAF50;
-        color: white;
-        padding: 8px 16px;
-        font-size: 13px;
-        cursor: pointer;
-        border: none;
-        border-radius: 4px;
-        margin-right: 5px;
-    }
-
-    .btn-back {
-        background-color: #f44336;
-    }
-
-    .btn:hover {
-        opacity: 0.8;
-    }
 
     .logo {
         max-width: 15mm;
@@ -69,7 +47,7 @@
     }
 
     .footer-info {
-        font-size: 6px;
+        font-size: 14px;
         color: #333;
         margin-top: 3px;
         text-align: center;
@@ -82,9 +60,7 @@
             padding: 0;
         }
 
-        .buttons {
-            display: none;
-        }
+
 
         .receipt {
             box-shadow: none;
@@ -92,7 +68,7 @@
             padding: 1mm;
             width: 58mm;
             height: auto !important;
-            font-size: 6px;
+            font-size: 16px;
             line-height: 1.0em;
         }
 
@@ -108,7 +84,7 @@
         }
 
         h3 {
-            font-size: 9px;
+            font-size: 12px;
             margin: 1px 0;
         }
 
@@ -136,8 +112,8 @@
             <div class="divider"></div>
         </div>
 
-        <p><strong style="font-size: 1.4em;">ሰሌዳ ቁጥር:{{ $ticket->bus->targa ?? $ticket->bus_id }}</strong> </p>
-        <p><strong>የተጓዥ ስም:</strong> {{ $ticket->passenger_name }}</p>
+        <p><strong style="font-size: 24px;">ሰሌዳ ቁጥር:{{ $ticket->bus->targa ?? $ticket->bus_id }}</strong> </p>
+        <pv ><strong >የተጓዥ ስም:</strong> {{ $ticket->passenger_name }}</pv>
         <p><strong>ጾታ:</strong> {{ ucfirst($ticket->gender) }}</p>
         <p><strong>ፋይዳ ቁጥር:</strong> {{ $ticket->fayda_id }}</p>
         <p><strong>የተጓዥ ስልክ:</strong> {{ $ticket->phone_no }}</p>
@@ -208,13 +184,7 @@
 
     </div>
 
-    <!-- Print and Back Buttons -->
-    <div class="buttons">
-        <button class="btn" onclick="window.print()">Print Receipt</button>
-        <a href="{{ route('ticketer.tickets.create') }}">
-            <button class="btn btn-back">Back</button>
-        </a>
-    </div>
+
 
 </body>
 </html>

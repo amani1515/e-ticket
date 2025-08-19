@@ -182,14 +182,13 @@ foreach (['file1', 'file2', 'file3'] as $fileKey) {
     // Search buses by targa for auto-suggestions
     public function search(Request $request)
     {
-        $mahberatId = Auth::user()->mahberat_id;
         $targa = $request->get('targa', '');
         
-        $buses = Bus::where('mahberat_id', $mahberatId)
-            ->where('targa', 'like', '%' . $targa . '%')
+        // Show all buses without mahberat filtering for mahberat users
+        $buses = Bus::where('targa', 'like', '%' . $targa . '%')
             ->where('status', 'active')
             ->select('id', 'targa', 'driver_name', 'total_seats', 'color', 'status', 'unique_bus_id')
-            ->limit(5)
+            ->limit(10)
             ->get();
         
         return response()->json([
