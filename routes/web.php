@@ -156,6 +156,10 @@ Route::middleware(['auth', 'role:ticketer'])->prefix('ticketer')->name('ticketer
     Route::get('/tickets/receipt/{ticketId}', [TicketController::class, 'showReceipt'])->name('tickets.receipt');
     Route::get('/tickets/scan', [TicketController::class, 'scan'])->name('tickets.scan');
     Route::get('/tickets/{id}/receipt', [TicketController::class, 'receipt'])->name('tickets.receipt');
+    Route::get('/tickets/{id}/receipt-pdf', [TicketController::class, 'receiptPdf'])->name('tickets.receipt.pdf');
+    Route::get('/tickets/{id}/receipt-pdf-download', [TicketController::class, 'receiptPdfDownload'])->name('tickets.receipt.pdf.download');
+    Route::get('/tickets/{id}/receipt-image', [TicketController::class, 'receiptImage'])->name('tickets.receipt.image');
+    Route::get('/tickets/{id}/receipt-text', [TicketController::class, 'receiptText'])->name('tickets.receipt.text');
     Route::get('/scan', [TicketController::class, 'showScanForm'])->name('tickets.scan');
     Route::post('/scan', [TicketController::class, 'processScan'])->name('tickets.processScan');
     Route::get('/first-queued-bus/{destination}', [TicketController::class, 'firstQueuedBus']);

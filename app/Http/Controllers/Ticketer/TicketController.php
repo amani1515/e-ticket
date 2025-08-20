@@ -14,6 +14,9 @@ use App\Models\Bus;
 use App\Exports\TicketsExport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\Schedule;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class TicketController extends Controller
 {
@@ -425,6 +428,185 @@ public function cancel($id)
     }
 
     return back()->with('success', 'Ticket cancelled successfully.');
+}
+
+public function receiptPdf($id)
+{
+    $ticket = Ticket::with(['destination', 'cargo', 'bus.mahberat', 'creator'])->findOrFail($id);
+    
+    $pdf = Pdf::loadView('ticketer.tickets.receipt-pdf', compact('ticket'))
+        ->setPaper([0, 0, 226.77, 566.93], 'portrait') // 58mm x 200mm
+        ->setOptions([
+            'isHtml5ParserEnabled' => true,
+            'isRemoteEnabled' => true,
+            'defaultFont' => 'DejaVu Sans',
+            'enable_php' => true
+        ]);
+    
+    return $pdf->stream('receipt-' . $ticket->id . '.pdf');
+}
+
+public function receiptPdfDownload($id)
+{
+    $ticket = Ticket::with(['destination', 'cargo', 'bus.mahberat', 'creator'])->findOrFail($id);
+    
+    $pdf = Pdf::loadView('ticketer.tickets.receipt-pdf', compact('ticket'))
+        ->setPaper([0, 0, 226.77, 566.93], 'portrait') // 58mm x 200mm
+        ->setOptions([
+            'isHtml5ParserEnabled' => true,
+            'isRemoteEnabled' => true,
+            'defaultFont' => 'DejaVu Sans',
+            'enable_php' => true
+        ]);
+    
+    return $pdf->download('receipt-' . $ticket->id . '.pdf');
+}
+
+public function receiptImage($id)
+{
+    $ticket = Ticket::with(['destination', 'cargo', 'bus.mahberat', 'creator'])->findOrFail($id);
+    
+    $manager = new ImageManager(new Driver());
+    
+    // Create image canvas (58mm = 220px at 96dpi)
+    $image = $manager->create(220, 800)->fill('#ffffff');
+    
+    // Add text content
+    $y = 20;
+    $image->text('E-TICKET', 110, $y, function($font) {
+        $font->size(16);
+        $font->color('#000000');
+        $font->align('center');
+        $font->valign('top');
+    });
+    
+    $y += 30;
+    $image->text('--------------------------------', 110, $y, function($font) {
+        $font->size(12);
+        $font->color('#000000');
+        $font->align('center');
+    });
+    
+    $y += 25;
+    $lines = [
+        'ሰሌዳ ቁጥር: ' . ($ticket->bus->targa ?? $ticket->bus_id),
+        'የተጓዥ ስም: ' . $ticket->passenger_name,
+        'ጾታ: ' . ucfirst($ticket->gender),
+        'ፋይዳ ቁጥር: ' . $ticket->fayda_id,
+        'የተጓዥ ስልክ: ' . $ticket->phone_no,
+        'መነሻ: ' . $ticket->destination->start_from,
+        'መድረሻ: ' . $ticket->destination->destination_name,
+        'የመነሻ ቀን: ' . \Carbon\Carbon::parse($ticket->departure_datetime)->format('Y-m-d'),
+        'የመሳፈሪያ ሰዓት: ' . \Carbon\Carbon::parse($ticket->departure_datetime)->format('H:i'),
+        'የትኬት መለያ ቁጥር: ' . $ticket->id,
+        'ትኬት ወኪል: ' . ($ticket->creator ? $ticket->creator->name : 'N/A'),
+        'ታሪፍ: ' . $ticket->destination->tariff,
+        'አገልግሎት ክፍያ: ' . $ticket->destination->service_fee,
+    ];
+    
+    if ($ticket->cargo) {
+        $lines[] = 'የእቃ ክብደት: ' . $ticket->cargo->weight . ' kg';
+        $lines[] = 'የእቃ ክፍያ: ' . number_format($ticket->cargo->total_amount, 2) . ' ብር';
+    }
+    
+    $lines[] = 'አጠቃላይ ክፍያ: ' . ($ticket->destination->tariff + $ticket->destination->tax + $ticket->destination->service_fee + ($ticket->cargo ? $ticket->cargo->total_amount : 0)) . ' ብር';
+    
+    foreach ($lines as $line) {
+        $image->text($line, 10, $y, function($font) {
+            $font->size(10);
+            $font->color('#000000');
+            $font->align('left');
+        });
+        $y += 20;
+    }
+    
+    $y += 10;
+    $image->text('--------------------------------', 110, $y, function($font) {
+        $font->size(12);
+        $font->color('#000000');
+        $font->align('center');
+    });
+    
+    $y += 25;
+    $image->text('ስለመረጡን እናመሰግናለን', 110, $y, function($font) {
+        $font->size(12);
+        $font->color('#000000');
+        $font->align('center');
+    });
+    
+    $y += 20;
+    $image->text('ለአንድ ጊዜ ጉዞ ብቻ የተፈቀደ', 110, $y, function($font) {
+        $font->size(12);
+        $font->color('#000000');
+        $font->align('center');
+    });
+    
+    $filename = 'receipt-' . $ticket->id . '.png';
+    $path = storage_path('app/public/receipts/' . $filename);
+    
+    // Ensure directory exists
+    if (!file_exists(dirname($path))) {
+        mkdir(dirname($path), 0755, true);
+    }
+    
+    $image->save($path);
+    
+    return response()->download($path)->deleteFileAfterSend(true);
+}
+
+public function receiptText($id)
+{
+    $ticket = Ticket::with(['destination', 'cargo', 'bus.mahberat', 'creator'])->findOrFail($id);
+    
+    $ageStatusAmharic = [
+        'baby' => 'ህጻን',
+        'adult' => 'ወጣት', 
+        'middle_aged' => 'ጎልማሳ',
+        'senior' => 'ሽማግሌ',
+    ];
+    
+    $disabilityStatusAmharic = [
+        'None' => 'የለም',
+        'Blind / Visual Impairment' => 'ማየት የተሳነው',
+        'Deaf / Hard of Hearing' => 'መስማት የተሳነው', 
+        'Speech Impairment' => 'መናገር የተሳነው',
+    ];
+    
+    $content = "E-TICKET\n";
+    $content .= "--------------------------------\n";
+    $content .= "ሰሌዳ ቁጥር: " . ($ticket->bus->targa ?? $ticket->bus_id) . "\n";
+    $content .= "የተጓዥ ስም: " . $ticket->passenger_name . "\n";
+    $content .= "ጾታ: " . ucfirst($ticket->gender) . "\n";
+    $content .= "ፋይዳ ቁጥር: " . $ticket->fayda_id . "\n";
+    $content .= "የተጓዥ ስልክ: " . $ticket->phone_no . "\n";
+    $content .= "የእድሜ ሁኔታ: " . ($ageStatusAmharic[$ticket->age_status] ?? $ticket->age_status) . "\n";
+    $content .= "የአካል ጉዳት: " . ($disabilityStatusAmharic[$ticket->disability_status] ?? $ticket->disability_status) . "\n";
+    $content .= "መነሻ: " . $ticket->destination->start_from . "\n";
+    $content .= "መድረሻ: " . $ticket->destination->destination_name . "\n";
+    $content .= "የመነሻ ቀን: " . \Carbon\Carbon::parse($ticket->departure_datetime)->format('Y-m-d') . "\n";
+    $content .= "የመሳፈሪያ ሰዓት: " . \Carbon\Carbon::parse($ticket->departure_datetime)->format('H:i') . "\n";
+    $content .= "የትኬት መለያ ቁጥር: " . $ticket->id . "\n";
+    $content .= "ትኬት ወኪል: " . ($ticket->creator ? $ticket->creator->name : 'N/A') . "\n";
+    $content .= "የማህበር ስም: " . ($ticket->bus && $ticket->bus->mahberat ? $ticket->bus->mahberat->name : 'N/A') . "\n";
+    $content .= "ታሪፍ: " . $ticket->destination->tariff . "\n";
+    $content .= "አገልግሎት ክፍያ: " . $ticket->destination->service_fee . "\n";
+    
+    if ($ticket->cargo) {
+        $content .= "የእቃ ክብደት: " . $ticket->cargo->weight . " kg\n";
+        $content .= "የእቃ ክፍያ: " . number_format($ticket->cargo->total_amount, 2) . " ብር\n";
+    }
+    
+    $total = $ticket->destination->tariff + $ticket->destination->tax + $ticket->destination->service_fee + ($ticket->cargo ? $ticket->cargo->total_amount : 0);
+    $content .= "አጠቃላይ ክፍያ: " . $total . " ብር\n";
+    $content .= "--------------------------------\n";
+    $content .= "ስለመረጡን እናመሰግናለን\n";
+    $content .= "ለአንድ ጊዜ ጉዞ ብቻ የተፈቀደ\n";
+    $content .= "\n";
+    $content .= "ለተጨማሪ መረጃ: 0956407670\n";
+    
+    return response($content, 200, [
+        'Content-Type' => 'text/plain; charset=utf-8'
+    ]);
 }
 
 

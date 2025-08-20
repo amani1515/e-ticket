@@ -33,7 +33,7 @@
     }
 
     .divider {
-        border-top: 1px dashed #000;
+        border-top: 2px dashed #000;
         margin: 3px 0;
     }
 
@@ -53,14 +53,20 @@
         text-align: center;
     }
 
+    .print-options {
+        display: block;
+    }
+    
     @media print {
         body {
             background: none;
             margin: 0;
             padding: 0;
         }
-
-
+        
+        .print-options {
+            display: none !important;
+        }
 
         .receipt {
             box-shadow: none;
@@ -68,7 +74,7 @@
             padding: 1mm;
             width: 58mm;
             height: auto !important;
-            font-size: 16px;
+            font-size: 12px;
             line-height: 1.0em;
         }
 
@@ -76,10 +82,11 @@
             display: block;
             max-width: 100%;
             height: auto;
+            max-height: 18mm;
         }
 
         .logo {
-            max-width: 12mm;
+            max-width: 15mm;
             margin-bottom: 1px;
         }
 
@@ -89,7 +96,16 @@
         }
 
         p {
-            margin: 0.5px 0;
+            margin: 0.3px 0;
+            font-size: 10px;
+        }
+        
+        .center {
+            font-size: 12px;
+        }
+        
+        .footer-info {
+            font-size: 10px;
         }
 
         @page {
@@ -109,10 +125,11 @@
         <div class="center">
             <img src="{{ asset('logo.png') }}" alt="SEBUS Logo" class="logo">
             <h3>E-TICKET</h3>
+            <p style="font-size: 10px; margin: 2px 0;"><strong>{{ $ticket->destination->start_from }}</strong> → <strong>{{ $ticket->destination->destination_name }}</strong></p>
             <div class="divider"></div>
         </div>
 
-        <p><strong style="font-size: 24px;">ሰሌዳ ቁጥር:{{ $ticket->bus->targa ?? $ticket->bus_id }}</strong> </p>
+        <p><strong>ሰሌዳ ቁጥር:{{ $ticket->bus->targa ?? $ticket->bus_id }}</strong> </p>
         <pv ><strong >የተጓዥ ስም:</strong> {{ $ticket->passenger_name }}</pv>
         <p><strong>ጾታ:</strong> {{ ucfirst($ticket->gender) }}</p>
         <p><strong>ፋይዳ ቁጥር:</strong> {{ $ticket->fayda_id }}</p>
@@ -184,7 +201,20 @@
 
     </div>
 
+    <!-- Print Button -->
+    <div class="print-options" style="text-align: center; margin: 20px 0; background: #28a745; padding: 25px; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+        <button onclick="printReceipt()" 
+           style="background: #fff; color: #28a745; border: none; padding: 20px 40px; border-radius: 12px; font-size: 18px; font-weight: bold; cursor: pointer; box-shadow: 0 3px 6px rgba(0,0,0,0.3); transition: all 0.3s ease;">
+            🖨️ ህትመት / PRINT
+        </button>
+        <p style="margin: 15px 0 0 0; color: #fff; font-size: 16px; font-weight: bold;">Click to Print Receipt</p>
+    </div>
 
+    <script>
+    function printReceipt() {
+        window.print();
+    }
+    </script>
 
 </body>
 </html>

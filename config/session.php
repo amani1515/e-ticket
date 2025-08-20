@@ -32,9 +32,9 @@ return [
     |
     */
 
-    'lifetime' => (int) env('SESSION_LIFETIME', 60), // Reduced from 120 to 60 minutes
+    'lifetime' => (int) env('SESSION_LIFETIME', 2880), // 48 hours for multiple devices
 
-    'expire_on_close' => env('SESSION_EXPIRE_ON_CLOSE', true), // Changed to true for security
+    'expire_on_close' => env('SESSION_EXPIRE_ON_CLOSE', false), // Keep sessions alive
 
     /*
     |--------------------------------------------------------------------------
