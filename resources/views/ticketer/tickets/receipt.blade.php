@@ -86,7 +86,7 @@
         }
 
         .logo {
-            max-width: 15mm;
+            max-width: 18mm;
             margin-bottom: 1px;
         }
 
@@ -121,19 +121,6 @@
 <body>
 
     <div class="receipt">
-
-        <div class="center">
-            <img src="{{ asset('logo.png') }}" alt="SEBUS Logo" class="logo">
-            <h3>E-TICKET</h3>
-            <p style="font-size: 10px; margin: 2px 0;"><strong>{{ $ticket->destination->start_from }}</strong> → <strong>{{ $ticket->destination->destination_name }}</strong></p>
-            <div class="divider"></div>
-        </div>
-
-        <p><strong>ሰሌዳ ቁጥር:{{ $ticket->bus->targa ?? $ticket->bus_id }}</strong> </p>
-        <pv ><strong >የተጓዥ ስም:</strong> {{ $ticket->passenger_name }}</pv>
-        <p><strong>ጾታ:</strong> {{ ucfirst($ticket->gender) }}</p>
-        <p><strong>ፋይዳ ቁጥር:</strong> {{ $ticket->fayda_id }}</p>
-        <p><strong>የተጓዥ ስልክ:</strong> {{ $ticket->phone_no }}</p>
 @php
     $ageStatusAmharic = [
         'baby' => 'ህጻን',
@@ -148,7 +135,25 @@
         'Deaf / Hard of Hearing' => 'መስማት የተሳነው',
         'Speech Impairment' => 'መናገር የተሳነው', 
     ];
+    
+    $genderAmharic = [
+        'male' => 'ወንድ',
+        'female' => 'ሴት',
+    ];
 @endphp
+
+        <div class="center">
+            <img src="{{ asset('logo.png') }}" alt="SEBUS Logo" class="logo">
+            <h3>E-TICKET</h3>
+            <p style="font-size: 10px; margin: 2px 0;"><strong>{{ $ticket->destination->start_from }}</strong> → <strong>{{ $ticket->destination->destination_name }}</strong></p>
+            <div class="divider"></div>
+        </div>
+
+        <p><strong>ሰሌዳ ቁጥር:{{ $ticket->bus->targa ?? $ticket->bus_id }}</strong> </p>
+        <pv ><strong >የተጓዥ ስም:</strong> {{ $ticket->passenger_name }}</pv>
+        <p><strong>ጾታ:</strong> {{ $genderAmharic[$ticket->gender] ?? ucfirst($ticket->gender) }}</p>
+        <p><strong>ፋይዳ ቁጥር:</strong> {{ $ticket->fayda_id }}</p>
+        <p><strong>የተጓዥ ስልክ:</strong> {{ $ticket->phone_no }}</p>
 
 <p><strong>የእድሜ ሁኔታ :</strong> {{ $ageStatusAmharic[$ticket->age_status] ?? $ticket->age_status }}</p>
         <p><strong>  የአካል ጉዳት  :</strong>  {{ $disabilityStatusAmharic[$ticket->disability_status] ?? $ticket->disability_status }}</p>
