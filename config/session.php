@@ -169,7 +169,7 @@ return [
     |
     */
 
-    'secure' => env('SESSION_SECURE_COOKIE', true), // Force HTTPS for cookies
+    'secure' => env('SESSION_SECURE_COOKIE', false), // Allow HTTP for local network
 
     /*
     |--------------------------------------------------------------------------
@@ -199,7 +199,7 @@ return [
     |
     */
 
-    'same_site' => env('SESSION_SAME_SITE', 'strict'), // Changed from 'lax' to 'strict' for better security
+    'same_site' => env('SESSION_SAME_SITE', 'lax'), // Allow cross-site requests for network access
 
     /*
     |--------------------------------------------------------------------------
