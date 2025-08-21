@@ -150,8 +150,6 @@ public function store(Request $request)
 
         if ($boardingCount >= $schedule->capacity) {
             $schedule->status = 'full';
-            // Clear ticketer ownership when schedule is full
-            $schedule->ticketer_id = null;
         } elseif ($schedule->status === 'queued') {
             $schedule->status = 'on loading';
         }
