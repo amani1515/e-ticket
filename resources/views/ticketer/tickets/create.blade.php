@@ -636,7 +636,11 @@ window.onload = function() {
     if (phoneInput) {
         phoneInput.oninput = function() {
             var value = this.value.replace(/[^0-9]/g, '');
-            this.value = value.substring(0, 10);
+            // Must start with 9 or 7, limit to 9 digits
+            if (value.length > 0 && value.charAt(0) !== '9' && value.charAt(0) !== '7') {
+                value = '';
+            }
+            this.value = value.substring(0, 9);
         };
     }
     

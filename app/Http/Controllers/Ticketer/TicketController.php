@@ -69,10 +69,18 @@ public function store(Request $request)
         'destination_id' => 'required|exists:destinations,id',
         'bus_id' => 'required|string|max:255', // This is targa from the form!
         'departure_datetime' => 'required|date',
-        'phone_no' => 'nullable|digits:10|unique:tickets,phone_no',
+        'phone_no' => 'nullable|digits:9|regex:/^[97]\d{8}$/',
         'fayda_id' => 'nullable|digits:16|unique:tickets,fayda_id',
         'disability_status' => 'required|in:None,Blind / Visual Impairment,Deaf / Hard of Hearing,Speech Impairment',
     ]);
+
+    // Check phone number uniqueness with leading 0
+    if ($request->phone_no) {
+        $phoneWithZero = '0' . $request->phone_no;
+        if (Ticket::where('phone_no', $phoneWithZero)->exists()) {
+            return back()->withErrors(['phone_no' => 'This phone number is already registered.']);
+        }
+    }
 
     // Find the first queued or on loading schedule for this destination
     $activeSchedule = Schedule::where('destination_id', $request->destination_id)
@@ -100,6 +108,9 @@ public function store(Request $request)
         ->whereIn('status', ['queued', 'on loading'])
         ->first();
 
+    // Add leading 0 to phone number for storage
+    $phoneNo = $request->phone_no ? '0' . $request->phone_no : null;
+    
     $ticket = Ticket::create([
         'cargo_id' => $request->cargo_id,
         'passenger_name' => $request->passenger_name,
@@ -115,7 +126,7 @@ public function store(Request $request)
         'service_fee' => $destination->service_fee,
         'ticket_status' => 'created',
         'disability_status' => $request->disability_status,
-        'phone_no' => $request->phone_no,
+        'phone_no' => $phoneNo,
         'fayda_id' => $request->fayda_id,
     ]);
 
@@ -155,7 +166,8 @@ public function store(Request $request)
 
 public function checkPhone(Request $request)
 {
-    $exists = Ticket::where('phone_no', $request->phone_no)->exists();
+    $phoneWithZero = '0' . $request->phone_no;
+    $exists = Ticket::where('phone_no', $phoneWithZero)->exists();
     return response()->json(['exists' => $exists]);
 }
 
