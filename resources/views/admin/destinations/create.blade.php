@@ -37,8 +37,11 @@
                                         type="text" 
                                         name="destination_name" 
                                         id="destination_name"
-                                        maxlength="100"
-                                        onpaste="return false"
+                                        lang="am"
+                                        dir="ltr"
+                                        autocomplete="off"
+                                        spellcheck="false"
+                                        inputmode="text"
                                         class="w-full px-4 py-3 border-2 border-amber-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition duration-200 bg-amber-50"
                                         placeholder="Enter destination name"
                                         required>
@@ -58,8 +61,11 @@
                                         type="text" 
                                         name="start_from" 
                                         id="start_from"
-                                        maxlength="100"
-                                        onpaste="return false"
+                                        lang="am"
+                                        dir="ltr"
+                                        autocomplete="off"
+                                        spellcheck="false"
+                                        inputmode="text"
                                         class="w-full px-4 py-3 border-2 border-amber-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition duration-200 bg-amber-50"
                                         placeholder="Enter starting point"
                                         required>
@@ -199,15 +205,17 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // Text input restrictions
-        const safeInput = (element) => {
+        // Text input character limit only
+        const limitInput = (element) => {
             if (!element) return;
             element.addEventListener('input', function () {
-                this.value = this.value.replace(/[^A-Za-zአ-ፐ0-9\s\-.,]/g, '').slice(0, 100);
+                if (this.value.length > 100) {
+                    this.value = this.value.slice(0, 100);
+                }
             });
         };
-        safeInput(document.getElementById('destination_name'));
-        safeInput(document.getElementById('start_from'));
+        limitInput(document.getElementById('destination_name'));
+        limitInput(document.getElementById('start_from'));
 
         // Numeric input restrictions with alert
         const numericFields = ['distance', 'tariff', 'tax', 'service_fee'];
