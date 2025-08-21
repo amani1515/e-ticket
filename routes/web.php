@@ -194,6 +194,8 @@ Route::middleware(['auth', 'role:mahberat'])->prefix('mahberat')->name('mahberat
     Route::get('/bus/{bus}/edit', [\App\Http\Controllers\Mahberat\BusController::class, 'edit'])->name('bus.edit');
     Route::put('/bus/{bus}', [\App\Http\Controllers\Mahberat\BusController::class, 'update'])->name('bus.update');
     Route::delete('/bus/{bus}', [\App\Http\Controllers\Mahberat\BusController::class, 'destroy'])->name('bus.destroy');
+    Route::post('/bus/quick-store', [\App\Http\Controllers\Mahberat\BusController::class, 'quickStore'])->name('bus.quickStore');
+    Route::get('/buses/search', [\App\Http\Controllers\Mahberat\BusController::class, 'search'])->name('buses.search');
     // Schedule management
     Route::get('/schedule', [ScheduleController::class, 'index'])->name('schedule.index');
     Route::get('/schedule/create', [ScheduleController::class, 'create'])->name('schedule.create');

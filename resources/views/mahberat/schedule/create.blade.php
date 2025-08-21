@@ -57,14 +57,21 @@
             <label for="bus_targa" class="block font-semibold text-gray-700 mb-2">
                 <i class="fas fa-bus mr-2 text-blue-600"></i>Enter Bus Targa Number
             </label>
-            <div class="relative">
-                <input type="text" id="bus_targa"
-                       class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 pl-12 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                       placeholder="Enter bus targa (e.g., 12345)" 
-                       autocomplete="off" required>
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <i class="fas fa-search text-gray-400"></i>
+            <div class="flex space-x-2">
+                <div class="relative flex-1">
+                    <input type="text" id="bus_targa"
+                           class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 pl-12 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                           placeholder="Enter bus targa (e.g., 12345)" 
+                           autocomplete="off" required>
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-search text-gray-400"></i>
+                    </div>
                 </div>
+                <button type="button" onclick="openBusModal()" 
+                        class="bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg shadow-md transition-all duration-200 flex items-center space-x-2">
+                    <i class="fas fa-plus"></i>
+                    <span>Quick Register</span>
+                </button>
             </div>
             
             <!-- Suggestions Dropdown -->
@@ -116,10 +123,119 @@
     </form>
 </div>
 
+<!-- Bus Registration Modal -->
+<div id="busModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4">
+        <div class="bg-green-600 text-white px-6 py-4 rounded-t-xl">
+            <h3 class="text-xl font-bold flex items-center">
+                <i class="fas fa-bus mr-2"></i>
+                Quick Bus Registration
+            </h3>
+        </div>
+        <form id="busForm" class="p-6 space-y-4">
+            @csrf
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Targa Number</label>
+                <input type="text" name="targa" id="modal_targa" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" required>
+            </div>
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Total Seats</label>
+                <input type="number" name="total_seats" id="modal_seats" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" min="1" max="100" required>
+            </div>
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Mahberat</label>
+                <select name="mahberat_id" id="modal_mahberat" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" required>
+                    <option value="">-- Select Mahberat --</option>
+                    @foreach(\App\Models\Mahberat::all() as $mahberat)
+                        <option value="{{ $mahberat->id }}">{{ $mahberat->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Driver Name</label>
+                <input type="text" name="driver_name" id="modal_driver" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" required>
+            </div>
+            <div class="flex space-x-3 pt-4">
+                <button type="button" onclick="closeBusModal()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded transition-colors">
+                    Cancel
+                </button>
+                <button type="submit" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded transition-colors">
+                    Register Bus
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <!-- Add Font Awesome for icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<meta name="csrf-token" content="{{ csrf_token() }}">
 
 <script>
+// Modal functions
+function openBusModal() {
+    document.getElementById('busModal').classList.remove('hidden');
+}
+
+function closeBusModal() {
+    document.getElementById('busModal').classList.add('hidden');
+    document.getElementById('busForm').reset();
+}
+
+// Global fetchSuggestions function
+let fetchSuggestions;
+
+// Bus registration
+document.getElementById('busForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    
+    fetch('/mahberat/bus/quick-store', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+    })
+    .then(response => {
+        console.log('Response status:', response.status);
+        return response.text().then(text => {
+            try {
+                const data = JSON.parse(text);
+                if (!response.ok) {
+                    throw new Error(data.message || 'HTTP ' + response.status);
+                }
+                return data;
+            } catch (e) {
+                if (!response.ok) {
+                    throw new Error('Server error: ' + text.substring(0, 200));
+                }
+                throw new Error('Invalid JSON response');
+            }
+        });
+    })
+    .then(data => {
+        console.log('Response data:', data);
+        if (data.success) {
+            closeBusModal();
+            // Auto-fill the targa input with newly registered bus
+            document.getElementById('bus_targa').value = data.bus.targa;
+            // Trigger search to show the new bus
+            if (fetchSuggestions) {
+                fetchSuggestions(data.bus.targa);
+            }
+            alert('Bus registered successfully!');
+        } else {
+            alert('Error: ' + (data.message || 'Registration failed'));
+        }
+    })
+    .catch(error => {
+        console.error('Full error:', error);
+        alert('Error: ' + error.message);
+    });
+});
+
 document.addEventListener('DOMContentLoaded', function() {
     const targaInput = document.getElementById('bus_targa');
     const suggestionsDiv = document.getElementById('suggestions');
@@ -148,7 +264,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Fetch bus suggestions
-    function fetchSuggestions(query) {
+    fetchSuggestions = function(query) {
         if (query.length < 1) {
             suggestionsDiv.classList.add('hidden');
             return;

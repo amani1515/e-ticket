@@ -31,13 +31,9 @@ class ScheduleController extends Controller
     // Show the form to create a new schedule
     public function create()
     {
-        $user = Auth::user();
-        $mahberat = $user->mahberat;
-        // Get destinations and active buses for this Mahberat
-        $destinations = $mahberat->destinations()->get();
-        $buses = Bus::where('mahberat_id', $mahberat->id)
-                    ->where('status', 'active')
-                    ->get();
+        // Get all destinations for mahberat user to access any destination
+        $destinations = Destination::all();
+        $buses = Bus::where('status', 'active')->get();
         return view('mahberat.schedule.create', compact('destinations', 'buses'));
     }
 
@@ -55,10 +51,8 @@ class ScheduleController extends Controller
         $user = Auth::user();
         $mahberatId = $user->mahberat_id;
 
-        // Get the bus using unique_bus_id (sent from frontend after targa selection)
-        $bus = Bus::where('unique_bus_id', $request->unique_bus_id)
-            ->where('mahberat_id', $mahberatId)
-            ->first();
+        // Get the bus using unique_bus_id (allow any mahberat's bus)
+        $bus = Bus::where('unique_bus_id', $request->unique_bus_id)->first();
 
         if (!$bus) {
             return back()->withErrors(['unique_bus_id' => 'Selected bus not found or not available.']);
@@ -82,7 +76,7 @@ class ScheduleController extends Controller
             'bus_id'          => $bus->id,
             'destination_id'  => $request->destination_id,
             'scheduled_by'    => $user->id,
-            'mahberat_id'     => $mahberatId,
+            'mahberat_id'     => $bus->mahberat_id,
             'scheduled_at' => now(),  
         'status' => 'queued',
         'capacity' => $bus->total_seats,

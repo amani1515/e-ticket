@@ -28,6 +28,44 @@ class BusController extends Controller
         return view('mahberat.bus.create');
     }
 
+    // Quick store for modal registration
+    public function quickStore(Request $request)
+    {
+        try {
+            $request->validate([
+                'targa' => 'required|string|unique:buses,targa',
+                'total_seats' => 'required|integer|min:1|max:100',
+                'mahberat_id' => 'required|exists:mahberats,id',
+                'driver_name' => 'required|string|max:255'
+            ]);
+
+            $bus = Bus::create([
+                'targa' => $request->targa,
+                'total_seats' => $request->total_seats,
+                'mahberat_id' => $request->mahberat_id,
+                'driver_name' => $request->driver_name,
+                'unique_bus_id' => 'SEV' . now()->format('Ymd') . strtoupper(Str::random(6)),
+                'registered_by' => Auth::id()
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Bus registered successfully',
+                'bus' => $bus
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation error: ' . implode(', ', $e->validator->errors()->all())
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
     // Store a new bus in the database
     public function store(Request $request)
     {
