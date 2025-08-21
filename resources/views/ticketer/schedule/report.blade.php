@@ -12,6 +12,7 @@
             </div>
             <h1 class="text-3xl font-bold text-blue-900 mb-2">📋 Schedule Reports</h1>
             <p class="text-blue-700 text-lg">Monitor bus schedules and performance</p>
+            <p class="text-sm text-gray-600">Debug: Total schedules: {{ $totalSchedules ?? 0 }} | User ID: {{ $currentUserId ?? 'N/A' }} | Found: {{ $schedules->total() }}</p>
         </div>
 
         <!-- Filter Card -->

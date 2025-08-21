@@ -14,7 +14,8 @@ class ScheduleController extends Controller
     {
         $user = auth()->user();
         $query = \App\Models\Schedule::with(['bus', 'destination'])
-            ->where('ticketer_id', $user->id);
+            ->where('ticketer_id', $user->id)
+            ->whereIn('status', ['queued', 'on loading', 'full', 'paid']);
 
         // Filter by destination
         if ($request->filled('destination_id')) {
@@ -58,15 +59,19 @@ class ScheduleController extends Controller
         }
 
         $schedules = $query->orderByDesc('scheduled_at')->paginate(15);
-
-        return view('ticketer.schedule.report', compact('schedules'));
+        
+        // Debug info
+        $totalSchedules = \App\Models\Schedule::count();
+        $currentUserId = $user->id;
+        
+        return view('ticketer.schedule.report', compact('schedules', 'totalSchedules', 'currentUserId'));
     }
 
     // Mark a schedule as paid by the current user
     public function pay($id)
     {
         $schedule = \App\Models\Schedule::findOrFail($id);
-        $schedule->status = 'paid';
+        $schedule->status = 'departed';
         $schedule->paid_by = auth()->id();
         $schedule->paid_at = now();
         $schedule->save();
