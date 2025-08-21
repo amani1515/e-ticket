@@ -174,8 +174,7 @@
                                     </td>
                                     <td class="px-4 py-3">
                                         <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                            {{ \App\Models\Ticket::where('bus_id', $schedule->bus_id)
-                                                ->where('destination_id', $schedule->destination_id)
+                                            {{ \App\Models\Ticket::where('schedule_id', $schedule->id)
                                                 ->whereIn('ticket_status', ['waiting_scan', 'created'])
                                                 ->count() }}
                                         </span>
