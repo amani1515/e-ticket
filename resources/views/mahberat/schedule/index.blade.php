@@ -54,7 +54,7 @@
                     <th class="px-6 py-3 text-left">Scheduled At</th>
                     <th class="px-6 py-3 text-left">Scheduled By</th>
                     <th class="px-6 py-3 text-left">Status</th>
-                    <th class="px-6 py-3 text-left">Remove</th> <!-- Add Remove column -->
+                    <th class="px-6 py-3 text-left">Actions</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-200">
@@ -72,13 +72,26 @@
                             </span>
                         </td>
                         <td class="px-6 py-4">
-                            <form action="{{ route('mahberat.schedule.destroy', $schedule->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to remove this schedule?');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-red-600 hover:text-red-800 font-bold px-3 py-1 rounded transition">
-                                    Remove
-                                </button>
-                            </form>
+                            @if($schedule->status === 'queued')
+                                <div class="flex space-x-2">
+                                    <button onclick="openEditModal({{ $schedule->id }}, '{{ $schedule->bus->targa }}', '{{ $schedule->bus->unique_bus_id }}')" class="text-blue-600 hover:text-blue-800 px-2 py-1 rounded transition" title="Edit">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                        </svg>
+                                    </button>
+                                    <form action="{{ route('mahberat.schedule.destroy', $schedule->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to remove this queued schedule?');" class="inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-red-600 hover:text-red-800 px-2 py-1 rounded transition" title="Remove">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                            </svg>
+                                        </button>
+                                    </form>
+                                </div>
+                            @else
+                                <span class="text-gray-400 text-sm">No actions</span>
+                            @endif
                         </td>
                     </tr>
                 @empty
@@ -92,6 +105,148 @@
         </table>
     </div>
 </div>
+
+<!-- Edit Schedule Modal -->
+<div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4">
+        <div class="bg-blue-600 text-white px-6 py-4 rounded-t-xl">
+            <h3 class="text-xl font-bold flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                </svg>
+                Edit Schedule Bus
+            </h3>
+        </div>
+        <form id="editForm" class="p-6 space-y-4">
+            @csrf
+            @method('PUT')
+            <div class="relative">
+                <label class="block text-sm font-semibold text-gray-700 mb-1">New Bus Targa</label>
+                <input type="text" id="edit_targa" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter new bus targa" required>
+                
+                <!-- Suggestions Dropdown -->
+                <div id="edit_suggestions" class="absolute z-10 w-full bg-white border border-gray-300 rounded-lg shadow-lg mt-1 hidden max-h-60 overflow-y-auto">
+                    <!-- Suggestions will be populated here -->
+                </div>
+            </div>
+            
+            <!-- Hidden fields -->
+            <input type="hidden" id="edit_schedule_id" value="">
+            <input type="hidden" id="edit_unique_bus_id" value="">
+            
+            <div class="flex space-x-3 pt-4">
+                <button type="button" onclick="closeEditModal()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded transition-colors">
+                    Cancel
+                </button>
+                <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded transition-colors">
+                    Update Bus
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// Modal functions
+function openEditModal(scheduleId, currentTarga, currentUniqueBusId) {
+    document.getElementById('editModal').classList.remove('hidden');
+    document.getElementById('edit_schedule_id').value = scheduleId;
+    document.getElementById('edit_targa').value = currentTarga;
+    document.getElementById('edit_unique_bus_id').value = currentUniqueBusId;
+}
+
+function closeEditModal() {
+    document.getElementById('editModal').classList.add('hidden');
+    document.getElementById('editForm').reset();
+    document.getElementById('edit_suggestions').classList.add('hidden');
+}
+
+// Bus suggestions for edit
+function fetchEditSuggestions(query) {
+    if (query.length < 1) {
+        document.getElementById('edit_suggestions').classList.add('hidden');
+        return;
+    }
+    
+    fetch(`/mahberat/buses/search?targa=${encodeURIComponent(query)}`)
+        .then(response => response.json())
+        .then(data => {
+            displayEditSuggestions(data.buses || []);
+        })
+        .catch(error => {
+            console.error('Error fetching suggestions:', error);
+        });
+}
+
+function displayEditSuggestions(buses) {
+    const suggestionsDiv = document.getElementById('edit_suggestions');
+    
+    if (buses.length === 0) {
+        suggestionsDiv.innerHTML = '<div class="p-4 text-center text-gray-500">No buses found</div>';
+        suggestionsDiv.classList.remove('hidden');
+        return;
+    }
+    
+    const suggestionsHTML = buses.map(bus => `
+        <div class="edit-suggestion-item p-3 hover:bg-blue-50 cursor-pointer border-b border-gray-100 last:border-b-0" 
+             data-targa="${bus.targa}" data-unique-id="${bus.unique_bus_id}">
+            <div class="font-semibold text-gray-800">Targa: ${bus.targa}</div>
+            <div class="text-sm text-gray-600">${bus.driver_name} - ${bus.total_seats} seats</div>
+        </div>
+    `).join('');
+    
+    suggestionsDiv.innerHTML = suggestionsHTML;
+    suggestionsDiv.classList.remove('hidden');
+    
+    // Add click listeners
+    document.querySelectorAll('.edit-suggestion-item').forEach(item => {
+        item.addEventListener('click', function() {
+            document.getElementById('edit_targa').value = this.dataset.targa;
+            document.getElementById('edit_unique_bus_id').value = this.dataset.uniqueId;
+            suggestionsDiv.classList.add('hidden');
+        });
+    });
+}
+
+// Event listeners
+document.getElementById('edit_targa').addEventListener('input', function() {
+    fetchEditSuggestions(this.value);
+});
+
+// Form submission
+document.getElementById('editForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const scheduleId = document.getElementById('edit_schedule_id').value;
+    const uniqueBusId = document.getElementById('edit_unique_bus_id').value;
+    
+    if (!uniqueBusId) {
+        alert('Please select a valid bus from suggestions');
+        return;
+    }
+    
+    const formData = new FormData();
+    formData.append('unique_bus_id', uniqueBusId);
+    formData.append('_token', '{{ csrf_token() }}');
+    formData.append('_method', 'PUT');
+    
+    fetch(`/mahberat/schedule/${scheduleId}`, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (response.ok) {
+            location.reload();
+        } else {
+            alert('Error updating schedule');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Network error occurred');
+    });
+});
+</script>
 
 {{-- Fade Animation --}}
 <style>

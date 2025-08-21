@@ -14,15 +14,12 @@ use Illuminate\Support\Str;
 // It allows Mahberat users to create, view, and delete schedules for their buses.
 class ScheduleController extends Controller
 {
-    // List all schedules for the logged-in user's Mahberat
+    // List all schedules
     public function index()
     {
-        $mahberatId = Auth::user()->mahberat_id;
-
-        // Eager load related bus, destination, and scheduledBy user
+        // Eager load related bus, destination, and scheduledBy user - show all schedules
         $schedules = Schedule::with(['bus', 'destination', 'scheduledBy'])
-            ->where('mahberat_id', $mahberatId)
-            ->orderBy('created_at', 'asc')
+            ->orderBy('created_at', 'desc')
             ->get();
 
         return view('mahberat.schedule.index', compact('schedules'));
@@ -106,9 +103,12 @@ public function cardView()
 
     public function destroy($id)
     {
-        $schedule = Schedule::where('id', $id)
-            ->where('mahberat_id', auth()->user()->mahberat_id)
-            ->firstOrFail();
+        $schedule = Schedule::findOrFail($id);
+        
+        // Only allow removal of queued schedules
+        if ($schedule->status !== 'queued') {
+            return redirect()->route('mahberat.schedule.index')->with('error', 'Only queued schedules can be removed.');
+        }
 
         // Trigger sync for delete before deleting
         $schedule->syncDelete();
@@ -116,5 +116,48 @@ public function cardView()
         $schedule->delete();
 
         return redirect()->route('mahberat.schedule.index')->with('success', 'Schedule removed successfully.');
+    }
+
+    // Update schedule bus
+    public function update(Request $request, $id)
+    {
+        $schedule = Schedule::findOrFail($id);
+        
+        // Only allow updating queued schedules
+        if ($schedule->status !== 'queued') {
+            return redirect()->route('mahberat.schedule.index')->with('error', 'Only queued schedules can be updated.');
+        }
+
+        $request->validate([
+            'unique_bus_id' => 'required|string'
+        ]);
+
+        // Find the new bus
+        $bus = Bus::where('unique_bus_id', $request->unique_bus_id)->first();
+        if (!$bus) {
+            return redirect()->route('mahberat.schedule.index')->with('error', 'Selected bus not found.');
+        }
+
+        // Check if the new bus is already scheduled
+        $alreadyScheduled = Schedule::where('bus_id', $bus->id)
+            ->where('id', '!=', $id)
+            ->whereIn('status', ['queued', 'on loading'])
+            ->exists();
+
+        if ($alreadyScheduled) {
+            return redirect()->route('mahberat.schedule.index')->with('error', 'Selected bus is already scheduled.');
+        }
+
+        // Update the schedule
+        $schedule->bus_id = $bus->id;
+        $schedule->mahberat_id = $bus->mahberat_id;
+        $schedule->capacity = $bus->total_seats;
+        $schedule->cargo_capacity = $bus->cargo_capacity ?? 0;
+        $schedule->save();
+        
+        // Trigger sync for update
+        $schedule->syncUpdate();
+
+        return redirect()->route('mahberat.schedule.index')->with('success', 'Schedule bus updated successfully.');
     }
 }
