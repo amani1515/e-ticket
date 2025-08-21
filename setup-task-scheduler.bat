@@ -1,18 +1,25 @@
 @echo off
-echo Setting up Windows Task Scheduler for E-Ticket Background Sync...
+title Start E-Ticket Background Sync
+echo 🚀 Starting E-Ticket Background Sync...
+echo.
 
-schtasks /create /tn "ETicketBackgroundSync" /tr "php \"d:\Sevastopol techs\e-ticket\artisan\" sync:background" /sc minute /mo 1 /st 00:00 /sd %date% /ru SYSTEM /f
+echo 🛑 Stopping any existing sync first...
+schtasks /delete /tn "ETicketBackgroundSync" /f >nul 2>&1
+
+echo ⚙️  Creating new Windows Task Scheduler...
+schtasks /create /tn "ETicketBackgroundSync" /tr "php \"d:\Sevastopol techs\e-ticket\artisan\" sync:background" /sc minute /mo 1 /f
 
 if %errorlevel% == 0 (
-    echo ✅ Task scheduled successfully!
-    echo Background sync will run every minute automatically.
+    echo ✅ Background sync STARTED successfully!
+    echo 🔄 Syncing every minute automatically
     echo.
-    echo To manage the task:
-    echo   schtasks /run /tn "ETicketBackgroundSync"     - Run now
-    echo   schtasks /end /tn "ETicketBackgroundSync"     - Stop
-    echo   schtasks /delete /tn "ETicketBackgroundSync"  - Remove
+    echo To STOP background sync:
+    echo   👉 Run "stop-background-sync.bat"
+    echo.
+    echo To check status:
+    echo   schtasks /query /tn "ETicketBackgroundSync"
 ) else (
-    echo ❌ Failed to create scheduled task. Run as Administrator.
+    echo ❌ Failed to start. Run as Administrator.
 )
 
 pause
