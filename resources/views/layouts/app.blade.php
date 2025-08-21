@@ -44,5 +44,10 @@
         @stack('modals')
 
         @livewireScripts
+        
+        <!-- Background Sync -->
+        @auth
+        <script src="{{ asset('js/background-sync.js') }}"></script>
+        @endauth
     </body>
 </html>

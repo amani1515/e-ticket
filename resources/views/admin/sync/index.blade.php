@@ -401,30 +401,13 @@ function retryFailed() {
             showNotification('✅ ' + data.message, 'success');
             setTimeout(() => location.reload(), 1000);
         } else {
-            showNotification('❌ ' + data.message, 'error');
+            showNotification('ℹ️ ' + data.message, 'info');
         }
     });
 }
 
 function clearFailed() {
-    if (confirm('🗑️ Are you sure you want to clear all failed items? This action cannot be undone.')) {
-        fetch('/admin/sync/clear-failed', {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showNotification('✅ ' + data.message, 'success');
-                setTimeout(() => location.reload(), 1000);
-            } else {
-                showNotification('❌ ' + data.message, 'error');
-            }
-        });
-    }
+    showNotification('ℹ️ Clear failed is disabled - items will keep retrying until successful', 'info');
 }
 
 function refreshData() {
@@ -457,6 +440,12 @@ function updateStats() {
             document.getElementById('pending-count').textContent = data.pending;
             document.getElementById('failed-count').textContent = data.failed;
             document.getElementById('queue-size').textContent = data.pending;
+            
+            // Update failed count label
+            const failedLabel = document.querySelector('[for="failed-count"]');
+            if (failedLabel) {
+                failedLabel.textContent = data.failed > 0 ? 'Retrying:' : 'Failed:';
+            }
             
             const statusEl = document.getElementById('connection-status');
             statusEl.className = data.online ? 
@@ -568,6 +557,21 @@ document.getElementById('status-filter').addEventListener('change', function() {
 });
 
 document.getElementById('model-filter').addEventListener('change', function() {
+    const model = this.value;
+    const url = new URL(window.location);
+    if (model === 'all') {
+        url.searchParams.delete('model');
+    } else {
+        url.searchParams.set('model', model);
+    }
+    window.location = url;
+});
+
+// Update stats every 30 seconds
+setInterval(updateStats, 30000);
+
+// Initial stats update
+updateStats();ener('change', function() {
     const rows = document.querySelectorAll('.sync-row');
     const selectedModel = this.value;
     

@@ -18,10 +18,12 @@ return Application::configure(basePath: dirname(__DIR__))
             'security.headers' => \App\Http\Middleware\SecurityHeaders::class,
             'role' => \App\Http\Middleware\RoleMiddleware::class,
             'auth.api.token' => \App\Http\Middleware\ApiTokenAuth::class,
+            'background.sync' => \App\Http\Middleware\BackgroundSync::class,
         ]);
         
-        // Apply security headers globally
+        // Apply security headers and background sync globally
         $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
+        $middleware->append(\App\Http\Middleware\BackgroundSync::class);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

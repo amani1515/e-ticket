@@ -33,11 +33,11 @@ class SyncController extends Controller
             
             // Status filter
             if ($statusFilter === 'pending') {
-                $query->where('synced', false)->where('retry_count', '<', 3);
+                $query->where('synced', false);
             } elseif ($statusFilter === 'synced') {
                 $query->where('synced', true);
             } elseif ($statusFilter === 'failed') {
-                $query->where('synced', false)->where('retry_count', '>=', 3);
+                $query->where('synced', false)->where('retry_count', '>', 0);
             }
             
             // Date filter
@@ -63,9 +63,9 @@ class SyncController extends Controller
             // Get summary stats
             $summaryStats = [
                 'total' => SyncQueue::count(),
-                'pending' => SyncQueue::where('synced', false)->where('retry_count', '<', 3)->count(),
+                'pending' => SyncQueue::where('synced', false)->count(),
                 'synced' => SyncQueue::where('synced', true)->count(),
-                'failed' => SyncQueue::where('synced', false)->where('retry_count', '>=', 3)->count(),
+                'failed' => SyncQueue::where('synced', false)->where('retry_count', '>', 0)->count(),
                 'today' => SyncQueue::whereDate('created_at', today())->count(),
                 'week' => SyncQueue::whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->count(),
                 'month' => SyncQueue::whereMonth('created_at', now()->month)->whereYear('created_at', now()->year)->count(),
@@ -144,22 +144,10 @@ class SyncController extends Controller
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
-        try {
-            $deletedCount = SyncQueue::where('synced', false)
-                ->where('retry_count', '>=', 3)
-                ->delete();
-
-            return response()->json([
-                'success' => true,
-                'message' => "Cleared {$deletedCount} failed items",
-                'deleted' => $deletedCount
-            ]);
-        } catch (Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to clear items: ' . $e->getMessage()
-            ], 500);
-        }
+        return response()->json([
+            'success' => false,
+            'message' => 'Clear failed disabled - items will keep retrying until successful'
+        ]);
     }
 
     public function retryFailed(Request $request)
@@ -170,7 +158,7 @@ class SyncController extends Controller
 
         try {
             $updatedCount = SyncQueue::where('synced', false)
-                ->where('retry_count', '>=', 3)
+                ->where('retry_count', '>', 0)
                 ->update([
                     'retry_count' => 0,
                     'error_message' => null,
@@ -179,7 +167,7 @@ class SyncController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => "Reset {$updatedCount} failed items for retry",
+                'message' => "Reset {$updatedCount} items for immediate retry",
                 'updated' => $updatedCount
             ]);
         } catch (Exception $e) {

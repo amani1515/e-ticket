@@ -21,8 +21,9 @@ return [
     |--------------------------------------------------------------------------
     */
     'sync_interval' => env('SYNC_INTERVAL', 300), // 5 minutes
-    'batch_size' => env('SYNC_BATCH_SIZE', 50),
-    'max_retries' => env('SYNC_MAX_RETRIES', 3),
+    'batch_size' => env('SYNC_BATCH_SIZE', 20),
+    'timeout' => env('SYNC_TIMEOUT', 60), // 60 seconds
+    'retry_forever' => env('SYNC_RETRY_FOREVER', true),
     
     /*
     |--------------------------------------------------------------------------

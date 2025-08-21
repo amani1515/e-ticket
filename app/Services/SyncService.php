@@ -22,9 +22,12 @@ class SyncService
     public function isOnline(): bool
     {
         try {
-            $response = Http::timeout(5)->get($this->remoteUrl . '/api/ping');
+            $response = Http::timeout(10)
+                ->withHeaders(['User-Agent' => 'E-Ticket-Sync/1.0'])
+                ->get($this->remoteUrl . '/api/ping');
             return $response->successful();
         } catch (Exception $e) {
+            Log::warning('Connection check failed: ' . $e->getMessage());
             return false;
         }
     }
@@ -36,9 +39,8 @@ class SyncService
         }
 
         $pendingItems = SyncQueue::where('synced', false)
-            ->where('retry_count', '<', 3)
             ->orderBy('created_at')
-            ->limit(10) // Reduce batch size for testing
+            ->limit(20)
             ->get();
 
         if ($pendingItems->isEmpty()) {
@@ -62,6 +64,7 @@ class SyncService
                     'error_message' => null
                 ]);
                 $results['synced']++;
+                Log::info('Successfully synced item: ' . $item->id);
             } catch (Exception $e) {
                 $item->updateQuietly([
                     'retry_count' => $item->retry_count + 1,
@@ -78,7 +81,7 @@ class SyncService
         
         $message = "Synced {$results['synced']} items";
         if ($results['failed'] > 0) {
-            $message .= ", {$results['failed']} failed";
+            $message .= ", {$results['failed']} will retry";
         }
         $results['message'] = $message;
         
@@ -93,6 +96,10 @@ class SyncService
         $data = $item->data;
         if (is_string($data)) {
             $data = json_decode($data, true);
+        }
+        
+        if (!is_array($data)) {
+            throw new Exception('Invalid data format for sync item');
         }
         
         // Convert datetime fields to proper format
@@ -126,7 +133,7 @@ class SyncService
         // Remove problematic fields
         $fieldsToRemove = [
             'created_at', 'updated_at', 'synced', 'synced_at', 'last_modified',
-            'email_verified_at', 'two_factor_secret', 'two_factor_recovery_codes',
+            'two_factor_secret', 'two_factor_recovery_codes',
             'remember_token', 'profile_photo_path', 'current_team_id'
         ];
         
@@ -136,14 +143,9 @@ class SyncService
         
         // Handle User model specific requirements
         if (strpos($item->model_type, 'User') !== false) {
-            // Ensure password exists for User creation
             if ($item->action === 'create' && empty($data['password'])) {
-                $data['password'] = bcrypt('password123'); // Default password
-            } elseif (isset($data['password']) && strlen($data['password']) < 60) {
-                $data['password'] = bcrypt($data['password']);
+                $data['password'] = 'password123';
             }
-            
-            // Ensure required fields exist
             if (empty($data['email_verified_at'])) {
                 $data['email_verified_at'] = now()->format('Y-m-d H:i:s');
             }
@@ -151,7 +153,6 @@ class SyncService
         
         // Handle CashReport model specific requirements
         if (strpos($item->model_type, 'CashReport') !== false) {
-            // Ensure report_date is in correct format
             if (isset($data['report_date'])) {
                 $data['report_date'] = \Carbon\Carbon::parse($data['report_date'])->format('Y-m-d');
             }
@@ -168,25 +169,38 @@ class SyncService
         ];
         
         Log::info('Syncing item', [
-            'endpoint' => $endpoint, 
+            'id' => $item->id,
+            'endpoint' => $this->remoteUrl . $endpoint, 
             'model' => class_basename($item->model_type),
             'uuid' => $item->model_uuid,
-            'action' => $item->action
+            'action' => $item->action,
+            'retry_count' => $item->retry_count
         ]);
         
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $this->apiToken,
             'Content-Type' => 'application/json',
-            'Accept' => 'application/json'
-        ])->timeout(30)->post($this->remoteUrl . $endpoint, $payload);
+            'Accept' => 'application/json',
+            'User-Agent' => 'E-Ticket-Sync/1.0'
+        ])->timeout(60)->retry(2, 1000)->post($this->remoteUrl . $endpoint, $payload);
 
         if (!$response->successful()) {
             $errorBody = $response->body();
-            Log::error('Sync API Error', ['status' => $response->status(), 'body' => $errorBody]);
-            throw new Exception('API Error ' . $response->status() . ': ' . $errorBody);
+            $errorMessage = "HTTP {$response->status()}: {$errorBody}";
+            Log::error('Sync API Error', [
+                'item_id' => $item->id,
+                'status' => $response->status(), 
+                'body' => $errorBody,
+                'endpoint' => $this->remoteUrl . $endpoint
+            ]);
+            throw new Exception($errorMessage);
         }
         
-        Log::info('Sync successful', ['response' => $response->json()]);
+        $responseData = $response->json();
+        Log::info('Sync successful', [
+            'item_id' => $item->id,
+            'response' => $responseData
+        ]);
     }
 
     private function getEndpoint(string $modelType): string
@@ -233,14 +247,14 @@ class SyncService
     {
         try {
             $pending = SyncQueue::where('synced', false)->count();
-            $failed = SyncQueue::where('synced', false)
-                ->where('retry_count', '>=', 3)
+            $retrying = SyncQueue::where('synced', false)
+                ->where('retry_count', '>', 0)
                 ->count();
             
             return [
                 'online' => $this->isOnline(),
                 'pending' => $pending,
-                'failed' => $failed,
+                'failed' => $retrying,
                 'last_sync' => SyncSettings::get('last_sync_attempt', 'Never')
             ];
         } catch (Exception $e) {
