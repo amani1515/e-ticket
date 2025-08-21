@@ -241,10 +241,16 @@ public function processScan(Request $request)
     }
 
     if (!$ticket) {
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json(['success' => false, 'message' => 'Ticket not found: ' . $inputCode]);
+        }
         return redirect()->back()->with('error', 'Ticket not found: ' . $inputCode);
     }
 
     if ($ticket->ticket_status !== 'created') {
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json(['success' => false, 'message' => 'Ticket already processed. Status: ' . $ticket->ticket_status]);
+        }
         return redirect()->back()->with('error', 'Ticket already processed. Status: ' . $ticket->ticket_status);
     }
 
@@ -254,6 +260,9 @@ public function processScan(Request $request)
     // Trigger sync for ticket confirmation
     $ticket->syncUpdate();
 
+    if ($request->expectsJson() || $request->ajax()) {
+        return response()->json(['success' => true, 'message' => 'Ticket confirmed! Passenger: ' . $ticket->passenger_name]);
+    }
     return redirect()->back()->with('success', 'Ticket confirmed! Passenger: ' . $ticket->passenger_name);
 }
 

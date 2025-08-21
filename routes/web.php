@@ -102,6 +102,12 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('users/{user}/block', [UserController::class, 'block'])->name('users.block');
     Route::post('users/{user}/unblock', [UserController::class, 'unblock'])->name('users.unblock');
     Route::get('backup', [BackupController::class, 'backupDownload'])->name('backup');
+    
+    // Admin scan ticket using ticketer controller
+    Route::get('/tickets/scan', function() {
+        return view('admin.tickets.scan');
+    })->name('tickets.scan');
+    Route::post('/tickets/scan', [TicketController::class, 'processScan'])->name('tickets.processScan');
 
 // Schedule Reports
 Route::get('/schedule-reports', [\App\Http\Controllers\Admin\ScheduleReportController::class, 'index'])->name('schedule.reports');
