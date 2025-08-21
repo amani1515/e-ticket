@@ -87,12 +87,8 @@ class ScheduleController extends Controller
 
 public function cardView()
 {
-    $user = Auth::user();
-    $mahberatId = $user->mahberat_id;
-
-    // Get schedules belonging to this mahberat, grouped by destination
+    // Get all schedules, grouped by destination
     $schedules = \App\Models\Schedule::with(['bus', 'destination'])
-        ->where('mahberat_id', $mahberatId)
         ->whereIn('status', ['queued', 'on loading'])
         ->get()
         ->groupBy('destination_id');
