@@ -1,6 +1,7 @@
 @extends('ticketer.layout.app')
 
 @section('content')
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
     <div class="container mx-auto px-4 py-6 max-w-md">
         <!-- Header -->
@@ -374,6 +375,43 @@
                 <span class="font-medium text-purple-800">View Reports</span>
             </a>
         </div>
+        
+        <!-- Quick View Button -->
+        <div class="mt-4">
+            <button onclick="openQuickView()" class="w-full flex items-center justify-center p-4 bg-white rounded-xl shadow-lg border-2 border-orange-200 hover:border-orange-400 transition duration-200">
+                <svg class="w-6 h-6 text-orange-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                </svg>
+                <span class="font-medium text-orange-800">Quick View Schedules</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Quick View Modal -->
+<div id="quickViewModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl mx-4 max-h-[90vh] overflow-hidden">
+        <div class="bg-orange-600 text-white px-6 py-4 rounded-t-xl">
+            <h3 class="text-xl font-bold flex items-center justify-between">
+                <span class="flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    Schedule Boarding Status
+                </span>
+                <button onclick="closeQuickView()" class="text-white hover:text-gray-200">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </h3>
+        </div>
+        <div class="p-6 overflow-y-auto max-h-[70vh]">
+            <div id="scheduleData" class="space-y-4">
+                <div class="text-center text-gray-500">Loading schedules...</div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -422,6 +460,107 @@ input, select, button {
 </style>
 
 <script>
+// Quick View Modal Functions
+function openQuickView() {
+    document.getElementById('quickViewModal').classList.remove('hidden');
+    fetchScheduleData();
+}
+
+function closeQuickView() {
+    document.getElementById('quickViewModal').classList.add('hidden');
+}
+
+// Close modal when clicking outside
+document.addEventListener('click', function(e) {
+    var modal = document.getElementById('quickViewModal');
+    if (e.target === modal) {
+        closeQuickView();
+    }
+});
+
+// Ticketer ownership conflict prevention is now handled server-side
+
+function fetchScheduleData() {
+    var scheduleContainer = document.getElementById('scheduleData');
+    scheduleContainer.innerHTML = '<div class="text-center text-gray-500">Loading schedules...</div>';
+    
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/ticketer/schedule-boarding-info', true);
+    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+    
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                try {
+                    var data = JSON.parse(xhr.responseText);
+                    displayScheduleData(data);
+                } catch (e) {
+                    scheduleContainer.innerHTML = '<div class="text-center text-red-500">Error loading data</div>';
+                }
+            } else {
+                scheduleContainer.innerHTML = '<div class="text-center text-red-500">Failed to load schedules</div>';
+            }
+        }
+    };
+    
+    xhr.send();
+}
+
+function displayScheduleData(schedules) {
+    var container = document.getElementById('scheduleData');
+    
+    if (!schedules || schedules.length === 0) {
+        container.innerHTML = '<div class="text-center text-gray-500">No active schedules found</div>';
+        return;
+    }
+    
+    var html = '';
+    for (var i = 0; i < schedules.length; i++) {
+        var schedule = schedules[i];
+        var availableSeats = schedule.capacity - schedule.boarding;
+        var progressPercent = (schedule.boarding / schedule.capacity) * 100;
+        
+        html += '<div class="bg-gray-50 rounded-lg p-4 border">';
+        html += '<div class="flex justify-between items-start mb-3">';
+        html += '<div>';
+        html += '<h4 class="font-semibold text-lg">' + schedule.destination_name + '</h4>';
+        html += '<p class="text-sm text-gray-600">Bus: ' + schedule.bus_targa + ' | Driver: ' + schedule.driver_name + '</p>';
+        if (schedule.ticketer_name) {
+            var ownershipClass = schedule.is_owned_by_me ? 'text-green-600' : 'text-red-600';
+            var ownershipText = schedule.is_owned_by_me ? 'You are handling this' : 'Handled by: ' + schedule.ticketer_name;
+            html += '<p class="text-sm font-medium ' + ownershipClass + '">' + ownershipText + '</p>';
+        }
+        html += '</div>';
+        html += '<span class="px-3 py-1 rounded-full text-sm font-medium ' + 
+                (schedule.status === 'queued' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800') + '">' + 
+                schedule.status + '</span>';
+        html += '</div>';
+        
+        html += '<div class="grid grid-cols-3 gap-4 mb-3">';
+        html += '<div class="text-center">';
+        html += '<div class="text-2xl font-bold text-blue-600">' + schedule.capacity + '</div>';
+        html += '<div class="text-sm text-gray-500">Total Seats</div>';
+        html += '</div>';
+        html += '<div class="text-center">';
+        html += '<div class="text-2xl font-bold text-green-600">' + schedule.boarding + '</div>';
+        html += '<div class="text-sm text-gray-500">Boarded</div>';
+        html += '</div>';
+        html += '<div class="text-center">';
+        html += '<div class="text-2xl font-bold text-orange-600">' + availableSeats + '</div>';
+        html += '<div class="text-sm text-gray-500">Available</div>';
+        html += '</div>';
+        html += '</div>';
+        
+        html += '<div class="w-full bg-gray-200 rounded-full h-3">';
+        html += '<div class="bg-gradient-to-r from-blue-500 to-green-500 h-3 rounded-full" style="width: ' + progressPercent + '%"></div>';
+        html += '</div>';
+        html += '<div class="text-center text-sm text-gray-600 mt-1">' + Math.round(progressPercent) + '% Full</div>';
+        html += '</div>';
+    }
+    
+    container.innerHTML = html;
+}
+
 // Simple JavaScript for Chrome 56 compatibility
 function fetchBusData(destinationId) {
     if (!destinationId) {
@@ -497,10 +636,7 @@ window.onload = function() {
     if (phoneInput) {
         phoneInput.oninput = function() {
             var value = this.value.replace(/[^0-9]/g, '');
-            if (value.length > 0 && value[0] !== '9' && value[0] !== '7') {
-                value = value.substring(1);
-            }
-            this.value = value.substring(0, 9);
+            this.value = value.substring(0, 10);
         };
     }
     

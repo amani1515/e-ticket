@@ -178,6 +178,9 @@ Route::middleware(['auth', 'role:ticketer'])->prefix('ticketer')->name('ticketer
     Route::post('/tickets/{id}/cancel', [TicketController::class, 'cancel'])->name('tickets.cancel');
     Route::get('/tickets/export', [TicketController::class, 'export'])->name('tickets.export');
     Route::get('/debug-tickets', [TicketController::class, 'debugTickets'])->name('debug.tickets');
+    Route::get('/schedule-boarding-info', [TicketController::class, 'scheduleBoardingInfo'])->name('schedule.boarding.info');
+    Route::get('/check-ticketer-ownership', [TicketController::class, 'checkTicketerOwnership'])->name('check.ticketer.ownership');
+
     // Cash reports
     Route::get('/cash-report', [\App\Http\Controllers\Ticketer\CashReportController::class, 'index'])->name('cash-report.index');
     Route::post('/cash-report/submit', [\App\Http\Controllers\Ticketer\CashReportController::class, 'submit'])->name('cash-report.submit');

@@ -17,6 +17,7 @@ class Schedule extends Model
         'scheduled_at',
         'status',
         'mahberat_id',
+        'ticketer_id',
         'capacity',
         'boarding',
         'wellgo_at',
@@ -58,6 +59,11 @@ public function paidBy()
 public function mahberat()
 {
     return $this->belongsTo(Mahberat::class);
+}
+
+public function ticketer()
+{
+    return $this->belongsTo(User::class, 'ticketer_id');
 }
 
 

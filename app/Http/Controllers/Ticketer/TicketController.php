@@ -74,6 +74,18 @@ public function store(Request $request)
         'disability_status' => 'required|in:None,Blind / Visual Impairment,Deaf / Hard of Hearing,Speech Impairment',
     ]);
 
+    // Find the first queued or on loading schedule for this destination
+    $activeSchedule = Schedule::where('destination_id', $request->destination_id)
+        ->whereIn('status', ['queued', 'on loading'])
+        ->orderBy('scheduled_at')
+        ->first();
+    
+    // If there's an active schedule with a ticketer assigned, only that ticketer can create tickets
+    if ($activeSchedule && $activeSchedule->ticketer_id && $activeSchedule->ticketer_id !== auth()->id()) {
+        $ticketerName = User::find($activeSchedule->ticketer_id)->name ?? 'Another ticketer';
+        return back()->withErrors(['destination_id' => $ticketerName . ' is already creating tickets for this destination. Please wait until they finish.']);
+    }
+
     $destination = Destination::findOrFail($request->destination_id);
 
     // Find the bus by targa
@@ -113,7 +125,10 @@ public function store(Request $request)
     }
 
     if ($schedule) {
-        $schedule->ticket_created_by = auth()->id();
+        // Set ticketer ownership when first ticket is created for this schedule
+        if (!$schedule->ticketer_id) {
+            $schedule->ticketer_id = auth()->id();
+        }
 
         // Count only tickets with status 'created' or 'confirmed'
         $boardingCount = Ticket::where('schedule_id', $schedule->id)
@@ -124,6 +139,8 @@ public function store(Request $request)
 
         if ($boardingCount >= $schedule->capacity) {
             $schedule->status = 'full';
+            // Clear ticketer ownership when schedule is full
+            $schedule->ticketer_id = null;
         } elseif ($schedule->status === 'queued') {
             $schedule->status = 'on loading';
         }
@@ -271,6 +288,57 @@ public function debugTickets()
     $tickets = Ticket::latest()->take(10)->get(['id', 'ticket_code', 'ticket_status', 'passenger_name']);
     return response()->json($tickets);
 }
+
+public function scheduleBoardingInfo()
+{
+    $schedules = Schedule::with(['bus', 'destination', 'ticketer'])
+        ->whereIn('status', ['queued', 'on loading'])
+        ->get()
+        ->map(function($schedule) {
+            return [
+                'id' => $schedule->id,
+                'destination_name' => $schedule->destination->destination_name,
+                'bus_targa' => $schedule->bus->targa,
+                'driver_name' => $schedule->bus->driver_name,
+                'capacity' => $schedule->capacity,
+                'boarding' => $schedule->boarding,
+                'status' => $schedule->status,
+                'ticketer_name' => $schedule->ticketer ? $schedule->ticketer->name : null,
+                'is_owned_by_me' => $schedule->ticketer_id === auth()->id()
+            ];
+        });
+    
+    return response()->json($schedules);
+}
+
+public function checkTicketerOwnership(Request $request)
+{
+    $destinationId = $request->destination_id;
+    
+    $activeSchedule = Schedule::where('destination_id', $destinationId)
+        ->whereIn('status', ['queued', 'on loading'])
+        ->with('ticketer')
+        ->first();
+    
+    if (!$activeSchedule) {
+        return response()->json(['available' => true, 'message' => 'No active schedule found']);
+    }
+    
+    if (!$activeSchedule->ticketer_id) {
+        return response()->json(['available' => true, 'message' => 'Schedule available for ticketing']);
+    }
+    
+    if ($activeSchedule->ticketer_id === auth()->id()) {
+        return response()->json(['available' => true, 'message' => 'You own this schedule']);
+    }
+    
+    return response()->json([
+        'available' => false, 
+        'message' => 'Schedule is being handled by ' . ($activeSchedule->ticketer->name ?? 'another ticketer')
+    ]);
+}
+
+
 
 
 public function getFirstBus($destinationId)
@@ -421,10 +489,15 @@ public function cancel($id)
 
             if ($boardingCount >= $schedule->capacity) {
                 $schedule->status = 'full';
+                // Clear ticketer ownership when schedule is full
+                $schedule->ticketer_id = null;
             } elseif ($boardingCount === 0) {
                 $schedule->status = 'queued';
+                // Clear ticketer ownership when no active tickets remain
+                $schedule->ticketer_id = null;
             } else {
                 $schedule->status = 'on loading';
+                // Keep ticketer ownership while there are active tickets
             }
             $schedule->save();
             

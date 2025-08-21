@@ -32,7 +32,12 @@ class TrafficScheduleController extends \App\Http\Controllers\Controller
             $schedule->status = 'wellgo';
             $schedule->wellgo_at = now();
             $schedule->traffic_name = auth()->user()->name ?? 'Unknown';
+            // Clear ticketer ownership when schedule is completed
+            $schedule->ticketer_id = null;
             $schedule->save();
+            
+            // Trigger sync for schedule update
+            $schedule->syncUpdate();
         }
         // Return the same result view with the updated schedule
         return view('traffic.schedule.result', compact('schedule'));
