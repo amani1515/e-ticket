@@ -14,7 +14,7 @@ class ScheduleController extends Controller
     {
         $user = auth()->user();
         $query = \App\Models\Schedule::with(['bus', 'destination'])
-            ->where('ticket_created_by', $user->id);
+            ->where('ticketer_id', $user->id);
 
         // Filter by destination
         if ($request->filled('destination_id')) {
