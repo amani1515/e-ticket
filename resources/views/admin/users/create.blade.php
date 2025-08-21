@@ -317,22 +317,13 @@
                                     <div class="relative">
                                         <input type="password" name="password" id="password" 
                                             class="w-full px-4 py-3 border-2 border-red-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition duration-200 bg-red-50"
-                                            placeholder="Enter secure password" required minlength="8">
+                                            placeholder="Enter password" required>
                                         <button type="button" onclick="togglePassword('password')" class="absolute inset-y-0 right-0 pr-3 flex items-center">
                                             <svg id="password-eye" class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                                             </svg>
                                         </button>
-                                    </div>
-                                    <div id="password-strength" class="mt-2">
-                                        <div class="flex space-x-1">
-                                            <div class="h-2 w-1/4 bg-gray-200 rounded"></div>
-                                            <div class="h-2 w-1/4 bg-gray-200 rounded"></div>
-                                            <div class="h-2 w-1/4 bg-gray-200 rounded"></div>
-                                            <div class="h-2 w-1/4 bg-gray-200 rounded"></div>
-                                        </div>
-                                        <p class="text-xs text-red-600 mt-1">Min 8 chars, uppercase, lowercase, number & symbol</p>
                                     </div>
                                     @error('password')
                                         <span class="text-red-500 text-sm mt-1 flex items-center">
@@ -357,22 +348,6 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                                             </svg>
                                         </button>
-                                    </div>
-                                    <div id="password-match" class="text-sm mt-1 hidden">
-                                        <span class="text-green-600 flex items-center">
-                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                            </svg>
-                                            Passwords match
-                                        </span>
-                                    </div>
-                                    <div id="password-mismatch" class="text-sm mt-1 hidden">
-                                        <span class="text-red-600 flex items-center">
-                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                            </svg>
-                                            Passwords don't match
-                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -554,54 +529,10 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Enhanced password strength validation
-    passwordInput.addEventListener('input', function() {
-        const password = this.value;
-        const strengthBars = document.querySelectorAll('#password-strength .h-2');
-        let strength = 0;
-        
-        if (password.length >= 8) strength++;
-        if (/[a-z]/.test(password)) strength++;
-        if (/[A-Z]/.test(password)) strength++;
-        if (/\d/.test(password)) strength++;
-        if (/[@$!%*?&]/.test(password)) strength++;
-        
-        strengthBars.forEach((bar, index) => {
-            bar.className = 'h-2 w-1/4 rounded';
-            if (index < strength) {
-                if (strength <= 2) bar.classList.add('bg-red-500');
-                else if (strength <= 3) bar.classList.add('bg-yellow-500');
-                else bar.classList.add('bg-green-500');
-            } else {
-                bar.classList.add('bg-gray-200');
-            }
-        });
-        
-        checkPasswordMatch();
+    // Basic password confirmation validation
+    passwordConfirmInput.addEventListener('input', function() {
+        // Simple confirmation check without strength requirements
     });
-
-    // Password confirmation validation
-    passwordConfirmInput.addEventListener('input', checkPasswordMatch);
-    
-    function checkPasswordMatch() {
-        const password = passwordInput.value;
-        const confirm = passwordConfirmInput.value;
-        const matchDiv = document.getElementById('password-match');
-        const mismatchDiv = document.getElementById('password-mismatch');
-        
-        if (confirm.length > 0) {
-            if (password === confirm) {
-                matchDiv.classList.remove('hidden');
-                mismatchDiv.classList.add('hidden');
-            } else {
-                matchDiv.classList.add('hidden');
-                mismatchDiv.classList.remove('hidden');
-            }
-        } else {
-            matchDiv.classList.add('hidden');
-            mismatchDiv.classList.add('hidden');
-        }
-    }
 
     // Form submission with enhanced security
     form.addEventListener('submit', function(e) {
