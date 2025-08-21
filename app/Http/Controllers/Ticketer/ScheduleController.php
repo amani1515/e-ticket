@@ -15,7 +15,7 @@ class ScheduleController extends Controller
         $user = auth()->user();
         $query = \App\Models\Schedule::with(['bus', 'destination'])
             ->where('ticketer_id', $user->id)
-            ->whereIn('status', ['queued', 'on loading', 'full', 'paid']);
+            ->whereIn('status', ['queued', 'on loading', 'full','departed', 'paid']);
 
         // Filter by destination
         if ($request->filled('destination_id')) {
