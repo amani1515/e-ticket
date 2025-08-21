@@ -82,10 +82,8 @@ class SyncController extends Controller
                 ->sort()
                 ->values();
 
-            $recentSync = SyncQueue::latest()->limit(20)->get();
-            
             return view('admin.sync.index', compact(
-                'status', 'recentSync'
+                'status', 'syncData', 'summaryStats', 'availableModels', 'statusFilter', 'dateFilter', 'modelFilter', 'perPage'
             ));
         } catch (\Exception $e) {
             return view('admin.sync.index', [
@@ -95,13 +93,7 @@ class SyncController extends Controller
                     'failed' => 0,
                     'last_sync' => 'Error: ' . $e->getMessage()
                 ],
-                'syncData' => collect([])->paginate(20),
-                'summaryStats' => ['total' => 0, 'pending' => 0, 'synced' => 0, 'failed' => 0, 'today' => 0, 'week' => 0, 'month' => 0],
-                'availableModels' => collect([]),
-                'statusFilter' => 'all',
-                'dateFilter' => 'all', 
-                'modelFilter' => 'all',
-                'perPage' => 20
+'recentSync' => collect([])
             ]);
         }
     }
