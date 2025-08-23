@@ -120,6 +120,37 @@
                         </tbody>
                     </table>
                 </div>
+                
+                <!-- Pagination -->
+                @if($reports->hasPages())
+                <div class="bg-white px-4 py-3 border-t border-gray-200 sm:px-6">
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1 flex justify-between sm:hidden">
+                            @if($reports->onFirstPage())
+                                <span class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default rounded-md">Previous</span>
+                            @else
+                                <a href="{{ $reports->previousPageUrl() }}" class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">Previous</a>
+                            @endif
+                            
+                            @if($reports->hasMorePages())
+                                <a href="{{ $reports->nextPageUrl() }}" class="ml-3 relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">Next</a>
+                            @else
+                                <span class="ml-3 relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default rounded-md">Next</span>
+                            @endif
+                        </div>
+                        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                            <div>
+                                <p class="text-sm text-gray-700">
+                                    Showing {{ $reports->firstItem() }} to {{ $reports->lastItem() }} of {{ $reports->total() }} results
+                                </p>
+                            </div>
+                            <div>
+                                {{ $reports->appends(request()->query())->links() }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endif
             @else
                 <div class="text-center py-12">
                     <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -148,7 +179,7 @@
         </div>
 
         <!-- Summary Stats -->
-        @if($reports->count() > 0)
+        @if($reports->total() > 0)
         <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="bg-white rounded-xl shadow-sm p-6">
                 <div class="flex items-center">
@@ -161,7 +192,7 @@
                     </div>
                     <div class="ml-4">
                         <p class="text-sm font-medium text-gray-500">Total Reports</p>
-                        <p class="text-2xl font-bold text-gray-900">{{ $reports->count() }}</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ $reports->total() }}</p>
                     </div>
                 </div>
             </div>
@@ -177,7 +208,7 @@
                     </div>
                     <div class="ml-4">
                         <p class="text-sm font-medium text-gray-500">Total Amount</p>
-                        <p class="text-2xl font-bold text-green-600">{{ number_format($reports->sum('total_amount'), 2) }} Birr</p>
+                        <p class="text-2xl font-bold text-green-600">{{ number_format($reports->getCollection()->sum('total_amount'), 2) }} Birr</p>
                     </div>
                 </div>
             </div>
@@ -193,7 +224,7 @@
                     </div>
                     <div class="ml-4">
                         <p class="text-sm font-medium text-gray-500">Pending</p>
-                        <p class="text-2xl font-bold text-yellow-600">{{ $reports->where('status', 'pending')->count() }}</p>
+                        <p class="text-2xl font-bold text-yellow-600">{{ $reports->getCollection()->where('status', 'pending')->count() }}</p>
                     </div>
                 </div>
             </div>

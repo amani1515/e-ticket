@@ -113,7 +113,7 @@ class CashReportController extends Controller
             $query->whereBetween('report_date', [now()->startOfWeek(), now()->endOfWeek()]);
         }
         
-        $reports = $query->orderBy('report_date', 'desc')->get();
+        $reports = $query->orderBy('report_date', 'desc')->paginate(10);
         
         return view('ticketer.cash_report.list', compact('reports', 'filter'));
     }
