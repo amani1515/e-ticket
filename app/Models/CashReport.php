@@ -32,6 +32,12 @@ class CashReport extends Model
         return $this->belongsTo(User::class);
     }
 
+    protected $casts = [
+        'report_date' => 'date',
+        'submitted_at' => 'datetime',
+        'received_at' => 'datetime',
+    ];
+
     protected function getUuidData(): array
     {
         return [

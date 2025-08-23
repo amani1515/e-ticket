@@ -187,6 +187,7 @@ Route::middleware(['auth', 'role:ticketer'])->prefix('ticketer')->name('ticketer
     // Cash reports
     Route::get('/cash-report', [\App\Http\Controllers\Ticketer\CashReportController::class, 'index'])->name('cash-report.index');
     Route::post('/cash-report/submit', [\App\Http\Controllers\Ticketer\CashReportController::class, 'submit'])->name('cash-report.submit');
+    Route::get('/cash-report/list', [\App\Http\Controllers\Ticketer\CashReportController::class, 'list'])->name('cash-report.list');
 });
 
 

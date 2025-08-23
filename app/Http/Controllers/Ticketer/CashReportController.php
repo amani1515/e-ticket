@@ -94,6 +94,30 @@ class CashReportController extends Controller
         return redirect()->back()->with('success', 'Cash report submitted successfully.');
     }
 
+    // Show list of submitted cash reports for current ticketer
+    public function list(Request $request)
+    {
+        if (auth()->user()->usertype !== 'ticketer') {
+            return view('errors.403');
+        }
+
+        $user = auth()->user();
+        $filter = $request->get('filter', 'all');
+        
+        $query = CashReport::where('user_id', $user->id);
+        
+        // Apply date filters
+        if ($filter === 'today') {
+            $query->whereDate('report_date', today());
+        } elseif ($filter === 'week') {
+            $query->whereBetween('report_date', [now()->startOfWeek(), now()->endOfWeek()]);
+        }
+        
+        $reports = $query->orderBy('report_date', 'desc')->get();
+        
+        return view('ticketer.cash_report.list', compact('reports', 'filter'));
+    }
+
     // ADMIN PERMISSIONS
     // Show all submitted cash reports to admin for review
     public function adminIndex()
