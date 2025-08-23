@@ -265,4 +265,17 @@ public function update(Request $request, $id) {
         }
     }
 }
+
+public function resetPassword(User $user)
+{
+    if (auth()->check() && Auth::user()->usertype === 'admin') {
+        $newPassword = 'password123';
+        $user->update(['password' => Hash::make($newPassword)]);
+        $user->syncUpdate();
+        
+        return redirect()->route('admin.users.index')
+            ->with('success', "Password reset successfully! New password: {$newPassword}");
+    }
+    return abort(403);
+}
 }

@@ -172,7 +172,7 @@
                                     @endif
                                 </td>
                                 <td class="px-6 py-4">
-                                    <div class="flex items-center space-x-2">
+                                    <div class="flex flex-wrap items-center gap-2">
                                         <a href="{{ route('admin.users.show', $user->id) }}"
                                             class="inline-flex items-center px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white text-xs font-medium rounded-md transition-colors duration-200">
                                             <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -209,6 +209,15 @@
                                                 </button>
                                             </form>
                                         @endif
+                                        <form action="{{ route('admin.users.reset-password', $user->id) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to reset this user\'s password to default?');">
+                                            @csrf
+                                            <button type="submit" class="inline-flex items-center px-3 py-1.5 bg-purple-500 hover:bg-purple-600 text-white text-xs font-medium rounded-md transition-colors duration-200">
+                                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m0 0a2 2 0 012 2m-2-2a2 2 0 00-2 2m2-2V5a2 2 0 00-2-2m0 0H9a2 2 0 00-2 2v0m4 0V3a2 2 0 014 0v2m-4 0a2 2 0 00-4 0v2m0 0v2a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2z"></path>
+                                                </svg>
+                                                Reset Password
+                                            </button>
+                                        </form>
                                     </div>
                                 </td>
                             </tr>

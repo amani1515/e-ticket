@@ -101,6 +101,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::put('users/{id}', [UserController::class, 'update'])->name('users.update');
     Route::post('users/{user}/block', [UserController::class, 'block'])->name('users.block');
     Route::post('users/{user}/unblock', [UserController::class, 'unblock'])->name('users.unblock');
+    Route::post('users/{user}/reset-password', [UserController::class, 'resetPassword'])->name('users.reset-password');
     Route::get('backup', [BackupController::class, 'backupDownload'])->name('backup');
     
     // Admin scan ticket using ticketer controller
