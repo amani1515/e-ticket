@@ -118,6 +118,21 @@ class CashReportController extends Controller
         return view('ticketer.cash_report.list', compact('reports', 'filter'));
     }
 
+    // Show receipt for cash report
+    public function receipt($id)
+    {
+        if (auth()->user()->usertype !== 'ticketer') {
+            return view('errors.403');
+        }
+
+        $report = CashReport::where('id', $id)
+            ->where('user_id', auth()->id())
+            ->where('status', 'received')
+            ->firstOrFail();
+
+        return view('ticketer.cash_report.receipt', compact('report'));
+    }
+
     // ADMIN PERMISSIONS
     // Show all submitted cash reports to admin for review
     public function adminIndex()

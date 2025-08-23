@@ -54,6 +54,7 @@
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service Fee</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Submitted</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
@@ -101,6 +102,18 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                     {{ $report->submitted_at ? \Carbon\Carbon::parse($report->submitted_at)->format('M d, Y H:i') : 'N/A' }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    @if($report->status === 'received')
+                                        <a href="{{ route('ticketer.cash-report.receipt', $report->id) }}" class="inline-flex items-center px-3 py-1 border border-transparent text-xs font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+                                            </svg>
+                                            Print
+                                        </a>
+                                    @else
+                                        <span class="text-xs text-gray-400">Print available when received</span>
+                                    @endif
                                 </td>
                             </tr>
                             @endforeach
@@ -188,4 +201,130 @@
         @endif
     </div>
 </div>
+
+@endsection
+
+@section('scripts')
+<script>
+function printReceipt(reportId) {
+    // Find the report data
+    const reports = @json($reports);
+    const report = reports.find(r => r.id === reportId);
+    
+    if (!report) {
+        alert('Report not found');
+        return;
+    }
+    
+    // Format dates
+    const reportDate = new Date(report.report_date).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short', 
+        day: 'numeric'
+    });
+    
+    const submittedDate = report.submitted_at ? 
+        new Date(report.submitted_at).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        }) : 'N/A';
+    
+    // Create receipt content for 58mm POS printer
+    const receiptContent = `
+        <div style="text-align: center; margin-bottom: 10px;">
+            <strong>E-TICKET SYSTEM</strong><br>
+            <small>Cash Report Receipt</small>
+        </div>
+        
+        <div style="text-align: center; margin: 10px 0;">
+            <strong style="font-size: 14px;">CONGRATULATIONS!</strong><br>
+            <small>Your cash report has been</small><br>
+            <strong>CONFIRMED</strong>
+        </div>
+        
+        <div style="border-top: 1px dashed #000; margin: 8px 0; padding-top: 8px;">
+            <strong>REPORT DETAILS</strong><br>
+            Report Date: ${reportDate}<br>
+            Status: ${report.status.toUpperCase()}<br>
+            Submitted: ${submittedDate}
+        </div>
+        
+        <div style="border-top: 1px dashed #000; margin: 8px 0; padding-top: 8px;">
+            <strong>FINANCIAL SUMMARY</strong><br>
+            // Total Amount: ${parseFloat(report.total_amount).toFixed(2)} Birr<br>
+            // Tax Amount: ${parseFloat(report.tax).toFixed(2)} Birr<br>
+            Collected Service Fee: ${parseFloat(report.service_fee).toFixed(2)} Birr
+        </div>
+        
+        <div style="border-top: 1px dashed #000; margin: 8px 0; padding-top: 8px;">
+            <strong>TICKETER INFO</strong><br>
+            Name: {{ auth()->user()->name }}<br>
+            ID: {{ auth()->user()->id }}
+        </div>
+        
+        <div style="text-align: center; margin-top: 10px; font-size: 10px;">
+            Thank you for your service!<br>
+            Generated: ${new Date().toLocaleString()}
+        </div>
+        
+        <div style="text-align: center; margin-top: 8px; border-top: 1px dashed #000; padding-top: 8px;">
+            <small>Sevastopol technologies PLC © 2025</small>
+        </div>
+    `;
+    
+    // Create print window
+    const printWindow = window.open('', '_blank', 'width=300,height=600');
+    
+    printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Cash Report Receipt</title>
+            <style>
+                @media print {
+                    @page {
+                        size: 58mm auto;
+                        margin: 2mm;
+                    }
+                    body {
+                        margin: 0;
+                        padding: 0;
+                    }
+                }
+                body {
+                    font-family: 'Courier New', monospace;
+                    font-size: 12px;
+                    line-height: 1.3;
+                    width: 58mm;
+                    margin: 0;
+                    padding: 2mm;
+                    color: #000;
+                }
+                strong {
+                    font-weight: bold;
+                }
+                small {
+                    font-size: 10px;
+                }
+            </style>
+        </head>
+        <body>
+            ${receiptContent}
+        </body>
+        </html>
+    `);
+    
+    printWindow.document.close();
+    
+    // Wait for content to load then print
+    setTimeout(() => {
+        printWindow.focus();
+        printWindow.print();
+        printWindow.close();
+    }, 500);
+}
+</script>
 @endsection
