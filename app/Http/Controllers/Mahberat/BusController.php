@@ -17,8 +17,15 @@ class BusController extends Controller
     public function index()
     {
         $mahberatId = Auth::user()->mahberat_id;
-        // Eager load owner relationship for efficiency
-        $buses = Bus::with('owner')->where('mahberat_id', $mahberatId)->get();
+        
+        // If user doesn't have mahberat_id, show all buses or handle appropriately
+        if ($mahberatId) {
+            $buses = Bus::with('owner')->where('mahberat_id', $mahberatId)->get();
+        } else {
+            // Show all buses if no mahberat_id (for testing/admin purposes)
+            $buses = Bus::with('owner')->get();
+        }
+        
         return view('mahberat.bus.index', compact('buses'));
     }
     
