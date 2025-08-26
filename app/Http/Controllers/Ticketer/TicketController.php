@@ -102,11 +102,25 @@ public function store(Request $request)
         return back()->withErrors(['bus_id' => 'Bus not found.']);
     }
 
-    // Find the related schedule (status queued or on loading)
+    // Find the related schedule (only queued or on loading)
     $schedule = Schedule::where('bus_id', $bus->id)
         ->where('destination_id', $request->destination_id)
         ->whereIn('status', ['queued', 'on loading'])
         ->first();
+
+    // Require a valid schedule to create tickets
+    if (!$schedule) {
+        return back()->withErrors(['bus_id' => 'No available schedule found for this bus and destination. Bus may be full or departed.']);
+    }
+
+    // Double-check current boarding count before creating ticket
+    $currentBoarding = Ticket::where('schedule_id', $schedule->id)
+        ->whereIn('ticket_status', ['created', 'confirmed'])
+        ->count();
+    
+    if ($currentBoarding >= $schedule->capacity) {
+        return back()->withErrors(['bus_id' => 'Bus has reached maximum capacity (' . $schedule->capacity . '/' . $schedule->capacity . '). Cannot create more tickets.']);
+    }
 
     // Add leading 0 to phone number for storage
     $phoneNo = $request->phone_no ? '0' . $request->phone_no : null;
@@ -150,8 +164,7 @@ public function store(Request $request)
 
         if ($boardingCount >= $schedule->capacity) {
             $schedule->status = 'full';
-            // Clear ticketer ownership when schedule is full
-            $schedule->ticketer_id = null;
+            // Keep ticketer ownership when schedule is full
         } elseif ($schedule->status === 'queued') {
             $schedule->status = 'on loading';
         }
@@ -501,8 +514,7 @@ public function cancel($id)
 
             if ($boardingCount >= $schedule->capacity) {
                 $schedule->status = 'full';
-                // Clear ticketer ownership when schedule is full
-                $schedule->ticketer_id = null;
+                // Keep ticketer ownership when schedule is full
             } elseif ($boardingCount === 0) {
                 $schedule->status = 'queued';
                 // Clear ticketer ownership when no active tickets remain

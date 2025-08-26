@@ -112,6 +112,7 @@
                             <tr>
                                 <th class="px-4 py-3 text-left text-sm font-semibold text-blue-800">ID</th>
                                 <th class="px-4 py-3 text-left text-sm font-semibold text-blue-800">Bus Targa</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-blue-800">Driver</th>
                                 <th class="px-4 py-3 text-left text-sm font-semibold text-blue-800">Destination</th>
                                 <th class="px-4 py-3 text-left text-sm font-semibold text-blue-800">Status</th>
                                 <th class="px-4 py-3 text-left text-sm font-semibold text-blue-800">Capacity</th>
@@ -132,6 +133,7 @@
                                 <tr class="hover:bg-blue-50 transition-colors duration-200">
                                     <td class="px-4 py-3 text-sm font-medium text-blue-900">#{{ $schedule->id }}</td>
                                     <td class="px-4 py-3 text-sm font-mono text-gray-900">{{ $schedule->bus->targa ?? '-' }}</td>
+                                    <td class="px-4 py-3 text-sm text-gray-900">{{ $schedule->bus->driver_name ?? '-' }}</td>
                                     <td class="px-4 py-3 text-sm text-gray-900">{{ $schedule->destination->destination_name ?? '-' }}</td>
                                     <td class="px-4 py-3">
                                         @if($schedule->status === 'queued')

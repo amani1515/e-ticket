@@ -188,7 +188,7 @@
                         <select name="destination_id" id="destination_id"
                             class="w-full px-4 py-3 border-2 border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-blue-50 text-lg appearance-none"
                             required>
-                            <option value="">Select Destination</option>
+                            <option value="" disabled selected>Select Destination *</option>
                             @foreach (auth()->user()->destinations as $destination)
                                 <option value="{{ $destination->id }}"
                                     {{ old('destination_id') == $destination->id ? 'selected' : '' }}>
