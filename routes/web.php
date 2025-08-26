@@ -110,12 +110,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     })->name('tickets.scan');
     Route::post('/tickets/scan', [TicketController::class, 'processScan'])->name('tickets.processScan');
 
-// Schedule Reports
-Route::get('/schedule-reports', [\App\Http\Controllers\Admin\ScheduleReportController::class, 'index'])->name('schedule.reports');
-Route::get('/reports/transactions', [TransactionController::class, 'index'])->name('reports.transactions')->middleware('auth');
-Route::get('/total-reports', [\App\Http\Controllers\Admin\TotalReportController::class, 'index'])->name('total.reports');
-Route::post('/total-reports/telegram', [\App\Http\Controllers\Admin\TotalReportController::class, 'exportToTelegram'])->name('total.reports.telegram');
-
 // Cargo Settings
   Route::resource('cargo-settings', \App\Http\Controllers\Admin\CargoSettingsController::class)
         ->only(['index', 'edit', 'update'])
@@ -130,12 +124,6 @@ Route::post('/cargo-settings/departure-fee', [\App\Http\Controllers\Admin\CargoS
 
     Route::resource('destinations', DestinationController::class);
     Route::resource('mahberats', controller: MahberatController::class)->only(['index', 'create', 'store', 'show']);
-
-    // Bus Management
-Route::get('/buses', [BusController::class, 'index'])->name('buses.index');
-Route::get('/buses/{id}', [BusController::class, 'show'])->name('buses.show');
-Route::get('/bus-reports', [BusReportController::class, 'index'])->name('bus.reports');
-Route::get('/buses/banner/{id}', [BusController::class, 'banner'])->name('buses.banner');
     
 // route for sms
 Route::resource('sms-template', SmsTemplateController::class);
@@ -151,8 +139,20 @@ Route::get('/sync/auto-status', [SyncController::class, 'getAutoSyncStatus'])->n
 
 });
 
-
-
+// Reports accessible by both admin and headoffice
+Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+    // Schedule Reports
+    Route::get('/schedule-reports', [\App\Http\Controllers\Admin\ScheduleReportController::class, 'index'])->name('schedule.reports');
+    Route::get('/reports/transactions', [TransactionController::class, 'index'])->name('reports.transactions');
+    Route::get('/total-reports', [\App\Http\Controllers\Admin\TotalReportController::class, 'index'])->name('total.reports');
+    Route::post('/total-reports/telegram', [\App\Http\Controllers\Admin\TotalReportController::class, 'exportToTelegram'])->name('total.reports.telegram');
+    
+    // Bus Management
+    Route::get('/buses', [BusController::class, 'index'])->name('buses.index');
+    Route::get('/buses/{id}', [BusController::class, 'show'])->name('buses.show');
+    Route::get('/bus-reports', [BusReportController::class, 'index'])->name('bus.reports');
+    Route::get('/buses/banner/{id}', [BusController::class, 'banner'])->name('buses.banner');
+});
 
 // --------------------
 // Ticketer Routes
