@@ -126,7 +126,7 @@ class PassengerDataSheet implements FromQuery, WithHeadings, WithMapping, WithSt
             ucfirst($ticket->gender),
             ucfirst(str_replace('_', ' ', $ticket->age_status)),
             $ticket->destination->destination_name ?? 'N/A',
-            $ticket->bus->bus_number ?? 'N/A',
+            $ticket->bus->targa ?? 'N/A',
             $ticket->seat_number ?? 'N/A',
             number_format($ticket->ticket_price ?? 0, 2),
             $ticket->created_at->format('Y-m-d H:i'),
