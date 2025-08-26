@@ -36,6 +36,12 @@ trait Syncable
 
     public function addToSyncQueue(string $action): void
     {
+        // Ensure UUID exists before adding to sync queue
+        if (empty($this->uuid)) {
+            $this->uuid = $this->generateUuid();
+            $this->save();
+        }
+        
         $data = $this->getAttributes();
         
         // For User model, ensure password is included

@@ -13,8 +13,11 @@ class BackgroundSync
     
     public function handle(Request $request, Closure $next)
     {
-        // Only run sync every 60 seconds
-        if (time() - self::$lastSync >= 60) {
+        // Check if sync is enabled
+        $syncEnabled = SyncSettings::get('sync_enabled', true);
+        
+        // Only run sync if enabled and every 60 seconds
+        if ($syncEnabled && time() - self::$lastSync >= 60) {
             $this->runBackgroundSync();
             self::$lastSync = time();
         }

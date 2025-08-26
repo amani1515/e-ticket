@@ -57,6 +57,35 @@
                     onclick="setQuickRange('this_year')">This Year</button>
             </div>
 
+            <!-- Background Sync Settings -->
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-6">
+                <div class="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-4">
+                    <h2 class="text-xl font-bold text-white flex items-center">
+                        <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                        Background Sync Settings
+                    </h2>
+                </div>
+                <div class="p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-700 font-medium">Auto sync status:</p>
+                            <span class="px-3 py-1 rounded-full text-sm font-medium {{ $syncEnabled ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                {{ $syncEnabled ? 'Active' : 'Inactive' }}
+                            </span>
+                        </div>
+                        
+                        <form action="{{ route('admin.sync.toggle') }}" method="POST" class="inline">
+                            @csrf
+                            <button type="submit" class="px-6 py-3 rounded-xl font-medium transition transform hover:scale-105 shadow-lg {{ $syncEnabled ? 'bg-red-500 hover:bg-red-600 text-white' : 'bg-green-500 hover:bg-green-600 text-white' }}">
+                                {{ $syncEnabled ? 'Deactivate' : 'Activate' }} Sync
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
             <!-- Date Filter Form -->
             <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-8">
                 <div class="bg-gradient-to-r from-amber-500 to-yellow-600 px-6 py-4">
