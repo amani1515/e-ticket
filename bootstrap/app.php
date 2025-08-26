@@ -21,9 +21,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'background.sync' => \App\Http\Middleware\BackgroundSync::class,
         ]);
         
-        // Apply security headers and background sync globally
+        // Apply security headers globally
         $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
-        $middleware->append(\App\Http\Middleware\BackgroundSync::class);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

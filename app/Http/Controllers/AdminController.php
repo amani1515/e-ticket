@@ -103,9 +103,6 @@ class AdminController extends Controller
                     return $disabilityCountsCollection[$label] ?? 0;
                 }, $disabilityLabels);
 
-                // Check sync status
-                $syncEnabled = \App\Models\SyncSettings::get('sync_enabled', true);
-
                 // Return the admin dashboard view with all statistics and chart data
                 return view('admin.index', compact(
                     'passengersToday',
@@ -123,8 +120,7 @@ class AdminController extends Controller
                     'ageStatusLabels',
                     'ageStatusCounts',
                     'disabilityLabels',
-                    'disabilityCounts',
-                    'syncEnabled'
+                    'disabilityCounts'
                 ));
             }
 
@@ -166,18 +162,7 @@ class AdminController extends Controller
         return \Excel::download(new \App\Exports\DashboardExport($startDate, $endDate), $fileName);
     }
 
-    public function toggleSync()
-    {
-        if (!auth()->check() || auth()->user()->usertype !== 'admin') {
-            abort(403);
-        }
 
-        $currentStatus = \App\Models\SyncSettings::get('sync_enabled', true);
-        $newStatus = !$currentStatus;
-        \App\Models\SyncSettings::set('sync_enabled', $newStatus);
-
-        return redirect()->back()->with('success', 'Background sync ' . ($newStatus ? 'activated' : 'deactivated'));
-    }
 
     public function exportPDF(Request $request)
     {
