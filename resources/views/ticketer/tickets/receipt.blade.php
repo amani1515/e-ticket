@@ -149,7 +149,7 @@
             <div class="divider"></div>
         </div>
 
-        <p><strong>ሰሌዳ ቁጥር:{{ $ticket->bus->targa ?? $ticket->bus_id }}</strong> </p>
+        <p style="font-size: 14px;"><strong>ሰሌዳ ቁጥር:{{ $ticket->bus->targa ?? $ticket->bus_id }}</strong> </p>
         <pv ><strong >የተጓዥ ስም:</strong> {{ $ticket->passenger_name }}</pv>
         <p><strong>ጾታ:</strong> {{ $genderAmharic[$ticket->gender] ?? ucfirst($ticket->gender) }}</p>
         <p><strong>ፋይዳ ቁጥር:</strong> {{ $ticket->fayda_id }}</p>
@@ -161,16 +161,16 @@
         <p><strong>መነሻ :</strong> {{ $ticket->destination->start_from }}</p>
         <p><strong>መድረሻ :</strong> {{ $ticket->destination->destination_name }}</p>
         <p><strong>የመነሻ ቀን :</strong> {{ \Carbon\Carbon::parse($ticket->departure_datetime)->format('Y-m-d') }}</p>
-        <p><strong>የመሳፈሪያ ሰዓት :</strong> {{ \Carbon\Carbon::parse($ticket->departure_datetime)->format('H:i') }}</p>
+        <p><strong>የመሳፈሪያ ሰዓት :</strong> {{ \Carbon\Carbon::parse($ticket->departure_datetime)->subHours(6)->format('H:i') }}</p>
         <p><strong>የትኬት መለያ ቁጥር :</strong> {{ $ticket->id }}</p>
-        <p><strong>ትኬት ወኪል:</strong> {{ $ticket->creator ? $ticket->creator->name : 'N/A' }}</p>
         <p><strong>የማህበር ስም:</strong> 
             {{ $ticket->bus && $ticket->bus->mahberat ? $ticket->bus->mahberat->name : 'N/A' }}
         </p>
+        <p><strong>ትኬት ወኪል:</strong> {{ $ticket->creator ? $ticket->creator->name : 'N/A' }}</p>
 
         <p><strong>ታሪፍ :</strong> {{ $ticket->destination->tariff }}</p>
         {{-- <p><strong>ታክስ :</strong> {{ $ticket->destination->tax }}</p> --}}
-        <p><strong>አገልግሎት ክፍያ :</strong> {{ $ticket->destination->service_fee }}</p>
+        <p><strong>የአገልግሎት ክፍያ :</strong> {{ $ticket->destination->service_fee }}</p>
 
         {{-- Display cargo information if available --}}
         @if($ticket->cargo)
