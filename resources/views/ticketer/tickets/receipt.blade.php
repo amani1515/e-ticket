@@ -189,7 +189,7 @@
         </p>
 
         <div class="center barcode">
-            <img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($ticket->ticket_code, 'C128', 2, 60) }}" alt="barcode" style="max-width: 100%;" />
+            <img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($ticket->ticket_code, 'C128', 3, 80) }}" alt="barcode" style="max-width: 100%;" />
         </div>
 
         <div class="center divider"></div>

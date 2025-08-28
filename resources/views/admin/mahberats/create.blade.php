@@ -119,9 +119,9 @@
         const selectedPreview = document.getElementById('selected-preview');
         const selectedList = document.getElementById('selected-list');
 
-        // Input validation for mahberat name
+        // Input validation for mahberat name - removed character restrictions
         mahberatInput.addEventListener('input', function () {
-            this.value = this.value.replace(/[^A-Za-zአ-ፐ0-9\s\-.,]/g, '').slice(0, 100);
+            this.value = this.value.slice(0, 100);
         });
 
         // Update selected destinations preview
