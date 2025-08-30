@@ -152,7 +152,14 @@ foreach (['file1', 'file2', 'file3'] as $fileKey) {
     public function edit($id)
     {
         $mahberatId = Auth::user()->mahberat_id;
-        $bus = Bus::where('id', $id)->where('mahberat_id', $mahberatId)->firstOrFail();
+        
+        if ($mahberatId) {
+            $bus = Bus::where('id', $id)->where('mahberat_id', $mahberatId)->firstOrFail();
+        } else {
+            // Allow editing any bus if no mahberat_id (for testing/admin purposes)
+            $bus = Bus::findOrFail($id);
+        }
+        
         return view('mahberat.bus.edit', compact('bus'));
     }
 
@@ -160,23 +167,29 @@ foreach (['file1', 'file2', 'file3'] as $fileKey) {
     public function update(Request $request, $id)
     {
         $mahberatId = Auth::user()->mahberat_id;
-        $bus = Bus::where('id', $id)->where('mahberat_id', $mahberatId)->firstOrFail();
+        
+        if ($mahberatId) {
+            $bus = Bus::where('id', $id)->where('mahberat_id', $mahberatId)->firstOrFail();
+        } else {
+            // Allow updating any bus if no mahberat_id (for testing/admin purposes)
+            $bus = Bus::findOrFail($id);
+        }
 
         $validated = $request->validate([
             'targa'           => 'required|string',
-            'driver_name'     => 'required|string',
-            'driver_phone'    => 'required|string',
-            'redat_name'      => 'required|string',
-            'level'           => 'required|in:level1,level2,level3',
+            'driver_name'     => 'nullable|string',
+            'driver_phone'    => 'nullable|string',
+            'redat_name'      => 'nullable|string',
+            'level'           => 'nullable|in:level1,level2,level3',
             'total_seats'     => 'required|integer',
-            'cargo_capacity'  => 'required|numeric|min:0',
+            'cargo_capacity'  => 'nullable|numeric|min:0',
             'status'          => 'nullable|in:active,maintenance,out_of_service,bolo_expire,accident,gidaj_yeweta,not_paid,punished,driver_shortage',
-            'model_year'      => 'required|integer',
-            'model'           => 'required|string',
-            'bolo_id'         => 'required|string',
-            'motor_number'    => 'required|string',
-            'color'           => 'required|string',
-            'distance'        => 'required|string',
+            'model_year'      => 'nullable|integer',
+            'model'           => 'nullable|string',
+            'bolo_id'         => 'nullable|string',
+            'motor_number'    => 'nullable|string',
+            'color'           => 'nullable|string',
+            'distance'        => 'nullable|string',
             'owner_id'        => 'nullable|exists:users,id',
             'file1'           => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
             'file2'           => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
@@ -207,7 +220,13 @@ foreach (['file1', 'file2', 'file3'] as $fileKey) {
     public function destroy($id)
     {
         $mahberatId = Auth::user()->mahberat_id;
-        $bus = Bus::where('id', $id)->where('mahberat_id', $mahberatId)->firstOrFail();
+        
+        if ($mahberatId) {
+            $bus = Bus::where('id', $id)->where('mahberat_id', $mahberatId)->firstOrFail();
+        } else {
+            // Allow deleting any bus if no mahberat_id (for testing/admin purposes)
+            $bus = Bus::findOrFail($id);
+        }
 
         // Delete associated files if any
         foreach (['file1', 'file2', 'file3'] as $fileKey) {
@@ -217,7 +236,9 @@ foreach (['file1', 'file2', 'file3'] as $fileKey) {
         }
 
         // Trigger sync for delete before deleting
-        $bus->syncDelete();
+        if (method_exists($bus, 'syncDelete')) {
+            $bus->syncDelete();
+        }
         
         $bus->delete();
 

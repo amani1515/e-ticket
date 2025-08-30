@@ -22,7 +22,7 @@ for /f "tokens=2 delims=:" %%i in ('ipconfig ^| findstr /i "IPv4"') do (
 
 REM Test database connection
 echo [INFO] Testing database connection...
-php -r "try { $pdo = new PDO('mysql:host=127.0.0.1;port=3306;dbname=e-ticket', 'root', ''); echo 'Database e-ticket: Connected successfully\n'; } catch(Exception $e) { echo 'Database Error: ' . $e->getMessage() . '\n'; echo 'Please check: 1) MySQL is running 2) Database e-ticket exists 3) Credentials are correct\n'; }"
+php -r "try { $pdo = new PDO('mysql:host=127.0.0.1;port=3306;dbname=e-ticket', 'root', 'seVastopol@eticket2018'); echo 'Database e-ticket: Connected successfully\n'; } catch(Exception $e) { echo 'Database Error: ' . $e->getMessage() . '\n'; echo 'Please check: 1) MySQL is running 2) Database e-ticket exists 3) Credentials are correct\n'; }"
 
 REM Clear cache (skip database-dependent commands)
 php artisan config:clear

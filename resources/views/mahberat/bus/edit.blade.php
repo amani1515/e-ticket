@@ -26,26 +26,26 @@
 
             <div>
                 <label>Driver Name</label>
-                <input type="text" name="driver_name" value="{{ old('driver_name', $bus->driver_name) }}" class="w-full border p-2" required>
+                <input type="text" name="driver_name" value="{{ old('driver_name', $bus->driver_name) }}" class="w-full border p-2">
             </div>
 
             <div>
                 <label>Driver Phone</label>
                 <div class="flex">
                     <span class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 rounded-l-md">+251</span>
-                    <input type="text" name="driver_phone" id="driver_phone" value="{{ substr(old('driver_phone', $bus->driver_phone), 1) }}" class="w-full border p-2 rounded-r-md" maxlength="9" required
+                    <input type="text" name="driver_phone" id="driver_phone" value="{{ substr(old('driver_phone', $bus->driver_phone), 1) }}" class="w-full border p-2 rounded-r-md" maxlength="9"
                         oninput="let value = this.value.replace(/[^0-9]/g, ''); if (value.length > 0 && value[0] !== '9' && value[0] !== '7') { value = value.substring(1); } this.value = value.slice(0, 9);">
                 </div>
             </div>
 
             <div>
                 <label>Redat Name</label>
-                <input type="text" name="redat_name" value="{{ old('redat_name', $bus->redat_name) }}" class="w-full border p-2" required>
+                <input type="text" name="redat_name" value="{{ old('redat_name', $bus->redat_name) }}" class="w-full border p-2">
             </div>
 
             <div>
                 <label>Level</label>
-                <select name="level" class="w-full border p-2" required>
+                <select name="level" class="w-full border p-2">
                     <option value="level1" {{ $bus->level == 'level1' ? 'selected' : '' }}>Level 1</option>
                     <option value="level2" {{ $bus->level == 'level2' ? 'selected' : '' }}>Level 2</option>
                     <option value="level3" {{ $bus->level == 'level3' ? 'selected' : '' }}>Level 3</option>
@@ -59,7 +59,7 @@
 
             <div>
                 <label>Status</label>
-                <select name="status" class="w-full border p-2" required>
+                <select name="status" class="w-full border p-2">
     <option value="active" {{ $bus->status == 'active' ? 'selected' : '' }}>Active</option>
     <option value="maintenance" {{ $bus->status == 'maintenance' ? 'selected' : '' }}>Maintenance</option>
     <option value="out_of_service" {{ $bus->status == 'out_of_service' ? 'selected' : '' }}>Out of Service</option>
@@ -74,37 +74,39 @@
 
             <div>
                 <label>Model Year</label>
-                <input type="text" name="model_year" value="{{ old('model_year', $bus->model_year) }}" class="w-full border p-2" required>
+                <input type="text" name="model_year" value="{{ old('model_year', $bus->model_year) }}" class="w-full border p-2">
             </div>
 
             <div>
                 <label>Model</label>
-                <input type="text" name="model" value="{{ old('model', $bus->model) }}" class="w-full border p-2" required>
+                <input type="text" name="model" value="{{ old('model', $bus->model) }}" class="w-full border p-2">
             </div>
 
             <div>
                 <label>Bolo ID</label>
-                <input type="text" name="bolo_id" value="{{ old('bolo_id', $bus->bolo_id) }}" class="w-full border p-2" required>
+                <input type="text" name="bolo_id" value="{{ old('bolo_id', $bus->bolo_id) }}" class="w-full border p-2">
             </div>
 
             <div>
                 <label>Motor Number</label>
-                <input type="text" name="motor_number" value="{{ old('motor_number', $bus->motor_number) }}" class="w-full border p-2" required>
+                <input type="text" name="motor_number" value="{{ old('motor_number', $bus->motor_number) }}" class="w-full border p-2">
             </div>
 
             <div>
                 <label>Color</label>
-                <input type="text" name="color" value="{{ old('color', $bus->color) }}" class="w-full border p-2" required>
+                <input type="text" name="color" value="{{ old('color', $bus->color) }}" class="w-full border p-2">
+            </div>
+
+            <div>
+                <label>Distance</label>
+                <input type="text" name="distance" value="{{ old('distance', $bus->distance) }}" class="w-full border p-2">
+            </div>
+
+            <div>
+                <label>Cargo Capacity (kg)</label>
+                <input type="number" step="0.01" name="cargo_capacity" value="{{ old('cargo_capacity', $bus->cargo_capacity) }}" class="w-full border p-2">
             </div>
         </div>
-        <div class="flex flex-col gap-3">
-                <label for="distance" class="font-semibold text-gray-700">distance <span class="text-red-500">*</span></label>
-                <select id="sub-level" name="sub-level" required class="input-field">
-                    
-                    <option value="long">Long Distance</option>
-                    <option value="short">Short Distance</option>
-                    </select>
-            </div>
 
         <div class="mt-4">
             <label>Upload File 1</label>
