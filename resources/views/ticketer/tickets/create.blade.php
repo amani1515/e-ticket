@@ -525,6 +525,8 @@ function displayScheduleData(schedules) {
         html += '<div>';
         html += '<h4 class="font-semibold text-lg">' + schedule.destination_name + '</h4>';
         html += '<p class="text-sm text-gray-600">Bus: ' + schedule.bus_targa + ' | Driver: ' + schedule.driver_name + '</p>';
+        html += '<p class="text-sm font-medium text-yellow-500 font-bold">ID: ' + schedule.id + '</p>';
+
         if (schedule.ticketer_name) {
             var ownershipClass = schedule.is_owned_by_me ? 'text-green-600' : 'text-red-600';
             var ownershipText = schedule.is_owned_by_me ? 'You are handling this' : 'Handled by: ' + schedule.ticketer_name;
