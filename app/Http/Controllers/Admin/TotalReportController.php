@@ -116,15 +116,15 @@ public function exportToTelegram(Request $request)
         $dateRange = ' (' . ($from ? 'From: ' . $from : '') . ($from && $to ? ' - ' : '') . ($to ? 'To: ' . $to : '') . ')';
     }
 
-    $message = "🚌 *Sevastopol technologies plc  Report*" . $dateRange . "\n\n";
-    $message .= "📊 *SUMMARY*\n";
+    $message = " ***** Sevastopol technologies ***** \n" . $dateRange . "\n\n";
+    $message .= "📊 *ጠቅላላ ሪፖርት*\n";
     $message .= "━━━━━━━━━━━━━━━━━━━━\n";
-    $message .= "👥 Total Passengers: *{$totalTickets}*\n";
-    $message .= "👨 Male: *{$totalMale}*\n";
-    $message .= "👩 Female: *{$totalFemale}*\n";
+    $message .= "👥 የተጓዥ ብዛት: *{$totalTickets}*\n";
+    $message .= "👨 ወንድ: *{$totalMale}*\n";
+    $message .= "👩 ሴት: *{$totalFemale}*\n";
     $message .= "🛣️ Total KM: *{$totalKm} km*\n\n";
 
-    $message .= "🎯 *DESTINATIONS BREAKDOWN*\n";
+    $message .= "🎯 * ዝርዝር መረጃ *\n";
     $message .= "━━━━━━━━━━━━━━━━━━━━\n";
 
     foreach ($destinations as $destination) {
@@ -133,8 +133,8 @@ public function exportToTelegram(Request $request)
             if ($destination->start_from) {
                 $message .= "   From: {$destination->start_from}\n";
             }
-            $message .= "   👥 Passengers: *{$destination->tickets_count}*\n";
-            $message .= "   👨 Male: {$destination->male_count} | 👩 Female: {$destination->female_count}\n";
+            $message .= "   👥 የተጓዥ ብዛት:: *{$destination->tickets_count}*\n";
+            $message .= "   👨 ወንድ: {$destination->male_count} | 👩 ሴት  : {$destination->female_count}\n";
             $message .= "   🛣️ Distance: {$destination->total_km} km\n";
         }
     }
