@@ -101,9 +101,9 @@ public function cardView()
     {
         $schedule = Schedule::findOrFail($id);
         
-        // Only allow removal of queued schedules
-        if ($schedule->status !== 'queued') {
-            return redirect()->route('mahberat.schedule.index')->with('error', 'Only queued schedules can be removed.');
+        // Prevent removal of departed schedules
+        if ($schedule->status === 'departed') {
+            return redirect()->route('mahberat.schedule.index')->with('error', 'Cannot remove departed schedules.');
         }
 
         // Trigger sync for delete before deleting
@@ -119,9 +119,9 @@ public function cardView()
     {
         $schedule = Schedule::findOrFail($id);
         
-        // Only allow updating queued schedules
-        if ($schedule->status !== 'queued') {
-            return redirect()->route('mahberat.schedule.index')->with('error', 'Only queued schedules can be updated.');
+        // Prevent updating departed schedules
+        if ($schedule->status === 'departed') {
+            return redirect()->route('mahberat.schedule.index')->with('error', 'Cannot update departed schedules.');
         }
 
         $request->validate([
