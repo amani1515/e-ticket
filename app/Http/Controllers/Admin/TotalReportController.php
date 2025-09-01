@@ -83,6 +83,15 @@ public function exportToTelegram(Request $request)
     $totalMale = 0;
     $totalFemale = 0;
     $totalKm = 0;
+    $totalSchedules = 0;
+    $totalBaby = 0;
+    $totalAdult = 0;
+    $totalMiddleAged = 0;
+    $totalSenior = 0;
+    $totalNone = 0;
+    $totalBlind = 0;
+    $totalDeaf = 0;
+    $totalSpeech = 0;
 
     foreach ($destinations as $destination) {
         $destination->male_count = $destination->tickets()
@@ -97,17 +106,77 @@ public function exportToTelegram(Request $request)
             ->when($to, fn($q) => $q->whereDate('created_at', '<=', $to))
             ->count();
 
+        // Age status counts
+        $destination->baby_count = $destination->tickets()
+            ->where('age_status', 'baby')
+            ->when($from, fn($q) => $q->whereDate('created_at', '>=', $from))
+            ->when($to, fn($q) => $q->whereDate('created_at', '<=', $to))
+            ->count();
+
+        $destination->adult_count = $destination->tickets()
+            ->where('age_status', 'adult')
+            ->when($from, fn($q) => $q->whereDate('created_at', '>=', $from))
+            ->when($to, fn($q) => $q->whereDate('created_at', '<=', $to))
+            ->count();
+
+        $destination->middle_aged_count = $destination->tickets()
+            ->where('age_status', 'middle_aged')
+            ->when($from, fn($q) => $q->whereDate('created_at', '>=', $from))
+            ->when($to, fn($q) => $q->whereDate('created_at', '<=', $to))
+            ->count();
+
+        $destination->senior_count = $destination->tickets()
+            ->where('age_status', 'senior')
+            ->when($from, fn($q) => $q->whereDate('created_at', '>=', $from))
+            ->when($to, fn($q) => $q->whereDate('created_at', '<=', $to))
+            ->count();
+
+        // Disability status counts
+        $destination->none_disability = $destination->tickets()
+            ->where('disability_status', 'None')
+            ->when($from, fn($q) => $q->whereDate('created_at', '>=', $from))
+            ->when($to, fn($q) => $q->whereDate('created_at', '<=', $to))
+            ->count();
+
+        $destination->blind_count = $destination->tickets()
+            ->where('disability_status', 'Blind / Visual Impairment')
+            ->when($from, fn($q) => $q->whereDate('created_at', '>=', $from))
+            ->when($to, fn($q) => $q->whereDate('created_at', '<=', $to))
+            ->count();
+
+        $destination->deaf_count = $destination->tickets()
+            ->where('disability_status', 'Deaf / Hard of Hearing')
+            ->when($from, fn($q) => $q->whereDate('created_at', '>=', $from))
+            ->when($to, fn($q) => $q->whereDate('created_at', '<=', $to))
+            ->count();
+
+        $destination->speech_count = $destination->tickets()
+            ->where('disability_status', 'Speech Impairment')
+            ->when($from, fn($q) => $q->whereDate('created_at', '>=', $from))
+            ->when($to, fn($q) => $q->whereDate('created_at', '<=', $to))
+            ->count();
+
         $scheduleCount = $destination->schedules()
             ->when($from, fn($q) => $q->whereDate('scheduled_at', '>=', $from))
             ->when($to, fn($q) => $q->whereDate('scheduled_at', '<=', $to))
             ->count();
 
+        $destination->schedule_count = $scheduleCount;
         $destination->total_km = $scheduleCount * ($destination->distance ?? 0);
 
         $totalTickets += $destination->tickets_count;
         $totalMale += $destination->male_count;
         $totalFemale += $destination->female_count;
         $totalKm += $destination->total_km;
+        $totalSchedules += $scheduleCount;
+        $totalBaby += $destination->baby_count;
+        $totalAdult += $destination->adult_count;
+        $totalMiddleAged += $destination->middle_aged_count;
+        $totalSenior += $destination->senior_count;
+        $totalNone += $destination->none_disability;
+        $totalBlind += $destination->blind_count;
+        $totalDeaf += $destination->deaf_count;
+        $totalSpeech += $destination->speech_count;
     }
 
     // Format message
@@ -116,13 +185,15 @@ public function exportToTelegram(Request $request)
         $dateRange = ' (' . ($from ? 'From: ' . $from : '') . ($from && $to ? ' - ' : '') . ($to ? 'To: ' . $to : '') . ')';
     }
 
-    $message = " ***** Sevastopol technologies ***** \n" . $dateRange . "\n\n";
-    $message .= "📊 *ጠቅላላ ሪፖርት*\n";
-    $message .= "━━━━━━━━━━━━━━━━━━━━\n";
-    $message .= "👥 የተጓዥ ብዛት: *{$totalTickets}*\n";
-    $message .= "👨 ወንድ: *{$totalMale}*\n";
-    $message .= "👩 ሴት: *{$totalFemale}*\n";
-    $message .= "🛣️ Total KM: *{$totalKm} km*\n\n";
+    $message = " **ሴቫስቶፖል ቴክኖሎጅስ አዊ ዞን አዘና መናኸሪያ** \n" . $dateRange . "\n\n";
+    // $message .= "📊 *ጠቅላላ ሪፖርት*\n";
+    // $message .= "━━━━━━━━━━━━━━━━━━━━\n";
+    // $message .= "👥 የተጓዥ ብዛት: *{$totalTickets}*\n";
+    // $message .= "👨 ወንድ: *{$totalMale}* | 👩 ሴት: *{$totalFemale}*\n";
+    // $message .= "👶 ህጻን: *{$totalBaby}* | 👦 ወጣት: *{$totalAdult}*\n";
+    // $message .= "👨‍💼 ጎልማሳ: *{$totalMiddleAged}* | 👴 ሽማግሌ: *{$totalSenior}*\n";
+    // $message .= "🚌 ጠቅላላ ስኬጁል: *{$totalSchedules}*\n";
+    // $message .= "🛣️ Total KM: *{$totalKm} km*\n\n";
 
     $message .= "🎯 * ዝርዝር መረጃ *\n";
     $message .= "━━━━━━━━━━━━━━━━━━━━\n";
@@ -131,17 +202,31 @@ public function exportToTelegram(Request $request)
         if ($destination->tickets_count > 0) {
             $message .= "\n📍 *{$destination->destination_name}*\n";
             if ($destination->start_from) {
-                $message .= "   From: {$destination->start_from}\n";
+                $message .= "   መነሻ: {$destination->start_from}\n";
             }
-            $message .= "   👥 የተጓዥ ብዛት:: *{$destination->tickets_count}*\n";
-            $message .= "   👨 ወንድ: {$destination->male_count} | 👩 ሴት  : {$destination->female_count}\n";
+            $message .= "   👥 የተጓዥ ብዛት: *{$destination->tickets_count}*\n";
+            $message .= "   👨 ወንድ: **{$destination->male_count}** | 👩 ሴት: **{$destination->female_count}**\n";
+            $message .= "   👶 ህጻን: **{$destination->baby_count}** | 👦 ወጣት: {$destination->adult_count} \n";
+            $message .= "   👨‍💼 ጎልማሳ: {$destination->middle_aged_count} | 👴 ሽማግሌ: {$destination->senior_count}\n\n";
+            $message .= "   ♿ የአካል ጉዳት: የሌለባቸው = *{$destination->none_disability}* | ማየት የተሳናቸው= *{$destination->blind_count}* | መስማት የተሳናቸው= *{$destination->deaf_count}* | መናገር የተሳናቸው= *{$destination->speech_count}*\n\n";
+            $message .= "   🚌 የመርሀ-ግብር ብዛት: {$destination->schedule_count}\n";
             $message .= "   🛣️ Distance: {$destination->total_km} km\n";
         }
     }
 
-    $message .= "\n━━━━━━━━━━━━━━━━━━━━\n";
+    $message .= "\n═══════════════════════════════════\n";
+    $message .= "📊 **ጠቅላላ ሪፖርት SUMMARY**\n";
+    $message .= "═══════════════════════════════════\n";
+    $message .= "👥 **ጠቅላላ የተጓዥ ብዛት: {$totalTickets}**\n";
+    $message .= "👨 ወንድ: **{$totalMale}** | 👩 ሴት: **{$totalFemale}**\n";
+    $message .= "👶 ህጻን: **{$totalBaby}** | 👦 ወጣት: **{$totalAdult}**\n";
+    $message .= "👨 ጎልማሳ: **{$totalMiddleAged}** | 👴 ሽማግሌ: **{$totalSenior}**\n \n";
+    $message .= "♿ የአካል ጉዳት: የሌለባቸው =  **{$totalNone}** | ማየት  የተሳናቸው= **{$totalBlind}** | መስማት  የተሳናቸው= **{$totalDeaf}** | መናገር  የተሳናቸው= **{$totalSpeech}**\n \n";
+    $message .= "🚌 **ጠቅላላ የመርሀ-ግብር ብዛት: {$totalSchedules}**\n";
+    $message .= "🛣️ **Total KM : {$totalKm} km**\n\n";
+    $message .= "═══════════════════════════════════\n";
     $message .= "📅 Generated: " . now()->format('Y-m-d H:i:s') . "\n";
-    $message .= "🏢 E-Ticket System";
+    $message .= "🏢 **E-TICKET SYSTEM**";
 
     try {
         $response = Http::post("https://api.telegram.org/bot7730747858:AAEuouIJzrPKcd9YyWJ7jEWFL1AVFw3ouSc/sendMessage", [
