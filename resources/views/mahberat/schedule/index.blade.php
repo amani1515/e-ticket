@@ -74,7 +74,7 @@
                         <td class="px-6 py-4">
                             @if($schedule->status !== 'departed')
                                 <div class="flex space-x-2">
-                                    <button onclick="openEditModal({{ $schedule->id }}, '{{ $schedule->bus->targa }}', '{{ $schedule->bus->unique_bus_id }}')" class="text-blue-600 hover:text-blue-800 px-2 py-1 rounded transition" title="Edit">
+                                    <button onclick="openEditModal({{ $schedule->id }}, '{{ $schedule->bus->targa }}', '{{ $schedule->bus->unique_bus_id }}', {{ $schedule->destination_id }})" class="text-blue-600 hover:text-blue-800 px-2 py-1 rounded transition" title="Edit">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                         </svg>
@@ -114,7 +114,7 @@
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                 </svg>
-                Edit Schedule Bus
+                Edit Schedule
             </h3>
         </div>
         <form id="editForm" class="p-6 space-y-4">
@@ -130,9 +130,20 @@
                 </div>
             </div>
             
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Destination</label>
+                <select id="edit_destination" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    <option value="">Select destination...</option>
+                    @foreach(\App\Models\Destination::all() as $destination)
+                        <option value="{{ $destination->id }}">{{ $destination->destination_name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            
             <!-- Hidden fields -->
             <input type="hidden" id="edit_schedule_id" value="">
             <input type="hidden" id="edit_unique_bus_id" value="">
+            <input type="hidden" id="edit_current_destination" value="">
             
             <div class="flex space-x-3 pt-4">
                 <button type="button" onclick="closeEditModal()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded transition-colors">
@@ -148,11 +159,13 @@
 
 <script>
 // Modal functions
-function openEditModal(scheduleId, currentTarga, currentUniqueBusId) {
+function openEditModal(scheduleId, currentTarga, currentUniqueBusId, currentDestinationId) {
     document.getElementById('editModal').classList.remove('hidden');
     document.getElementById('edit_schedule_id').value = scheduleId;
     document.getElementById('edit_targa').value = currentTarga;
     document.getElementById('edit_unique_bus_id').value = currentUniqueBusId;
+    document.getElementById('edit_destination').value = currentDestinationId;
+    document.getElementById('edit_current_destination').value = currentDestinationId;
 }
 
 function closeEditModal() {
@@ -219,14 +232,21 @@ document.getElementById('editForm').addEventListener('submit', function(e) {
     
     const scheduleId = document.getElementById('edit_schedule_id').value;
     const uniqueBusId = document.getElementById('edit_unique_bus_id').value;
+    const destinationId = document.getElementById('edit_destination').value;
     
     if (!uniqueBusId) {
         alert('Please select a valid bus from suggestions');
         return;
     }
     
+    if (!destinationId) {
+        alert('Please select a destination');
+        return;
+    }
+    
     const formData = new FormData();
     formData.append('unique_bus_id', uniqueBusId);
+    formData.append('destination_id', destinationId);
     formData.append('_token', '{{ csrf_token() }}');
     formData.append('_method', 'PUT');
     

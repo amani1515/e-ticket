@@ -125,7 +125,8 @@ public function cardView()
         }
 
         $request->validate([
-            'unique_bus_id' => 'required|string'
+            'unique_bus_id' => 'required|string',
+            'destination_id' => 'required|exists:destinations,id'
         ]);
 
         // Find the new bus
@@ -146,6 +147,7 @@ public function cardView()
 
         // Update the schedule
         $schedule->bus_id = $bus->id;
+        $schedule->destination_id = $request->destination_id;
         $schedule->mahberat_id = $bus->mahberat_id;
         $schedule->capacity = $bus->total_seats;
         $schedule->cargo_capacity = $bus->cargo_capacity ?? 0;
@@ -154,6 +156,6 @@ public function cardView()
         // Trigger sync for update
         $schedule->syncUpdate();
 
-        return redirect()->route('mahberat.schedule.index')->with('success', 'Schedule bus updated successfully.');
+        return redirect()->route('mahberat.schedule.index')->with('success', 'Schedule updated successfully.');
     }
 }
