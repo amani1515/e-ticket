@@ -190,7 +190,7 @@ public function exportToTelegram(Request $request)
     // $message .= "━━━━━━━━━━━━━━━━━━━━\n";
     // $message .= "👥 የተጓዥ ብዛት: *{$totalTickets}*\n";
     // $message .= "👨 ወንድ: *{$totalMale}* | 👩 ሴት: *{$totalFemale}*\n";
-    // $message .= "👶 ህጻን: *{$totalBaby}* | 👦 ወጣት: *{$totalAdult}*\n";
+    // $message .= "👶 ታዳጊ: *{$totalBaby}* | 👦 ወጣት: *{$totalAdult}*\n";
     // $message .= "👨‍💼 ጎልማሳ: *{$totalMiddleAged}* | 👴 ሽማግሌ: *{$totalSenior}*\n";
     // $message .= "🚌 ጠቅላላ ስኬጁል: *{$totalSchedules}*\n";
     // $message .= "🛣️ Total KM: *{$totalKm} km*\n\n";
@@ -206,10 +206,10 @@ public function exportToTelegram(Request $request)
             }
             $message .= "   👥 የተጓዥ ብዛት: *{$destination->tickets_count}*\n";
             $message .= "   👨 ወንድ: **{$destination->male_count}** | 👩 ሴት: **{$destination->female_count}**\n";
-            $message .= "   👶 ህጻን: **{$destination->baby_count}** | 👦 ወጣት: {$destination->adult_count} \n";
+            $message .= "   👶 ታዳጊ: **{$destination->baby_count}** | 👦 ወጣት: {$destination->adult_count} \n";
             $message .= "   👨‍💼 ጎልማሳ: {$destination->middle_aged_count} | 👴 ሽማግሌ: {$destination->senior_count}\n\n";
             $message .= "   ♿ የአካል ጉዳት: የሌለባቸው = *{$destination->none_disability}* | ማየት የተሳናቸው= *{$destination->blind_count}* | መስማት የተሳናቸው= *{$destination->deaf_count}* | መናገር የተሳናቸው= *{$destination->speech_count}*\n\n";
-            $message .= "   🚌 የመርሀ-ግብር ብዛት: {$destination->schedule_count}\n";
+            $message .= "   🚌 የመርሀ-ግብር ብዛት: {$destination->schedule_count} - መለስተኛ\n";
             $message .= "   🛣️ Distance: {$destination->total_km} km\n";
         }
     }
@@ -219,10 +219,10 @@ public function exportToTelegram(Request $request)
     $message .= "═══════════════════════════════════\n";
     $message .= "👥 **ጠቅላላ የተጓዥ ብዛት: {$totalTickets}**\n";
     $message .= "👨 ወንድ: **{$totalMale}** | 👩 ሴት: **{$totalFemale}**\n";
-    $message .= "👶 ህጻን: **{$totalBaby}** | 👦 ወጣት: **{$totalAdult}**\n";
+    $message .= "👶 ታዳጊ: **{$totalBaby}** | 👦 ወጣት: **{$totalAdult}**\n";
     $message .= "👨 ጎልማሳ: **{$totalMiddleAged}** | 👴 ሽማግሌ: **{$totalSenior}**\n \n";
     $message .= "♿ የአካል ጉዳት: የሌለባቸው =  **{$totalNone}** | ማየት  የተሳናቸው= **{$totalBlind}** | መስማት  የተሳናቸው= **{$totalDeaf}** | መናገር  የተሳናቸው= **{$totalSpeech}**\n \n";
-    $message .= "🚌 **ጠቅላላ የመርሀ-ግብር ብዛት: {$totalSchedules}**\n";
+    $message .= "🚌 **ጠቅላላ የመርሀ-ግብር ብዛት: {$totalSchedules} - መለስተኛ **\n";
     $message .= "🛣️ **Total KM : {$totalKm} km**\n\n";
     $message .= "═══════════════════════════════════\n";
     $message .= "📅 Generated: " . now()->format('Y-m-d H:i:s') . "\n";
