@@ -158,4 +158,24 @@ public function cardView()
 
         return redirect()->route('mahberat.schedule.index')->with('success', 'Schedule updated successfully.');
     }
+
+    // Mark schedule as departed
+    public function markDeparted($id)
+    {
+        $schedule = Schedule::findOrFail($id);
+        
+        // Prevent marking already departed schedules
+        if ($schedule->status === 'departed') {
+            return redirect()->route('mahberat.schedule.index')->with('error', 'Schedule is already marked as departed.');
+        }
+
+        // Update status to departed
+        $schedule->status = 'departed';
+        $schedule->save();
+        
+        // Trigger sync for update
+        $schedule->syncUpdate();
+
+        return redirect()->route('mahberat.schedule.index')->with('success', 'Schedule marked as departed successfully.');
+    }
 }

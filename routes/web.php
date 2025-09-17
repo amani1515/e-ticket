@@ -216,6 +216,8 @@ Route::middleware(['auth', 'role:mahberat'])->prefix('mahberat')->name('mahberat
         ->name('schedule.destroy');
     Route::put('/schedule/{id}', [\App\Http\Controllers\Mahberat\ScheduleController::class, 'update'])
         ->name('schedule.update');
+    Route::patch('/schedule/{id}/mark-departed', [\App\Http\Controllers\Mahberat\ScheduleController::class, 'markDeparted'])
+        ->name('schedule.mark-departed');
         Route::get('/bus/check-targa', [\App\Http\Controllers\Mahberat\BusController::class, 'checkTarga']);
 });
 
