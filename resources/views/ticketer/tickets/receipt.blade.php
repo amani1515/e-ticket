@@ -140,6 +140,35 @@
         'male' => 'ወንድ',
         'female' => 'ሴት',
     ];
+    
+    function convertToEthiopian($date) {
+        $carbonDate = \Carbon\Carbon::parse($date);
+        $year = $carbonDate->year;
+        $month = $carbonDate->month;
+        $day = $carbonDate->day;
+        
+        $ethiopianYear = $year - 7;
+        $newYearDay = ($year % 4 == 0) ? 12 : 11;
+        
+        if ($month < 9 || ($month == 9 && $day < $newYearDay)) {
+            $ethiopianYear--;
+        }
+        
+        $dayOfYear = $carbonDate->dayOfYear;
+        $newYearDayOfYear = mktime(0, 0, 0, 9, $newYearDay, $year);
+        $newYearDayOfYear = date('z', $newYearDayOfYear) + 1;
+        
+        if ($dayOfYear >= $newYearDayOfYear) {
+            $ethiopianDayOfYear = $dayOfYear - $newYearDayOfYear + 1;
+        } else {
+            $ethiopianDayOfYear = $dayOfYear + 365 - $newYearDayOfYear + 1;
+        }
+        
+        $ethiopianMonth = intval(($ethiopianDayOfYear - 1) / 30) + 1;
+        $ethiopianDay = (($ethiopianDayOfYear - 1) % 30) + 1;
+        
+        return "{$ethiopianDay}/{$ethiopianMonth}/{$ethiopianYear}";
+    }
 @endphp
 
         <div class="center">
@@ -160,7 +189,7 @@
 
         <p><strong>መነሻ :</strong> {{ $ticket->destination->start_from }}</p>
         <p><strong>መድረሻ :</strong> {{ $ticket->destination->destination_name }}</p>
-        <p><strong>የመነሻ ቀን :</strong> {{ \Carbon\Carbon::parse($ticket->departure_datetime)->format('Y-m-d') }}</p>
+        <p><strong>የመነሻ ቀን :</strong> {{ convertToEthiopian($ticket->departure_datetime) }}</p>
         <p><strong>የመሳፈሪያ ሰዓት :</strong> {{ \Carbon\Carbon::parse($ticket->departure_datetime)->subHours(6)->format('H:i') }}</p>
         <p><strong>የትኬት መለያ ቁጥር :</strong> {{ $ticket->id }}</p>
         <p><strong>የማህበር ስም:</strong> 
