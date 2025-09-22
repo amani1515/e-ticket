@@ -182,10 +182,16 @@ public function exportToTelegram(Request $request)
     // Format message
     $dateRange = '';
     if ($from || $to) {
-        $dateRange = ' (' . ($from ? 'From: ' . $from : '') . ($from && $to ? ' - ' : '') . ($to ? 'To: ' . $to : '') . ')';
+        // Check if it's today's filter
+        $today = now()->format('Y-m-d');
+        if ($from === $today && $to === $today) {
+            $dateRange = ' ቀን : ' . $this->convertToEthiopian(now()) ;
+        } else {
+            $dateRange = ' (' . ($from ? 'From: ' . $from : '') . ($from && $to ? ' - ' : '') . ($to ? 'To: ' . $to : '') . ')';
+        }
     }
 
-    $message = " **ሴቫስቶፖል ቴክኖሎጅስ አዊ ዞን አዘና መናኸሪያ** \n" . $dateRange . "\n\n";
+    $message = " **ሴቫስቶፖል ቴክኖሎጅስ አዊ ዞን አዘና መናኸሪያ** \n\n" . $dateRange . "\n\n";
     // $message .= "📊 *ጠቅላላ ሪፖርት*\n";
     // $message .= "━━━━━━━━━━━━━━━━━━━━\n";
     // $message .= "👥 የተጓዥ ብዛት: *{$totalTickets}*\n";
@@ -243,5 +249,39 @@ public function exportToTelegram(Request $request)
     } catch (\Exception $e) {
         return response()->json(['error' => 'Error: ' . $e->getMessage()], 500);
     }
+}
+
+private function convertToEthiopian($date)
+{
+    $year = $date->year;
+    $month = $date->month;
+    $day = $date->day;
+    
+    // Ethiopian calendar is about 7-8 years behind
+    $ethiopianYear = $year - 7;
+    
+    // Ethiopian New Year starts on Sept 11 (or 12 in leap years)
+    $newYearDay = ($year % 4 == 0) ? 12 : 11;
+    
+    if ($month < 9 || ($month == 9 && $day < $newYearDay)) {
+        $ethiopianYear--;
+    }
+    
+    // Calculate Ethiopian day of year
+    $dayOfYear = $date->dayOfYear;
+    $newYearDayOfYear = mktime(0, 0, 0, 9, $newYearDay, $year);
+    $newYearDayOfYear = date('z', $newYearDayOfYear) + 1;
+    
+    if ($dayOfYear >= $newYearDayOfYear) {
+        $ethiopianDayOfYear = $dayOfYear - $newYearDayOfYear + 1;
+    } else {
+        $ethiopianDayOfYear = $dayOfYear + 365 - $newYearDayOfYear + 1;
+    }
+    
+    // Convert to Ethiopian month/day
+    $ethiopianMonth = intval(($ethiopianDayOfYear - 1) / 30) + 1;
+    $ethiopianDay = (($ethiopianDayOfYear - 1) % 30) + 1;
+    
+    return "{$ethiopianDay}/{$ethiopianMonth}/{$ethiopianYear}";
 }
 }
