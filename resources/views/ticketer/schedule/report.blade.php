@@ -201,12 +201,9 @@
                                     </td>
                                     <td class="px-4 py-3 text-sm text-gray-700">{{ date('M d, H:i', strtotime($schedule->scheduled_at)) }}</td>
                                     <td class="px-4 py-3 text-sm font-semibold text-green-700">
-                                        {{ number_format(($schedule->destination->tariff ?? 0) *
-                                            \App\Models\Ticket::where('bus_id', $schedule->bus_id)
-                                                ->where('destination_id', $schedule->destination_id)
-                                                ->where('schedule_id', $schedule->id)
+                                        {{ number_format(\App\Models\Ticket::where('schedule_id', $schedule->id)
                                                 ->whereIn('ticket_status', ['created', 'confirmed'])
-                                                ->count(), 2) }}
+                                                ->sum('tax'), 2) }}
                                     </td>
                                     <td class="px-4 py-3">
                                         @if($schedule->status === 'full')

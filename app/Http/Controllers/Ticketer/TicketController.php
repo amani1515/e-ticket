@@ -136,7 +136,7 @@ public function store(Request $request)
         'departure_datetime' => $request->departure_datetime,
         'ticket_code' => 'SE' . now()->format('Ymd') . strtoupper(uniqid()),
         'creator_user_id' => auth()->id(),
-        'tax' => $destination->tax,
+        'tax' => $destination->tariff,
         'service_fee' => $destination->service_fee,
         'ticket_status' => 'created',
         'disability_status' => $request->disability_status,
