@@ -20,6 +20,20 @@
         box-shadow: none;
         margin: 0;
         line-height: 1.1em;
+        position: relative;
+    }
+    
+    .watermark {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(-45deg);
+        font-size: 32px;
+        font-weight: bold;
+        color: rgba(255, 0, 0, 0.3);
+        z-index: 1;
+        pointer-events: none;
+        white-space: nowrap;
     }
 
     .center {
@@ -76,6 +90,20 @@
             height: auto !important;
             font-size: 12px;
             line-height: 1.0em;
+            position: relative;
+        }
+        
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 28px;
+            font-weight: bold;
+            color: rgba(255, 0, 0, 0.4);
+            z-index: 1;
+            pointer-events: none;
+            white-space: nowrap;
         }
 
         .barcode img {
@@ -171,12 +199,13 @@
     }
 @endphp
 
+        @if($ticket->print_count > 1)
+            <div class="watermark">*** REPRINTED (COPY) ***</div>
+        @endif
+        
         <div class="center">
             <img src="{{ asset('logo.png') }}" alt="SEBUS Logo" class="logo">
             <h3>E-TICKET</h3>
-            @if($ticket->print_count > 1)
-                <p style="font-weight: bold; color: red; font-size: 12px;">*** REPRINTED (COPY) ***</p>
-            @endif
             <p style="font-size: 10px; margin: 2px 0;"><strong>{{ $ticket->destination->start_from }}</strong> → <strong>{{ $ticket->destination->destination_name }}</strong></p>
             <div class="divider"></div>
         </div>
