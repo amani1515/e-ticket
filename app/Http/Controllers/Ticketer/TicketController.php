@@ -82,31 +82,25 @@ public function store(Request $request)
         }
     }
 
-    // Find the first queued or on loading schedule for this destination
-    $activeSchedule = Schedule::where('destination_id', $request->destination_id)
-        ->whereIn('status', ['queued', 'on loading'])
-        ->orderBy('scheduled_at')
-        ->first();
-    
-    // If there's an active schedule with a ticketer assigned, only that ticketer can create tickets
-    if ($activeSchedule && $activeSchedule->ticketer_id && $activeSchedule->ticketer_id !== auth()->id()) {
-        $ticketerName = User::find($activeSchedule->ticketer_id)->name ?? 'Another ticketer';
-        return back()->withErrors(['destination_id' => $ticketerName . ' is already creating tickets for this destination. Please wait until they finish.']);
-    }
-
-    $destination = Destination::findOrFail($request->destination_id);
-
-    // Find the bus by targa
+    // Find the bus by targa first
     $bus = Bus::where('targa', $request->bus_id)->first();
     if (!$bus) {
         return back()->withErrors(['bus_id' => 'Bus not found.']);
     }
 
-    // Find the related schedule (only queued or on loading)
+    // Find the specific schedule for this bus and destination
     $schedule = Schedule::where('bus_id', $bus->id)
         ->where('destination_id', $request->destination_id)
         ->whereIn('status', ['queued', 'on loading'])
         ->first();
+
+    // Check if this specific schedule is owned by another ticketer
+    if ($schedule && $schedule->ticketer_id && $schedule->ticketer_id !== auth()->id()) {
+        $ticketerName = User::find($schedule->ticketer_id)->name ?? 'Another ticketer';
+        return back()->withErrors(['bus_id' => $ticketerName . ' is already creating tickets for this bus. Please select a different bus.']);
+    }
+
+    $destination = Destination::findOrFail($request->destination_id);
 
     // Require a valid schedule to create tickets
     if (!$schedule) {
@@ -416,14 +410,23 @@ public function getFirstQueuedBus($destinationId)
 
         public function firstQueuedBus($destinationId)
         {
-            $bus = \App\Models\Schedule::where('destination_id', $destinationId)
+            $currentUserId = auth()->id();
+            
+            // Find the first available schedule that is either:
+            // 1. Not assigned to any ticketer (ticketer_id is null)
+            // 2. Already assigned to the current ticketer
+            $schedule = \App\Models\Schedule::where('destination_id', $destinationId)
                 ->whereIn('status', ['queued', 'on loading'])
+                ->where(function($query) use ($currentUserId) {
+                    $query->whereNull('ticketer_id')
+                          ->orWhere('ticketer_id', $currentUserId);
+                })
                 ->orderBy('scheduled_at')
                 ->with('bus')
                 ->first();
 
             return response()->json([
-                'bus_id' => $bus?->bus?->targa ?? '',
+                'bus_id' => $schedule?->bus?->targa ?? '',
             ]);
         }
 
