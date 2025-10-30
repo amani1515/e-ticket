@@ -27,6 +27,9 @@
     <div class="center">
         <img src="{{ public_path('logo.png') }}" alt="SEBUS Logo" class="logo">
         <h3>E-TICKET</h3>
+        @if($ticket->print_count > 1)
+            <p style="font-weight: bold; color: red;">*** REPRINTED (COPY) ***</p>
+        @endif
         <div class="divider"></div>
     </div>
 

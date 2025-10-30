@@ -54,8 +54,12 @@ class TicketController extends Controller
     // Only get destinations assigned to this user
     $destinations = $user->destinations;
 
-
-    return view('ticketer.tickets.create', compact('user', 'destinations'));
+    // Prevent caching to ensure fresh page on browser back
+    return response()
+        ->view('ticketer.tickets.create', compact('user', 'destinations'))
+        ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
+        ->header('Pragma', 'no-cache')
+        ->header('Expires', '0');
 }
 
     // Store the ticket data and generate a ticket code
@@ -188,6 +192,15 @@ public function checkFaydaId(Request $request)
    public function receipt($id)
 {
     $ticket = Ticket::with(['destination', 'cargo', 'bus.mahberat'])->findOrFail($id);
+    
+    // Track print count when receipt page is accessed
+    $ticket->increment('print_count');
+    if ($ticket->print_count == 1) {
+        $ticket->first_printed_at = now();
+    }
+    $ticket->last_printed_at = now();
+    $ticket->save();
+    
     return view('ticketer.tickets.receipt', compact('ticket'));
 }
 
@@ -543,6 +556,14 @@ public function receiptPdf($id)
 {
     $ticket = Ticket::with(['destination', 'cargo', 'bus.mahberat', 'creator'])->findOrFail($id);
     
+    // Track print count
+    $ticket->increment('print_count');
+    if ($ticket->print_count == 1) {
+        $ticket->first_printed_at = now();
+    }
+    $ticket->last_printed_at = now();
+    $ticket->save();
+    
     $pdf = Pdf::loadView('ticketer.tickets.receipt-pdf', compact('ticket'))
         ->setPaper([0, 0, 226.77, 566.93], 'portrait') // 58mm x 200mm
         ->setOptions([
@@ -667,6 +688,14 @@ public function receiptText($id)
 {
     $ticket = Ticket::with(['destination', 'cargo', 'bus.mahberat', 'creator'])->findOrFail($id);
     
+    // Track print count
+    $ticket->increment('print_count');
+    if ($ticket->print_count == 1) {
+        $ticket->first_printed_at = now();
+    }
+    $ticket->last_printed_at = now();
+    $ticket->save();
+    
     $ageStatusAmharic = [
         'baby' => 'ህጻን',
         'adult' => 'ወጣት', 
@@ -682,6 +711,9 @@ public function receiptText($id)
     ];
     
     $content = "E-TICKET\n";
+    if ($ticket->print_count > 1) {
+        $content .= "*** REPRINTED (COPY) ***\n";
+    }
     $content .= "--------------------------------\n";
     $content .= "ሰሌዳ ቁጥር: " . ($ticket->bus->targa ?? $ticket->bus_id) . "\n";
     $content .= "የተጓዥ ስም: " . $ticket->passenger_name . "\n";

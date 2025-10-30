@@ -174,6 +174,9 @@
         <div class="center">
             <img src="{{ asset('logo.png') }}" alt="SEBUS Logo" class="logo">
             <h3>E-TICKET</h3>
+            @if($ticket->print_count > 1)
+                <p style="font-weight: bold; color: red; font-size: 12px;">*** REPRINTED (COPY) ***</p>
+            @endif
             <p style="font-size: 10px; margin: 2px 0;"><strong>{{ $ticket->destination->start_from }}</strong> → <strong>{{ $ticket->destination->destination_name }}</strong></p>
             <div class="divider"></div>
         </div>
@@ -238,15 +241,29 @@
     <!-- Print Button -->
     <div class="print-options" style="text-align: center; margin: 20px 0; background: #28a745; padding: 25px; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
         <button onclick="printReceipt()" 
-           style="background: #fff; color: #28a745; border: none; padding: 20px 40px; border-radius: 12px; font-size: 18px; font-weight: bold; cursor: pointer; box-shadow: 0 3px 6px rgba(0,0,0,0.3); transition: all 0.3s ease;">
+           style="background: #fff; color: #28a745; border: none; padding: 20px 40px; border-radius: 12px; font-size: 18px; font-weight: bold; cursor: pointer; box-shadow: 0 3px 6px rgba(0,0,0,0.3); transition: all 0.3s ease; margin-right: 10px;">
             🖨️ ህትመት / PRINT
         </button>
-        <p style="margin: 15px 0 0 0; color: #fff; font-size: 16px; font-weight: bold;">Click to Print Receipt</p>
+        <button onclick="goBackToCreate()" 
+           style="background: #007bff; color: #fff; border: none; padding: 20px 40px; border-radius: 12px; font-size: 18px; font-weight: bold; cursor: pointer; box-shadow: 0 3px 6px rgba(0,0,0,0.3); transition: all 0.3s ease;">
+            ← Create New Ticket
+        </button>
+        <p style="margin: 15px 0 0 0; color: #fff; font-size: 16px; font-weight: bold;">Print Receipt or Create New Ticket</p>
     </div>
 
     <script>
     function printReceipt() {
         window.print();
+        
+        // Refresh page after print dialog closes to show REPRINTED text
+        setTimeout(function() {
+            window.location.reload();
+        }, 1000);
+    }
+    
+    function goBackToCreate() {
+        // Force refresh of create page by adding timestamp
+        window.location.href = '{{ route("ticketer.tickets.create") }}?refresh=' + Date.now();
     }
     </script>
 

@@ -599,6 +599,13 @@ function fetchBusData(destinationId) {
     xhr.send();
 }
 
+// Force refresh on browser back navigation
+window.addEventListener('pageshow', function(event) {
+    if (event.persisted) {
+        window.location.reload();
+    }
+});
+
 // Initialize when page loads
 window.onload = function() {
     var destinationSelect = document.getElementById('destination_id');
