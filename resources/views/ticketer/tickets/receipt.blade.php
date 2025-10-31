@@ -284,7 +284,7 @@
     function printReceipt() {
         window.print();
         
-        // Refresh page after print dialog closes to show REPRINTED text
+        // Refresh page after print dialog closes to show REPRINTED teext
         setTimeout(function() {
             window.location.reload();
         }, 1000);
