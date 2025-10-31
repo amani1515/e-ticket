@@ -296,5 +296,16 @@
     }
     </script>
 
+    <!-- Large Back Icon - Bottom Right -->
+    <div class="print-options" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000;">
+        <button onclick="goBackToCreate()" 
+           style="background: #007bff; color: #fff; border: none; padding: 80px; border-radius: 50%; font-size: 128px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,123,255,0.4); transition: all 0.3s ease; width: 320px; height: 320px; display: flex; align-items: center; justify-content: center;"
+           onmouseover="this.style.transform='scale(1.1)'; this.style.boxShadow='0 6px 16px rgba(0,123,255,0.6)'"
+           onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 4px 12px rgba(0,123,255,0.4)'"
+           title="Go back to create ticket">
+            ←
+        </button>
+    </div>
+
 </body>
 </html>
