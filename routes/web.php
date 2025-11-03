@@ -141,6 +141,8 @@ Route::get('/sync/auto-status', [SyncController::class, 'getAutoSyncStatus'])->n
 
 // Reports accessible by both admin and headoffice
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+    // Allow admin to access ticket receipts
+    Route::get('/tickets/{id}/receipt', [TicketController::class, 'receipt'])->name('tickets.receipt');
     // Schedule Reports
     Route::get('/schedule-reports', [\App\Http\Controllers\Admin\ScheduleReportController::class, 'index'])->name('schedule.reports');
     Route::get('/reports/transactions', [TransactionController::class, 'index'])->name('reports.transactions');

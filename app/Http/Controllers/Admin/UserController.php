@@ -214,8 +214,10 @@ public function unblock(User $user)
             $usertype = Auth::user()->usertype;
             if($usertype == 'admin')
             {
-                $user = User::findOrFail($id);
-                return view('admin.users.edit', compact('user'));
+                $user = User::with('destinations')->findOrFail($id);
+                $destinations = Destination::all();
+                $mahberats = Mahberat::all();
+                return view('admin.users.edit', compact('user', 'destinations', 'mahberats'));
             }
             else 
             {
@@ -234,6 +236,9 @@ public function update(Request $request, $id) {
                 'email' => 'required|email|unique:users,email,' . $user->id,
                 'phone' => ['required', 'regex:/^(09|07)\d{8}$/', 'digits:10', 'unique:users,phone,' . $user->id],
                 'usertype' => 'required|string',
+                'mahberat_id' => 'nullable|exists:mahberats,id',
+                'assigned_destinations' => 'nullable|array',
+                'assigned_destinations.*' => 'exists:destinations,id',
                 'birth_date' => 'nullable|date',
                 'national_id' => 'nullable|digits:16',
                 'profile_photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
@@ -255,6 +260,13 @@ public function update(Request $request, $id) {
             }
 
             $user->save();
+            
+            // Assign destinations
+            if (isset($validatedData['assigned_destinations'])) {
+                $user->destinations()->sync($validatedData['assigned_destinations']);
+            } else {
+                $user->destinations()->sync([]);
+            }
             
             // Manually trigger sync for update
             $user->syncUpdate();

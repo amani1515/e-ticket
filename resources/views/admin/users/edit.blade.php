@@ -112,15 +112,13 @@
                                     <div class="relative">
                                         <select name="usertype" id="usertype" class="w-full px-4 py-3 border-2 border-amber-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition duration-200 bg-amber-50" required>
                                             <option value="admin" {{ $user->usertype == 'admin' ? 'selected' : '' }}>Admin</option>
-                                            <option value="balehabt" {{ $user->usertype == 'balehabt' ? 'selected' : '' }}>Balehabt </option> 
-
-                                            {{-- <option value="ticketer" {{ $user->usertype == 'ticketer' ? 'selected' : '' }}> Ticketer</option>
+                                            <option value="ticketer" {{ $user->usertype == 'ticketer' ? 'selected' : '' }}>Ticket Agent</option>
                                             <option value="traffic" {{ $user->usertype == 'traffic' ? 'selected' : '' }}>Traffic</option>
-                                            <option value="hisabshum" {{ $user->usertype == 'hisabshum' ? 'selected' : '' }}> Hisabshum</option>
-                                            <option value="mahberat" {{ $user->usertype == 'mahberat' ? 'selected' : '' }}> Mahberat</option>
+                                            <option value="hisabshum" {{ $user->usertype == 'hisabshum' ? 'selected' : '' }}>Hisabshum</option>
+                                            <option value="mahberat" {{ $user->usertype == 'mahberat' ? 'selected' : '' }}>Mahberat</option>
                                             <option value="headoffice" {{ $user->usertype == 'headoffice' ? 'selected' : '' }}>Head Office</option>
                                             <option value="cargoMan" {{ $user->usertype == 'cargoMan' ? 'selected' : '' }}>Cargo Manager</option>
-                                            <option value="balehabt" {{ $user->usertype == 'balehabt' ? 'selected' : '' }}>Balehabt </option> --}}
+                                            <option value="balehabt" {{ $user->usertype == 'balehabt' ? 'selected' : '' }}>Balehabt /bus owner/</option>
                                         </select>
                                         <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                                             <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -175,6 +173,64 @@
                                             {{ $message }}
                                         </span>
                                     @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Role & Assignment Section -->
+                        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border-2 border-blue-200">
+                            <h3 class="text-lg font-bold text-blue-900 mb-6 flex items-center">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+                                </svg>
+                                Role & Assignments
+                            </h3>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- Assigned Destinations -->
+                                <div id="destinations-section" class="hidden">
+                                    <label for="assigned_destinations" class="block text-sm font-semibold text-blue-800 mb-2 uppercase tracking-wide">Assign Destinations</label>
+                                    <div class="relative">
+                                        <select name="assigned_destinations[]" id="assigned_destinations" multiple
+                                            class="w-full px-4 py-3 border-2 border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-blue-50 min-h-[120px]">
+                                            @if(isset($destinations))
+                                                @foreach ($destinations as $destination)
+                                                    <option value="{{ $destination->id }}"
+                                                        {{ $user->destinations && $user->destinations->contains($destination->id) ? 'selected' : '' }}>
+                                                        {{ $destination->start_from }} → {{ $destination->destination_name }}
+                                                    </option>
+                                                @endforeach
+                                            @endif
+                                        </select>
+                                    </div>
+                                    <p class="text-sm text-blue-600 mt-2 flex items-center">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        Hold Ctrl (Cmd on Mac) to select multiple destinations
+                                    </p>
+                                </div>
+
+                                <!-- Mahberat Assignment -->
+                                <div id="mahberat-section" class="hidden">
+                                    <label for="mahberat_id" class="block text-sm font-semibold text-blue-800 mb-2 uppercase tracking-wide">Assign to Mahberat</label>
+                                    <div class="relative">
+                                        <select name="mahberat_id" id="mahberat_id" class="w-full px-4 py-3 border-2 border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-blue-50">
+                                            <option value="">Select Mahberat</option>
+                                            @if(isset($mahberats))
+                                                @foreach ($mahberats as $m)
+                                                    <option value="{{ $m->id }}" {{ $user->mahberat_id == $m->id ? 'selected' : '' }}>
+                                                        {{ $m->name }}
+                                                    </option>
+                                                @endforeach
+                                            @endif
+                                        </select>
+                                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -271,6 +327,9 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    const userTypeSelect = document.getElementById('usertype');
+    const destinationsSection = document.getElementById('destinations-section');
+    const mahberatSection = document.getElementById('mahberat-section');
     const phoneInput = document.getElementById('phone');
     const emailInput = document.getElementById('email');
     const nationalIdInput = document.getElementById('national_id');
@@ -282,6 +341,22 @@ document.addEventListener('DOMContentLoaded', function() {
     const userId = "{{ $user->id }}";
     
     let formSubmitted = false;
+
+    // Role-based field visibility
+    function toggleFields() {
+        const selected = userTypeSelect.value;
+        destinationsSection.classList.add('hidden');
+        mahberatSection.classList.add('hidden');
+        
+        if (selected === 'ticketer') {
+            destinationsSection.classList.remove('hidden');
+        } else if (selected === 'mahberat') {
+            mahberatSection.classList.remove('hidden');
+        }
+    }
+    
+    userTypeSelect.addEventListener('change', toggleFields);
+    toggleFields();
 
     // Enhanced name validation with XSS protection
     nameInput.addEventListener('input', function() {
