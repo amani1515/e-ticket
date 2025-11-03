@@ -193,15 +193,21 @@ public function checkFaydaId(Request $request)
 {
     $ticket = Ticket::with(['destination', 'cargo', 'bus.mahberat'])->findOrFail($id);
     
-    // Track print count when receipt page is accessed
-    $ticket->increment('print_count');
-    if ($ticket->print_count == 1) {
+    return view('ticketer.tickets.receipt', compact('ticket'));
+}
+
+public function incrementPrintCount($id)
+{
+    $ticket = Ticket::findOrFail($id);
+    
+    if ($ticket->print_count == 0) {
         $ticket->first_printed_at = now();
     }
+    $ticket->increment('print_count');
     $ticket->last_printed_at = now();
     $ticket->save();
     
-    return view('ticketer.tickets.receipt', compact('ticket'));
+    return response()->json(['success' => true, 'print_count' => $ticket->print_count]);
 }
 
 
@@ -557,10 +563,10 @@ public function receiptPdf($id)
     $ticket = Ticket::with(['destination', 'cargo', 'bus.mahberat', 'creator'])->findOrFail($id);
     
     // Track print count
-    $ticket->increment('print_count');
-    if ($ticket->print_count == 1) {
+    if ($ticket->print_count == 0) {
         $ticket->first_printed_at = now();
     }
+    $ticket->increment('print_count');
     $ticket->last_printed_at = now();
     $ticket->save();
     
@@ -689,10 +695,10 @@ public function receiptText($id)
     $ticket = Ticket::with(['destination', 'cargo', 'bus.mahberat', 'creator'])->findOrFail($id);
     
     // Track print count
-    $ticket->increment('print_count');
-    if ($ticket->print_count == 1) {
+    if ($ticket->print_count == 0) {
         $ticket->first_printed_at = now();
     }
+    $ticket->increment('print_count');
     $ticket->last_printed_at = now();
     $ticket->save();
     

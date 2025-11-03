@@ -93,6 +93,10 @@
             position: relative;
         }
         
+        .watermark[data-print-count="1"] {
+            display: none !important;
+        }
+        
         .watermark {
             position: absolute;
             top: 50%;
@@ -200,7 +204,7 @@
 @endphp
 
         @if($ticket->print_count > 1)
-            <div class="watermark">*** REPRINTED (COPY) ***</div>
+            <div class="watermark" data-print-count="{{ $ticket->print_count }}">*** REPRINTED (COPY) ***</div>
         @endif
         
         <div class="center">
@@ -282,12 +286,25 @@
 
     <script>
     function printReceipt() {
-        window.print();
+        // Increment print count first
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/ticketer/tickets/{{ $ticket->id }}/increment-print-count', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.setRequestHeader('X-CSRF-TOKEN', '{{ csrf_token() }}');
         
-        // Refresh page after print dialog closes to show REPRINTED teext
-        setTimeout(function() {
-            window.location.reload();
-        }, 1000);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                // Print after count is incremented
+                window.print();
+                
+                // Refresh page after print dialog closes to show REPRINTED text
+                setTimeout(function() {
+                    window.location.reload();
+                }, 1000);
+            }
+        };
+        
+        xhr.send();
     }
     
     function goBackToCreate() {
@@ -295,8 +312,6 @@
         window.location.href = '{{ route("ticketer.tickets.create") }}?refresh=' + Date.now();
     }
     </script>
-
-    <!-- Large Back Icon - Bottom Right -->
     <div class="print-options" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000;">
         <button onclick="goBackToCreate()" 
            style="background: #007bff; color: #fff; border: none; padding: 80px; border-radius: 50%; font-size: 128px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,123,255,0.4); transition: all 0.3s ease; width: 320px; height: 320px; display: flex; align-items: center; justify-content: center;"
@@ -306,6 +321,5 @@
             ←
         </button>
     </div>
-
 </body>
 </html>

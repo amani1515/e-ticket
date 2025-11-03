@@ -172,6 +172,7 @@ Route::middleware(['auth', 'role:ticketer'])->prefix('ticketer')->name('ticketer
     Route::get('/tickets/{id}/receipt-pdf-download', [TicketController::class, 'receiptPdfDownload'])->name('tickets.receipt.pdf.download');
     Route::get('/tickets/{id}/receipt-image', [TicketController::class, 'receiptImage'])->name('tickets.receipt.image');
     Route::get('/tickets/{id}/receipt-text', [TicketController::class, 'receiptText'])->name('tickets.receipt.text');
+    Route::post('/tickets/{id}/increment-print-count', [TicketController::class, 'incrementPrintCount'])->name('tickets.increment.print.count');
     Route::get('/scan', [TicketController::class, 'showScanForm'])->name('tickets.scan');
     Route::post('/scan', [TicketController::class, 'processScan'])->name('tickets.processScan');
     Route::get('/first-queued-bus/{destination}', [TicketController::class, 'firstQueuedBus']);
