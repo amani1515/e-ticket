@@ -277,11 +277,11 @@
            style="background: #fff; color: #28a745; border: none; padding: 20px 40px; border-radius: 12px; font-size: 18px; font-weight: bold; cursor: pointer; box-shadow: 0 3px 6px rgba(0,0,0,0.3); transition: all 0.3s ease; margin-right: 10px;">
             🖨️ ህትመት / PRINT
         </button>
-        <button onclick="goBackToCreate()" 
+        {{-- <button onclick="goBackToCreate()" 
            style="background: #007bff; color: #fff; border: none; padding: 20px 40px; border-radius: 12px; font-size: 18px; font-weight: bold; cursor: pointer; box-shadow: 0 3px 6px rgba(0,0,0,0.3); transition: all 0.3s ease;">
             ← Create New Ticket
         </button>
-        <p style="margin: 15px 0 0 0; color: #fff; font-size: 16px; font-weight: bold;">Print Receipt or Create New Ticket</p>
+        <p style="margin: 15px 0 0 0; color: #fff; font-size: 16px; font-weight: bold;">Print Receipt or Create New Ticket</p> --}}
     </div>
 
     <script>
