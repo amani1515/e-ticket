@@ -38,9 +38,10 @@ class SyncService
             return ['success' => false, 'message' => 'Remote server is not reachable'];
         }
 
+        $batchSize = config('sync.batch_size', 3);
         $pendingItems = SyncQueue::where('synced', false)
             ->orderBy('created_at')
-            ->limit(20)
+            ->limit($batchSize)
             ->get();
 
         if ($pendingItems->isEmpty()) {
@@ -55,7 +56,7 @@ class SyncService
             'errors' => []
         ];
 
-        foreach ($pendingItems as $item) {
+        foreach ($pendingItems as $index => $item) {
             try {
                 $this->syncItem($item);
                 $item->updateQuietly([
@@ -65,6 +66,13 @@ class SyncService
                 ]);
                 $results['synced']++;
                 Log::info('Successfully synced item: ' . $item->id);
+                
+                // Add delay between items to reduce system load
+                if ($index < $pendingItems->count() - 1) {
+                    $delay = config('sync.delay_seconds', 3);
+                    sleep($delay);
+                }
+                
             } catch (Exception $e) {
                 $item->updateQuietly([
                     'retry_count' => $item->retry_count + 1,
@@ -75,6 +83,9 @@ class SyncService
                 $results['errors'][] = $e->getMessage();
                 Log::error('Sync failed for item ' . $item->id . ': ' . $e->getMessage());
             }
+            
+            // Clear memory after each item
+            gc_collect_cycles();
         }
 
         SyncSettings::set('last_sync_attempt', now()->toDateTimeString());
@@ -177,12 +188,13 @@ class SyncService
             'retry_count' => $item->retry_count
         ]);
         
+        $timeout = config('sync.timeout', 30);
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $this->apiToken,
             'Content-Type' => 'application/json',
             'Accept' => 'application/json',
             'User-Agent' => 'E-Ticket-Sync/1.0'
-        ])->timeout(60)->retry(2, 1000)->post($this->remoteUrl . $endpoint, $payload);
+        ])->timeout($timeout)->retry(1, 2000)->post($this->remoteUrl . $endpoint, $payload);
 
         if (!$response->successful()) {
             $errorBody = $response->body();

@@ -13,6 +13,10 @@ class BackgroundSync extends Command
 
     public function handle()
     {
+        // Set memory and time limits for background process
+        ini_set('memory_limit', '128M');
+        ini_set('max_execution_time', 300);
+        
         $syncService = new SyncService();
         
         try {
@@ -21,6 +25,9 @@ class BackgroundSync extends Command
             if ($results['synced'] > 0) {
                 \Log::info("Background sync: {$results['message']}");
             }
+            
+            // Clear memory after sync
+            gc_collect_cycles();
             
             return 0;
         } catch (\Exception $e) {

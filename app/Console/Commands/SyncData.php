@@ -26,9 +26,12 @@ class SyncData extends Command
                         if ($results['synced'] > 0 || $results['failed'] > 0) {
                             $this->info($results['message']);
                         }
+                        
+                        // Clear memory after each sync cycle
+                        gc_collect_cycles();
                     }
                     
-                    $interval = SyncSettings::get('auto_sync_interval', 300);
+                    $interval = config('sync.sync_interval', 1800);
                     sleep($interval);
                     
                 } catch (\Exception $e) {
