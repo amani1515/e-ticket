@@ -94,9 +94,99 @@
             </form>
         </div>
 
-        <!-- Schedule Table -->
+        <!-- Mobile Grid View -->
         @if ($schedules->count())
-            <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+            <div class="block md:hidden mb-6">
+                <h2 class="text-xl font-bold text-blue-900 mb-4">📋 Schedule Records ({{ $schedules->total() }})</h2>
+                <div class="grid gap-4">
+                    @foreach($schedules as $schedule)
+                        @php
+                            $confirmedTickets = $schedule->tickets()->whereIn('ticket_status', ['created', 'confirmed']);
+                            $totalTariff = $confirmedTickets->sum('tariff');
+                            $totalTax = $confirmedTickets->sum('tax');
+                            $totalServiceFee = $confirmedTickets->sum('service_fee');
+                            $netBalance = $totalTariff - $totalTax - $totalServiceFee;
+                        @endphp
+                        <div class="bg-white rounded-xl shadow-lg p-4 border-l-4 border-blue-500">
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <h3 class="font-bold text-lg text-blue-900">#{{ $schedule->id }}</h3>
+                                    <p class="text-sm text-gray-600">{{ $schedule->bus->targa ?? '-' }} • {{ $schedule->bus->driver_name ?? '-' }}</p>
+                                </div>
+                                @if($schedule->status === 'queued')
+                                    <span class="px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Queued</span>
+                                @elseif($schedule->status === 'on loading')
+                                    <span class="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">Loading</span>
+                                @elseif($schedule->status === 'full')
+                                    <span class="px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">Full</span>
+                                @elseif($schedule->status === 'paid')
+                                    <span class="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">Paid</span>
+                                @endif
+                            </div>
+                            
+                            <div class="mb-3">
+                                <p class="text-sm font-medium text-gray-900">📍 {{ $schedule->destination->destination_name ?? '-' }}</p>
+                                <p class="text-xs text-gray-500">{{ date('M d, H:i', strtotime($schedule->scheduled_at)) }}</p>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-3 text-sm mb-3">
+                                <div class="bg-blue-50 p-2 rounded">
+                                    <span class="text-gray-600">Capacity:</span>
+                                    <span class="font-medium">{{ $schedule->capacity }}</span>
+                                </div>
+                                <div class="bg-green-50 p-2 rounded">
+                                    <span class="text-gray-600">Boarding:</span>
+                                    <span class="font-medium">{{ $schedule->boarding }}</span>
+                                </div>
+                                <div class="bg-yellow-50 p-2 rounded">
+                                    <span class="text-gray-600">Confirmed:</span>
+                                    <span class="font-medium">{{ $schedule->tickets()->where('ticket_status', 'confirmed')->count() }}</span>
+                                </div>
+                                <div class="bg-red-50 p-2 rounded">
+                                    <span class="text-gray-600">Pending:</span>
+                                    <span class="font-medium">{{ $schedule->tickets()->whereIn('ticket_status', ['waiting_scan', 'created'])->count() }}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-3 text-sm mb-3">
+                                <div>
+                                    <span class="text-gray-600">Tariff:</span>
+                                    <span class="font-medium">{{ number_format($totalTariff, 2) }}</span>
+                                </div>
+                                <div>
+                                    <span class="text-gray-600">Tax:</span>
+                                    <span class="font-medium">{{ number_format($totalTax, 2) }}</span>
+                                </div>
+                                <div>
+                                    <span class="text-gray-600">Service Fee:</span>
+                                    <span class="font-medium">{{ number_format($totalServiceFee, 2) }}</span>
+                                </div>
+                                <div>
+                                    <span class="text-gray-600">Net Balance:</span>
+                                    <span class="font-bold text-green-600">{{ number_format($netBalance, 2) }}</span>
+                                </div>
+                            </div>
+                            
+                            @if($schedule->status === 'full')
+                                <form action="{{ route('ticketer.schedule.pay', $schedule->id) }}" method="POST" onsubmit="return confirm('Mark this schedule as paid?');">
+                                    @csrf
+                                    <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                                        💰 Mark as Paid
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+                
+                <!-- Mobile Pagination -->
+                <div class="mt-4">
+                    {{ $schedules->withQueryString()->links() }}
+                </div>
+            </div>
+            
+            <!-- Desktop Table -->
+            <div class="hidden md:block bg-white rounded-2xl shadow-xl overflow-hidden">
                 <div class="bg-gradient-to-r from-blue-500 to-indigo-600 px-6 py-4">
                     <h2 class="text-xl font-bold text-white flex items-center">
                         <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
