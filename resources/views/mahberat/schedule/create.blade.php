@@ -152,6 +152,15 @@
                 </select>
             </div>
             <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Bus Level</label>
+                <select name="level" id="modal_level" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" required>
+                    <option value="">-- Select Bus Level --</option>
+                    <option value="level1">Level 1 </option>
+                    <option value="level2">Level 2 </option>
+                    <option value="level3">Level 3 </option>
+                </select>
+            </div>
+            <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-1">Driver Name</label>
                 <input type="text" name="driver_name" id="modal_driver" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" required>
             </div>

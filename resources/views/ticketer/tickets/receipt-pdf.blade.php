@@ -64,7 +64,7 @@
     <p><strong>የትኬት መለያ ቁጥር:</strong> {{ $ticket->id }}</p>
     <p><strong>ትኬት ወኪል:</strong> {{ $ticket->creator ? $ticket->creator->name : 'N/A' }}</p>
     <p><strong>የማህበር ስም:</strong> {{ $ticket->bus && $ticket->bus->mahberat ? $ticket->bus->mahberat->name : 'N/A' }}</p>
-    <p><strong>ታሪፍ:</strong> {{ $ticket->destination->tariff }}</p>
+    <p><strong>ታሪፍ:</strong> {{ $ticket->tariff ?? $ticket->destination->tariff }}</p>
     <p><strong>አገልግሎት ክፍያ:</strong> {{ $ticket->destination->service_fee }}</p>
 
     @if($ticket->cargo)
@@ -72,7 +72,7 @@
         <p><strong>የእቃ ክፍያ:</strong> {{ number_format($ticket->cargo->total_amount, 2) }} ብር</p>
     @endif
 
-    <p><strong>አጠቃላይ ክፍያ:</strong> {{ $ticket->destination->tariff + $ticket->destination->tax + $ticket->destination->service_fee + ($ticket->cargo ? $ticket->cargo->total_amount : 0) }} ብር</p>
+    <p><strong>አጠቃላይ ክፍያ:</strong> {{ ($ticket->tariff ?? $ticket->destination->tariff) + $ticket->destination->tax + $ticket->destination->service_fee + ($ticket->cargo ? $ticket->cargo->total_amount : 0) }} ብር</p>
 
     <div class="divider"></div>
     <div class="center">

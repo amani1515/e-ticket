@@ -46,16 +46,24 @@ class DestinationController extends Controller
 
     public function store(Request $request)
     {
-        // Validate input
-        // Validate input
-       $request->validate([
-                'destination_name' => 'required|string|max:100',
-                'start_from' => 'required|string|max:100',
-                'distance' => 'required|numeric|min:0|max:10000',
-                'tariff' => 'required|numeric|min:0|max:10000',
-                'tax' => 'required|numeric|min:0|max:10000',
-                'service_fee' => 'required|numeric|min:0|max:10000',
-            ]);
+        $validation = [
+            'destination_name' => 'required|string|max:100',
+            'start_from' => 'required|string|max:100',
+            'distance' => 'required|numeric|min:0|max:10000',
+            'tax' => 'required|numeric|min:0|max:10000',
+            'service_fee' => 'required|numeric|min:0|max:10000',
+            'same_for_all_levels' => 'boolean',
+        ];
+        
+        if ($request->has('same_for_all_levels')) {
+            $validation['tariff'] = 'required|numeric|min:0|max:10000';
+        } else {
+            $validation['level1_tariff'] = 'required|numeric|min:0|max:10000';
+            $validation['level2_tariff'] = 'required|numeric|min:0|max:10000';
+            $validation['level3_tariff'] = 'required|numeric|min:0|max:10000';
+        }
+        
+        $request->validate($validation);
     
         // Save destination
         Destination::create([
@@ -63,8 +71,12 @@ class DestinationController extends Controller
             'start_from' => $request->start_from,
             'distance' => $request->distance,
             'tariff' => $request->tariff,
-            'tax' => $request->tax,  // Save tax as a decimal
-            'service_fee' => $request->service_fee,  // Save service fee as a decimal
+            'level1_tariff' => $request->level1_tariff,
+            'level2_tariff' => $request->level2_tariff,
+            'level3_tariff' => $request->level3_tariff,
+            'same_for_all_levels' => $request->has('same_for_all_levels'),
+            'tax' => $request->tax,
+            'service_fee' => $request->service_fee,
         ]);
     
         // Redirect back or to list
@@ -112,14 +124,24 @@ class DestinationController extends Controller
             $usertype = Auth::user()->usertype;
             if($usertype == 'admin')
             {
-                $request->validate([
+                $validation = [
                     'destination_name' => 'required|string|max:100',
                     'start_from' => 'required|string|max:100',
                     'distance' => 'required|numeric|min:0|max:10000',
-                    'tariff' => 'required|numeric|min:0|max:10000',
                     'tax' => 'required|numeric|min:0|max:10000',
                     'service_fee' => 'required|numeric|min:0|max:10000',
-                ]);
+                    'same_for_all_levels' => 'boolean',
+                ];
+                
+                if ($request->has('same_for_all_levels')) {
+                    $validation['tariff'] = 'required|numeric|min:0|max:10000';
+                } else {
+                    $validation['level1_tariff'] = 'required|numeric|min:0|max:10000';
+                    $validation['level2_tariff'] = 'required|numeric|min:0|max:10000';
+                    $validation['level3_tariff'] = 'required|numeric|min:0|max:10000';
+                }
+                
+                $request->validate($validation);
 
                 $destination = Destination::findOrFail($id);
                 $destination->update([
@@ -127,6 +149,10 @@ class DestinationController extends Controller
                     'start_from' => $request->start_from,
                     'distance' => $request->distance,
                     'tariff' => $request->tariff,
+                    'level1_tariff' => $request->level1_tariff,
+                    'level2_tariff' => $request->level2_tariff,
+                    'level3_tariff' => $request->level3_tariff,
+                    'same_for_all_levels' => $request->has('same_for_all_levels'),
                     'tax' => $request->tax,
                     'service_fee' => $request->service_fee,
                 ]);

@@ -56,7 +56,8 @@ class BusController extends Controller
                 'targa' => 'required|string|unique:buses,targa',
                 'total_seats' => 'required|integer|min:1|max:100',
                 'mahberat_id' => 'required|exists:mahberats,id',
-                'driver_name' => 'required|string|max:255'
+                'driver_name' => 'required|string|max:255',
+                'level' => 'required|in:level1,level2,level3'
             ]);
 
             $bus = Bus::create([
@@ -64,6 +65,7 @@ class BusController extends Controller
                 'total_seats' => $request->total_seats,
                 'mahberat_id' => $request->mahberat_id,
                 'driver_name' => $request->driver_name,
+                'level' => $request->level,
                 'unique_bus_id' => 'SEV' . now()->format('Ymd') . strtoupper(Str::random(6)),
                 'registered_by' => Auth::id()
             ]);

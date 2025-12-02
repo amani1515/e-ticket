@@ -233,7 +233,7 @@
         </p>
         <p><strong>ትኬት ወኪል:</strong> {{ $ticket->creator ? $ticket->creator->name : 'N/A' }}</p>
 
-        <p><strong>ታሪፍ :</strong> {{ $ticket->destination->tariff }}</p>
+        <p><strong>ታሪፍ :</strong> {{ $ticket->tariff ?? $ticket->destination->tariff }}</p>
         {{-- <p><strong>ታክስ :</strong> {{ $ticket->destination->tax }}</p> --}}
         <p><strong>የአገልግሎት ክፍያ :</strong> {{ $ticket->destination->service_fee }}</p>
 
@@ -246,7 +246,7 @@
 
         <p><strong>አጠቃላይ ክፍያ :</strong>
             {{
-                $ticket->destination->tariff +
+                ($ticket->tariff ?? $ticket->destination->tariff) +
                 $ticket->destination->tax +
                 $ticket->destination->service_fee +
                 ($ticket->cargo ? $ticket->cargo->total_amount : 0)

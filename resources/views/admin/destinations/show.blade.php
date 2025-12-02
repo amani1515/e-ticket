@@ -94,26 +94,95 @@
                             </div>
                         </div>
                         
-                        <!-- Total Cost Calculation -->
+                        <!-- Bus Level Pricing -->
                         <div class="mt-6 p-4 bg-amber-50 rounded-lg border border-amber-200">
-                            <h4 class="font-semibold text-amber-900 mb-2">Total Cost Breakdown</h4>
-                            <div class="space-y-2 text-sm">
-                                <div class="flex justify-between">
-                                    <span class="text-amber-700">Base Tariff:</span>
-                                    <span class="text-amber-900">{{ number_format($destination->tariff) }} ETB</span>
+                            <h4 class="font-semibold text-amber-900 mb-4">Bus Level Pricing</h4>
+                            
+                            @if($destination->same_for_all_levels)
+                                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                                    <div class="flex items-center mb-2">
+                                        <svg class="w-5 h-5 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        <span class="text-blue-800 font-medium">Same tariff for all bus levels</span>
+                                    </div>
+                                    <div class="text-sm text-blue-700">
+                                        All bus levels (Level 1, 2, 3) use the same base tariff of <strong>{{ number_format($destination->tariff) }} ETB</strong>
+                                    </div>
                                 </div>
-                                <div class="flex justify-between">
-                                    <span class="text-amber-700">Tax:</span>
-                                    <span class="text-amber-900">{{ number_format($destination->tax) }} ETB</span>
+                            @else
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                    <!-- Level 1 -->
+                                    <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                                        <div class="flex items-center mb-2">
+                                            <div class="w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-bold mr-2">
+                                                1
+                                            </div>
+                                            <span class="font-medium text-green-800">Level 1 (Economy)</span>
+                                        </div>
+                                        <div class="text-2xl font-bold text-green-900">
+                                            {{ number_format($destination->level1_tariff ?? $destination->tariff) }} ETB
+                                        </div>
+                                        <div class="text-sm text-green-700 mt-1">
+                                            + {{ number_format($destination->tax) }} tax + {{ number_format($destination->service_fee) }} service
+                                        </div>
+                                        <div class="text-sm font-semibold text-green-800 mt-2">
+                                            Total: {{ number_format(($destination->level1_tariff ?? $destination->tariff) + $destination->tax + $destination->service_fee) }} ETB
+                                        </div>
+                                    </div>
+
+                                    <!-- Level 2 -->
+                                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                                        <div class="flex items-center mb-2">
+                                            <div class="w-8 h-8 bg-yellow-600 text-white rounded-full flex items-center justify-center text-sm font-bold mr-2">
+                                                2
+                                            </div>
+                                            <span class="font-medium text-yellow-800">Level 2 (Standard)</span>
+                                        </div>
+                                        <div class="text-2xl font-bold text-yellow-900">
+                                            {{ number_format($destination->level2_tariff ?? $destination->tariff) }} ETB
+                                        </div>
+                                        <div class="text-sm text-yellow-700 mt-1">
+                                            + {{ number_format($destination->tax) }} tax + {{ number_format($destination->service_fee) }} service
+                                        </div>
+                                        <div class="text-sm font-semibold text-yellow-800 mt-2">
+                                            Total: {{ number_format(($destination->level2_tariff ?? $destination->tariff) + $destination->tax + $destination->service_fee) }} ETB
+                                        </div>
+                                    </div>
+
+                                    <!-- Level 3 -->
+                                    <div class="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                                        <div class="flex items-center mb-2">
+                                            <div class="w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center text-sm font-bold mr-2">
+                                                3
+                                            </div>
+                                            <span class="font-medium text-purple-800">Level 3 (Premium)</span>
+                                        </div>
+                                        <div class="text-2xl font-bold text-purple-900">
+                                            {{ number_format($destination->level3_tariff ?? $destination->tariff) }} ETB
+                                        </div>
+                                        <div class="text-sm text-purple-700 mt-1">
+                                            + {{ number_format($destination->tax) }} tax + {{ number_format($destination->service_fee) }} service
+                                        </div>
+                                        <div class="text-sm font-semibold text-purple-800 mt-2">
+                                            Total: {{ number_format(($destination->level3_tariff ?? $destination->tariff) + $destination->tax + $destination->service_fee) }} ETB
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="flex justify-between">
-                                    <span class="text-amber-700">Service Fee:</span>
-                                    <span class="text-amber-900">{{ number_format($destination->service_fee) }} ETB</span>
-                                </div>
-                                <hr class="border-amber-300">
-                                <div class="flex justify-between font-semibold text-amber-900">
-                                    <span>Total Cost:</span>
-                                    <span>{{ number_format($destination->tariff + $destination->tax + $destination->service_fee) }} ETB</span>
+                            @endif
+                            
+                            <!-- Base Cost Breakdown -->
+                            <div class="bg-white rounded-lg p-4 border border-amber-300">
+                                <h5 class="font-medium text-amber-900 mb-3">Additional Charges (Applied to all levels)</h5>
+                                <div class="grid grid-cols-2 gap-4 text-sm">
+                                    <div class="flex justify-between">
+                                        <span class="text-amber-700">Tax:</span>
+                                        <span class="text-amber-900 font-medium">{{ number_format($destination->tax) }} ETB</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-amber-700">Service Fee:</span>
+                                        <span class="text-amber-900 font-medium">{{ number_format($destination->service_fee) }} ETB</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>

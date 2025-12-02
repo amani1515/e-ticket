@@ -51,14 +51,52 @@
                             @enderror
                         </div>
 
-                        <!-- Tariff -->
+                        <!-- Same for All Levels Checkbox -->
                         <div>
-                            <label class="block text-sm font-medium text-amber-700 mb-2">Base Tariff (ETB)</label>
+                            <div class="flex items-center space-x-3 p-4 bg-amber-50 rounded-lg border border-amber-200">
+                                <input type="checkbox" id="same_for_all_levels" name="same_for_all_levels" value="1" 
+                                       {{ old('same_for_all_levels', $destination->same_for_all_levels) ? 'checked' : '' }}
+                                       class="w-5 h-5 text-amber-600 bg-white border-amber-300 rounded focus:ring-amber-500">
+                                <label for="same_for_all_levels" class="text-sm font-medium text-amber-700">
+                                    Same tariff for all bus levels (Level 1, 2, 3)
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Base Tariff -->
+                        <div id="base_tariff_section" class="{{ old('same_for_all_levels', $destination->same_for_all_levels) ? '' : 'hidden' }}">
+                            <label class="block text-sm font-medium text-amber-700 mb-2">Base Tariff (All Levels) - ETB</label>
                             <input type="number" name="tariff" value="{{ old('tariff', $destination->tariff) }}" step="0.01"
                                    class="w-full px-3 py-2 border border-amber-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 @error('tariff') border-red-500 @enderror">
                             @error('tariff')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
+                        </div>
+
+                        <!-- Level-Specific Tariffs -->
+                        <div id="level_tariffs_section" class="{{ old('same_for_all_levels', $destination->same_for_all_levels) ? 'hidden' : '' }}">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <!-- Level 1 Tariff -->
+                                <div>
+                                    <label class="block text-sm font-medium text-amber-700 mb-2">Level 1 Tariff (ETB)</label>
+                                    <input type="number" name="level1_tariff" value="{{ old('level1_tariff', $destination->level1_tariff) }}" step="0.01"
+                                           class="w-full px-3 py-2 border border-amber-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                                </div>
+
+                                <!-- Level 2 Tariff -->
+                                <div>
+                                    <label class="block text-sm font-medium text-amber-700 mb-2">Level 2 Tariff (ETB)</label>
+                                    <input type="number" name="level2_tariff" value="{{ old('level2_tariff', $destination->level2_tariff) }}" step="0.01"
+                                           class="w-full px-3 py-2 border border-amber-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                                </div>
+
+                                <!-- Level 3 Tariff -->
+                                <div>
+                                    <label class="block text-sm font-medium text-amber-700 mb-2">Level 3 Tariff (ETB)</label>
+                                    <input type="number" name="level3_tariff" value="{{ old('level3_tariff', $destination->level3_tariff) }}" step="0.01"
+                                           class="w-full px-3 py-2 border border-amber-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Tax -->
@@ -104,4 +142,22 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const sameForAllCheckbox = document.getElementById('same_for_all_levels');
+    const baseTariffSection = document.getElementById('base_tariff_section');
+    const levelTariffsSection = document.getElementById('level_tariffs_section');
+    
+    sameForAllCheckbox.addEventListener('change', function() {
+        if (this.checked) {
+            baseTariffSection.classList.remove('hidden');
+            levelTariffsSection.classList.add('hidden');
+        } else {
+            baseTariffSection.classList.add('hidden');
+            levelTariffsSection.classList.remove('hidden');
+        }
+    });
+});
+</script>
 @endsection
