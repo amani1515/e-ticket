@@ -13,33 +13,34 @@ use Illuminate\Support\Str;
 // It ensures only authorized users can manage their own buses and handles file uploads/cleanup.
 class BusController extends Controller
 {
-    // List all buses for the logged-in user's mahberat
+    // List buses with filters
     public function index(Request $request)
     {
-        $mahberatId = Auth::user()->mahberat_id;
         $search = $request->get('search');
+        $status = $request->get('status');
+        $level = $request->get('level');
         
         $query = Bus::with('owner');
         
-        // Apply mahberat filter
-        if ($mahberatId) {
-            $query->where('mahberat_id', $mahberatId);
-        }
-        
-        // Apply search filter
         if ($search) {
             $query->where(function($q) use ($search) {
                 $q->where('targa', 'like', '%' . $search . '%')
                   ->orWhere('driver_name', 'like', '%' . $search . '%')
-                  ->orWhere('driver_phone', 'like', '%' . $search . '%')
-                  ->orWhere('model', 'like', '%' . $search . '%')
-                  ->orWhere('level', 'like', '%' . $search . '%');
+                  ->orWhere('driver_phone', 'like', '%' . $search . '%');
             });
+        }
+        
+        if ($status) {
+            $query->where('status', $status);
+        }
+        
+        if ($level) {
+            $query->where('level', $level);
         }
         
         $buses = $query->paginate(10)->appends(request()->query());
         
-        return view('mahberat.bus.index', compact('buses', 'search'));
+        return view('mahberat.bus.index', compact('buses', 'search', 'status', 'level'));
     }
     
     // Show form to create a new bus
@@ -163,32 +164,17 @@ foreach (['file1', 'file2', 'file3'] as $fileKey) {
         return view('mahberat.bus.show', compact('bus'));
     }
 
-    // Show form for editing a bus, ensuring ownership
+    // Show form for editing a bus
     public function edit($id)
     {
-        $mahberatId = Auth::user()->mahberat_id;
-        
-        if ($mahberatId) {
-            $bus = Bus::where('id', $id)->where('mahberat_id', $mahberatId)->firstOrFail();
-        } else {
-            // Allow editing any bus if no mahberat_id (for testing/admin purposes)
-            $bus = Bus::findOrFail($id);
-        }
-        
+        $bus = Bus::findOrFail($id);
         return view('mahberat.bus.edit', compact('bus'));
     }
 
-    // Update bus info, including file uploads and ownership check
+    // Update bus info, including file uploads
     public function update(Request $request, $id)
     {
-        $mahberatId = Auth::user()->mahberat_id;
-        
-        if ($mahberatId) {
-            $bus = Bus::where('id', $id)->where('mahberat_id', $mahberatId)->firstOrFail();
-        } else {
-            // Allow updating any bus if no mahberat_id (for testing/admin purposes)
-            $bus = Bus::findOrFail($id);
-        }
+        $bus = Bus::findOrFail($id);
 
         $validated = $request->validate([
             'targa'           => 'required|string',
@@ -231,17 +217,10 @@ foreach (['file1', 'file2', 'file3'] as $fileKey) {
         return redirect()->route('mahberat.bus.index')->with('success', 'Bus updated successfully!');
     }
 
-    // Delete a bus with ownership check and file cleanup
+    // Delete a bus with file cleanup
     public function destroy($id)
     {
-        $mahberatId = Auth::user()->mahberat_id;
-        
-        if ($mahberatId) {
-            $bus = Bus::where('id', $id)->where('mahberat_id', $mahberatId)->firstOrFail();
-        } else {
-            // Allow deleting any bus if no mahberat_id (for testing/admin purposes)
-            $bus = Bus::findOrFail($id);
-        }
+        $bus = Bus::findOrFail($id);
 
         // Delete associated files if any
         foreach (['file1', 'file2', 'file3'] as $fileKey) {
