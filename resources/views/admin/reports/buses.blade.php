@@ -1,12 +1,12 @@
 @extends('admin.layout.app')
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-yellow-50 to-amber-100 p-4 sm:p-8">
+<div class="min-h-screen bg-gradient-to-br from-yellow-50 to-amber-100 p-2 sm:p-4 lg:p-8">
     <div class="max-w-7xl mx-auto">
         <!-- Header -->
-        <div class="mb-8">
-            <h1 class="text-4xl font-bold text-amber-900 mb-2">🚌 Bus Management</h1>
-            <p class="text-amber-700">Manage all buses and their information</p>
+        <div class="mb-4 sm:mb-8">
+            <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-amber-900 mb-2">🚌 Bus Management</h1>
+            <p class="text-sm sm:text-base text-amber-700">Manage all buses and their information</p>
             <!-- Debug info -->
             <div class="text-xs text-gray-500 mt-2">
                 Debug: {{ count($mahberats ?? []) }} mahberats, {{ $buses->count() }} buses
@@ -24,16 +24,16 @@
         </div>
 
         <!-- Search and Filters -->
-        <div class="bg-white rounded-2xl shadow-xl p-6 mb-6">
+        <div class="bg-white rounded-xl lg:rounded-2xl shadow-xl p-4 sm:p-6 mb-4 sm:mb-6">
             <form method="GET" action="{{ route('admin.buses.index') }}" class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <!-- Search -->
-                    <div class="md:col-span-2">
+                    <div class="sm:col-span-2 lg:col-span-2">
                         <label class="block text-sm font-medium text-amber-700 mb-2">Search Buses</label>
                         <div class="relative">
                             <input type="text" name="search" value="{{ request('search') }}" 
-                                   placeholder="Search by targa, driver name, phone, or bus ID..."
-                                   class="w-full pl-10 pr-4 py-2 border border-amber-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                                   placeholder="Search buses..."
+                                   class="w-full pl-10 pr-4 py-2 text-sm border border-amber-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
                             <svg class="absolute left-3 top-2.5 h-5 w-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                             </svg>
@@ -43,7 +43,7 @@
                     <!-- Status Filter -->
                     <div>
                         <label class="block text-sm font-medium text-amber-700 mb-2">Status</label>
-                        <select name="status_filter" class="w-full px-3 py-2 border border-amber-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                        <select name="status_filter" class="w-full px-3 py-2 text-sm border border-amber-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
                             <option value="">All Status</option>
                             <option value="active" {{ request('status_filter') === 'active' ? 'selected' : '' }}>Active</option>
                             <option value="inactive" {{ request('status_filter') === 'inactive' ? 'selected' : '' }}>Inactive</option>
@@ -54,7 +54,7 @@
                     <!-- Mahberat Filter -->
                     <div>
                         <label class="block text-sm font-medium text-amber-700 mb-2">Mahberat</label>
-                        <select name="mahberat_filter" class="w-full px-3 py-2 border border-amber-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                        <select name="mahberat_filter" class="w-full px-3 py-2 text-sm border border-amber-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
                             <option value="">All Mahberats</option>
                             @if(isset($mahberats))
                                 @foreach($mahberats as $mahberat)
@@ -67,14 +67,14 @@
                     </div>
                 </div>
                 
-                <div class="flex gap-3">
-                    <button type="submit" class="inline-flex items-center px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-medium rounded-lg transition-colors duration-200">
+                <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                    <button type="submit" class="inline-flex items-center justify-center px-4 py-2 text-sm bg-amber-600 hover:bg-amber-700 text-white font-medium rounded-lg transition-colors duration-200">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z"></path>
                         </svg>
                         Apply Filters
                     </button>
-                    <a href="{{ route('admin.buses.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white font-medium rounded-lg transition-colors duration-200">
+                    <a href="{{ route('admin.buses.index') }}" class="inline-flex items-center justify-center px-4 py-2 text-sm bg-gray-500 hover:bg-gray-600 text-white font-medium rounded-lg transition-colors duration-200">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                         </svg>
@@ -84,8 +84,81 @@
             </form>
         </div>
 
-        <!-- Buses Table -->
-        <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+        {{-- Mobile Card View --}}
+        <div class="block lg:hidden space-y-4">
+            @if($buses->count() > 0)
+                @foreach($buses as $index => $bus)
+                    <div class="bg-white rounded-xl shadow-lg p-4 border border-amber-100">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h3 class="font-bold text-lg text-amber-900">{{ $bus->targa }}</h3>
+                                <p class="text-sm text-amber-600">{{ $bus->driver_name }}</p>
+                                @if($bus->unique_bus_id)
+                                    <p class="text-xs text-amber-500">ID: {{ $bus->unique_bus_id }}</p>
+                                @endif
+                            </div>
+                            <div class="text-right">
+                                @if($bus->status === 'active')
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        ✓ Active
+                                    </span>
+                                @elseif($bus->status === 'maintenance')
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                        ⚠ Maintenance
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                        ✗ Inactive
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-3 text-sm mb-4">
+                            <div>
+                                <span class="text-amber-600 font-medium">Phone:</span>
+                                <p class="text-amber-900">{{ $bus->driver_phone }}</p>
+                            </div>
+                            <div>
+                                <span class="text-amber-600 font-medium">Seats:</span>
+                                <p class="text-amber-900">{{ $bus->total_seats }}</p>
+                            </div>
+                            <div class="col-span-2">
+                                <span class="text-amber-600 font-medium">Mahberat:</span>
+                                <p class="text-amber-900">{{ $bus->mahberat->name ?? 'Not assigned' }}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex gap-2">
+                            <a href="{{ route('admin.buses.show', $bus->id) }}"
+                               class="flex-1 text-center px-3 py-2 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+                                View
+                            </a>
+                            <button onclick="printRow(this)" 
+                                    class="flex-1 px-3 py-2 text-sm bg-green-500 text-white rounded-lg hover:bg-green-600">
+                                Print
+                            </button>
+                            <a href="{{ route('admin.buses.banner', $bus->id) }}"
+                               class="flex-1 text-center px-3 py-2 text-sm bg-amber-500 text-white rounded-lg hover:bg-amber-600">
+                                QR
+                            </a>
+                        </div>
+                    </div>
+                @endforeach
+            @else
+                <div class="text-center py-12 bg-white rounded-xl">
+                    <svg class="mx-auto h-12 w-12 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"></path>
+                    </svg>
+                    <h3 class="mt-2 text-sm font-medium text-amber-900">No buses found</h3>
+                    <p class="mt-1 text-sm text-amber-600">Try adjusting your search or filter criteria.</p>
+                </div>
+            @endif
+        </div>
+
+        {{-- Desktop Table View --}}
+        <div class="hidden lg:block bg-white rounded-2xl shadow-xl overflow-hidden">
             @if($buses->count() > 0)
                 <div class="overflow-x-auto">
                     <table class="min-w-full">
@@ -192,8 +265,8 @@
 
         <!-- Pagination -->
         @if($buses->hasPages())
-        <div class="mt-8 flex justify-center">
-            <div class="bg-white rounded-lg shadow px-6 py-4">
+        <div class="mt-4 sm:mt-8 flex justify-center">
+            <div class="bg-white rounded-lg shadow px-4 sm:px-6 py-3 sm:py-4 w-full sm:w-auto">
                 {{ $buses->links() }}
             </div>
         </div>
