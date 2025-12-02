@@ -14,19 +14,32 @@ use Illuminate\Support\Str;
 class BusController extends Controller
 {
     // List all buses for the logged-in user's mahberat
-    public function index()
+    public function index(Request $request)
     {
         $mahberatId = Auth::user()->mahberat_id;
+        $search = $request->get('search');
         
-        // If user doesn't have mahberat_id, show all buses or handle appropriately
+        $query = Bus::with('owner');
+        
+        // Apply mahberat filter
         if ($mahberatId) {
-            $buses = Bus::with('owner')->where('mahberat_id', $mahberatId)->get();
-        } else {
-            // Show all buses if no mahberat_id (for testing/admin purposes)
-            $buses = Bus::with('owner')->get();
+            $query->where('mahberat_id', $mahberatId);
         }
         
-        return view('mahberat.bus.index', compact('buses'));
+        // Apply search filter
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('targa', 'like', '%' . $search . '%')
+                  ->orWhere('driver_name', 'like', '%' . $search . '%')
+                  ->orWhere('driver_phone', 'like', '%' . $search . '%')
+                  ->orWhere('model', 'like', '%' . $search . '%')
+                  ->orWhere('level', 'like', '%' . $search . '%');
+            });
+        }
+        
+        $buses = $query->paginate(10)->appends(request()->query());
+        
+        return view('mahberat.bus.index', compact('buses', 'search'));
     }
     
     // Show form to create a new bus
