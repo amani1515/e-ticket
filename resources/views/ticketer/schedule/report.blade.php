@@ -181,29 +181,24 @@
                                                 ->count() }}
                                         </span>
                                     </td>
-                                    <td class="px-4 py-3 text-sm text-gray-700">{{ number_format($schedule->tickets()->sum('service_fee'), 2) }}</td>
+                                    <td class="px-4 py-3 text-sm text-gray-700">{{ number_format($schedule->tickets()->whereIn('ticket_status', ['created', 'confirmed'])->sum('service_fee'), 2) }}</td>
                                     <td class="px-4 py-3 text-sm text-gray-700">
-                                        {{ number_format(($schedule->destination->tariff ?? 0) *
-                                            \App\Models\Ticket::where('bus_id', $schedule->bus_id)
-                                                ->where('destination_id', $schedule->destination_id)
-                                                ->where('schedule_id', $schedule->id)
-                                                ->whereIn('ticket_status', ['created', 'confirmed'])
-                                                ->count(), 2) }}
+                                        {{ number_format($schedule->tickets()->whereIn('ticket_status', ['created', 'confirmed'])->sum('tariff'), 2) }}
                                     </td>
-                                    <td class="px-4 py-3 text-sm text-gray-700">{{ number_format($schedule->tickets()->sum('tax'), 2) }}</td>
+                                    <td class="px-4 py-3 text-sm text-gray-700">{{ number_format($schedule->tickets()->whereIn('ticket_status', ['created', 'confirmed'])->sum('tax'), 2) }}</td>
                                     <td class="px-4 py-3 text-sm text-gray-700">
-                                        {{ number_format(($schedule->destination->tariff ?? 0) *
-                                            \App\Models\Ticket::where('bus_id', $schedule->bus_id)
-                                                ->where('destination_id', $schedule->destination_id)
-                                                ->where('schedule_id', $schedule->id)
-                                                ->where('ticket_status', 'cancelled')
-                                                ->count(), 2) }}
+                                        {{ number_format($schedule->tickets()->where('ticket_status', 'cancelled')->sum('tariff'), 2) }}
                                     </td>
                                     <td class="px-4 py-3 text-sm text-gray-700">{{ date('M d, H:i', strtotime($schedule->scheduled_at)) }}</td>
                                     <td class="px-4 py-3 text-sm font-semibold text-green-700">
-                                        {{ number_format(\App\Models\Ticket::where('schedule_id', $schedule->id)
-                                                ->whereIn('ticket_status', ['created', 'confirmed'])
-                                                ->sum('tax'), 2) }}
+                                        @php
+                                            $confirmedTickets = $schedule->tickets()->whereIn('ticket_status', ['created', 'confirmed']);
+                                            $totalTariff = $confirmedTickets->sum('tariff');
+                                            $totalTax = $confirmedTickets->sum('tax');
+                                            $totalServiceFee = $confirmedTickets->sum('service_fee');
+                                            $netBalance = $totalTariff - $totalTax - $totalServiceFee;
+                                        @endphp
+                                        {{ number_format($netBalance, 2) }}
                                     </td>
                                     <td class="px-4 py-3">
                                         @if($schedule->status === 'full')
