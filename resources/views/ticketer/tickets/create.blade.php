@@ -5,7 +5,7 @@
 <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
     <div class="container mx-auto px-4 py-6 max-w-md">
         <!-- Header -->
-        <div class="mb-6 text-center">
+        {{-- <div class="mb-6 text-center">
             <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
                 <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"></path>
@@ -13,7 +13,7 @@
             </div>
             <h1 class="text-2xl font-bold text-blue-900 mb-2">🎫 Create New Ticket</h1>
             <p class="text-blue-700 text-sm">Fill in passenger details to generate ticket</p>
-        </div>
+        </div> --}}
 
         <!-- Success Message -->
         @if (session('success'))
@@ -84,101 +84,55 @@
                     @enderror
                 </div>
 
-                <!-- Age Status -->
-                <div>
-                    <label for="age_status" class="block text-sm font-semibold text-blue-800 mb-2 uppercase tracking-wide">
-                        Age Category <span class="text-red-500">*</span>
-                    </label>
-                    <div class="relative">
-                        <select name="age_status" id="age_status"
-                            class="w-full px-4 py-3 border-2 border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-blue-50 text-lg appearance-none"
-                            required>
-                            <option value="adult" {{ old('age_status') == 'adult' ? 'selected' : '' }}>👨 ወጣት (Adult)</option>
-                            <option value="baby" {{ old('age_status') == 'baby' ? 'selected' : '' }}>👶 ታዳጊ (Child)</option>
-                            <option value="middle_aged" {{ old('age_status') == 'middle_aged' ? 'selected' : '' }}>👩 ጎልማሳ (Middle-aged)</option>
-                            <option value="senior" {{ old('age_status') == 'senior' ? 'selected' : '' }}>👴 አዛውንት (Senior)</option>
-                        </select>
-                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        </div>
-                    </div>
-                    @error('age_status')
-                        <span class="text-red-500 text-sm flex items-center mt-1">
-                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                            {{ e($message) }}
-                        </span>
-                    @enderror
-                </div>
 
                 <!-- Gender -->
-                <div>
-                    <label class="block text-sm font-semibold text-blue-800 mb-2 uppercase tracking-wide">
-                        Gender <span class="text-red-500">*</span>
-                    </label>
-                    <div class="grid grid-cols-2 gap-3">
-                        <label class="relative cursor-pointer">
-                            <input type="radio" name="gender" value="male" {{ old('gender', 'male') == 'male' ? 'checked' : '' }} class="sr-only gender-radio" required>
-                            <div class="gender-option flex items-center justify-center p-4 border-2 border-blue-200 rounded-xl transition duration-200 hover:border-blue-400">
-                                <svg class="w-6 h-6 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                                </svg>
-                                <span class="font-medium text-blue-800">👨 Male</span>
-                            </div>
-                        </label>
-                        <label class="relative cursor-pointer">
-                            <input type="radio" name="gender" value="female" {{ old('gender') == 'female' ? 'checked' : '' }} class="sr-only gender-radio" required>
-                            <div class="gender-option flex items-center justify-center p-4 border-2 border-blue-200 rounded-xl transition duration-200 hover:border-blue-400">
-                                <svg class="w-6 h-6 text-pink-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                                </svg>
-                                <span class="font-medium text-blue-800">👩 Female</span>
-                            </div>
-                        </label>
-                    </div>
-                    @error('gender')
-                        <span class="text-red-500 text-sm flex items-center mt-1">
-                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                            {{ e($message) }}
-                        </span>
-                    @enderror
-                </div>
+               <div>
+    <label class="block text-xs font-semibold text-blue-800 mb-1 uppercase tracking-wide">
+        Gender <span class="text-red-500">*</span>
+    </label>
 
-                <!-- Disability Status -->
-                <div>
-                    <label for="disability_status" class="block text-sm font-semibold text-blue-800 mb-2 uppercase tracking-wide">
-                        Accessibility Needs <span class="text-red-500">*</span>
-                    </label>
-                    <div class="relative">
-                        <select name="disability_status" id="disability_status"
-                            class="w-full px-4 py-3 border-2 border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-blue-50 text-lg appearance-none"
-                            required>
-                            <option value="None" {{ old('disability_status') == 'None' ? 'selected' : '' }}>✅ None</option>
-                            <option value="Blind / Visual Impairment" {{ old('disability_status') == 'Blind / Visual Impairment' ? 'selected' : '' }}>👁️ Visual Impairment</option>
-                            <option value="Deaf / Hard of Hearing" {{ old('disability_status') == 'Deaf / Hard of Hearing' ? 'selected' : '' }}>👂 Hearing Impairment</option>
-                            <option value="Speech Impairment" {{ old('disability_status') == 'Speech Impairment' ? 'selected' : '' }}>🗣️ Speech Impairment</option>
-                        </select>
-                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        </div>
-                    </div>
-                    @error('disability_status')
-                        <span class="text-red-500 text-sm flex items-center mt-1">
-                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                            {{ e($message) }}
-                            
-                        </span>
-                    @enderror
-                </div>
+    <div class="grid grid-cols-2 gap-2">
+        <!-- Male -->
+        <label class="relative cursor-pointer">
+            <input type="radio" name="gender" value="male"
+                {{ old('gender', 'male') == 'male' ? 'checked' : '' }}
+                class="sr-only gender-radio" required>
+
+            <div class="gender-option flex items-center justify-center p-2 border-2 border-blue-200 rounded-lg transition duration-200 hover:border-blue-400">
+                <svg class="w-3 h-3 text-blue-500 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                </svg>
+                <span class="font-medium text-xs text-blue-800">👨 Male</span>
+            </div>
+        </label>
+
+        <!-- Female -->
+        <label class="relative cursor-pointer">
+            <input type="radio" name="gender" value="female"
+                {{ old('gender') == 'female' ? 'checked' : '' }}
+                class="sr-only gender-radio" required>
+
+            <div class="gender-option flex items-center justify-center p-2 border-2 border-blue-200 rounded-lg transition duration-200 hover:border-blue-400">
+                <svg class="w-3 h-3 text-pink-500 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                </svg>
+                <span class="font-medium text-xs text-blue-800">👩 Female</span>
+            </div>
+        </label>
+    </div>
+
+    @error('gender')
+        <span class="text-red-500 text-xs flex items-center mt-1">
+            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            {{ e($message) }}
+        </span>
+    @enderror
+</div>
 
                 <!-- Destination -->
                 <div>
@@ -212,6 +166,70 @@
                         </span>
                     @enderror
                 </div>
+                <!-- Age Status -->
+                <div>
+                    <label for="age_status" class="block text-sm font-semibold text-blue-800 mb-2 uppercase tracking-wide">
+                        Age Category <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
+                        <select name="age_status" id="age_status"
+                            class="w-full px-4 py-3 border-2 border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-blue-50 text-lg appearance-none"
+                            required>
+                            <option value="adult" {{ old('age_status') == 'adult' ? 'selected' : '' }}>👨 ወጣት (Adult)</option>
+                            <option value="baby" {{ old('age_status') == 'baby' ? 'selected' : '' }}>👶 ታዳጊ (Child)</option>
+                            <option value="middle_aged" {{ old('age_status') == 'middle_aged' ? 'selected' : '' }}>👩 ጎልማሳ (Middle-aged)</option>
+                            <option value="senior" {{ old('age_status') == 'senior' ? 'selected' : '' }}>👴 አዛውንት (Senior)</option>
+                        </select>
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    @error('age_status')
+                        <span class="text-red-500 text-sm flex items-center mt-1">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            {{ e($message) }}
+                        </span>
+                    @enderror
+                </div>
+
+                
+
+                <!-- Disability Status -->
+                <div>
+                    <label for="disability_status" class="block text-sm font-semibold text-blue-800 mb-2 uppercase tracking-wide">
+                        Accessibility Needs <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
+                        <select name="disability_status" id="disability_status"
+                            class="w-full px-4 py-3 border-2 border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-blue-50 text-lg appearance-none"
+                            required>
+                            <option value="None" {{ old('disability_status') == 'None' ? 'selected' : '' }}>✅ None</option>
+                            <option value="Blind / Visual Impairment" {{ old('disability_status') == 'Blind / Visual Impairment' ? 'selected' : '' }}>👁️ Visual Impairment</option>
+                            <option value="Deaf / Hard of Hearing" {{ old('disability_status') == 'Deaf / Hard of Hearing' ? 'selected' : '' }}>👂 Hearing Impairment</option>
+                            <option value="Speech Impairment" {{ old('disability_status') == 'Speech Impairment' ? 'selected' : '' }}>🗣️ Speech Impairment</option>
+                        </select>
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    @error('disability_status')
+                        <span class="text-red-500 text-sm flex items-center mt-1">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            {{ e($message) }}
+                            
+                        </span>
+                    @enderror
+                </div>
+
+
 
                 <!-- Bus ID -->
                 <div>
@@ -388,6 +406,14 @@
             </button>
         </div>
     </div>
+</div>
+
+<!-- Floating Submit Button -->
+<div style="position: fixed; right: 10px; top: 50%; transform: translateY(-50%); z-index: 99999;">
+    <button type="submit" form="ticket-form" id="floating-submit-btn"
+        style="background: #2563eb; color: white; border: none; border-radius: 5%; width: 60px; height: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 24px;">
+        Print
+    </button>
 </div>
 
 <!-- Quick View Modal -->
@@ -611,7 +637,16 @@ window.addEventListener('pageshow', function(event) {
 window.onload = function() {
     var destinationSelect = document.getElementById('destination_id');
     if (destinationSelect) {
+        // Load saved destination from localStorage
+        var savedDestination = localStorage.getItem('selected_destination');
+        if (savedDestination && !destinationSelect.value) {
+            destinationSelect.value = savedDestination;
+            fetchBusData(savedDestination);
+        }
+        
         destinationSelect.onchange = function() {
+            // Save selected destination to localStorage
+            localStorage.setItem('selected_destination', this.value);
             fetchBusData(this.value);
         };
         
