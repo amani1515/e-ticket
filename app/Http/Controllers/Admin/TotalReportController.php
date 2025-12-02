@@ -92,6 +92,11 @@ public function exportToTelegram(Request $request)
     $totalBlind = 0;
     $totalDeaf = 0;
     $totalSpeech = 0;
+    
+    // Bus level counts
+    $totalLevel1Buses = 0;
+    $totalLevel2Buses = 0;
+    $totalLevel3Buses = 0;
 
     foreach ($destinations as $destination) {
         $destination->male_count = $destination->tickets()
@@ -163,6 +168,31 @@ public function exportToTelegram(Request $request)
 
         $destination->schedule_count = $scheduleCount;
         $destination->total_km = $scheduleCount * ($destination->distance ?? 0);
+        
+        // Count buses by level for this destination
+        $destination->level1_buses = $destination->schedules()
+            ->join('buses', 'schedules.bus_id', '=', 'buses.id')
+            ->where('buses.level', 'level1')
+            ->when($from, fn($q) => $q->whereDate('schedules.scheduled_at', '>=', $from))
+            ->when($to, fn($q) => $q->whereDate('schedules.scheduled_at', '<=', $to))
+            ->distinct('buses.id')
+            ->count('buses.id');
+            
+        $destination->level2_buses = $destination->schedules()
+            ->join('buses', 'schedules.bus_id', '=', 'buses.id')
+            ->where('buses.level', 'level2')
+            ->when($from, fn($q) => $q->whereDate('schedules.scheduled_at', '>=', $from))
+            ->when($to, fn($q) => $q->whereDate('schedules.scheduled_at', '<=', $to))
+            ->distinct('buses.id')
+            ->count('buses.id');
+            
+        $destination->level3_buses = $destination->schedules()
+            ->join('buses', 'schedules.bus_id', '=', 'buses.id')
+            ->where('buses.level', 'level3')
+            ->when($from, fn($q) => $q->whereDate('schedules.scheduled_at', '>=', $from))
+            ->when($to, fn($q) => $q->whereDate('schedules.scheduled_at', '<=', $to))
+            ->distinct('buses.id')
+            ->count('buses.id');
 
         $totalTickets += $destination->tickets_count;
         $totalMale += $destination->male_count;
@@ -177,6 +207,9 @@ public function exportToTelegram(Request $request)
         $totalBlind += $destination->blind_count;
         $totalDeaf += $destination->deaf_count;
         $totalSpeech += $destination->speech_count;
+        $totalLevel1Buses += $destination->level1_buses;
+        $totalLevel2Buses += $destination->level2_buses;
+        $totalLevel3Buses += $destination->level3_buses;
     }
 
     // Format message
@@ -215,7 +248,8 @@ public function exportToTelegram(Request $request)
             $message .= "   👶 ታዳጊ: **{$destination->baby_count}** | 👦 ወጣት: {$destination->adult_count} \n";
             $message .= "   👨‍💼 ጎልማሳ: {$destination->middle_aged_count} | 👴 ሽማግሌ: {$destination->senior_count}\n\n";
             $message .= "   ♿ የአካል ጉዳት: የሌለባቸው = *{$destination->none_disability}* | ማየት የተሳናቸው= *{$destination->blind_count}* | መስማት የተሳናቸው= *{$destination->deaf_count}* | መናገር የተሳናቸው= *{$destination->speech_count}*\n\n";
-            $message .= "   🚌 የመርሀ-ግብር ብዛት: {$destination->schedule_count} - መለስተኛ\n";
+            $message .= "   🚌 የመርሀ-ግብር ብዛት: {$destination->schedule_count}\n";
+            $message .= "   ከፍተኛ : **{$destination->level1_buses}** | መለስተኛ: **{$destination->level2_buses}** | አነስተኛ: **{$destination->level3_buses}**\n";
             $message .= "   🛣️ Distance: {$destination->total_km} km\n";
         }
     }
@@ -228,7 +262,8 @@ public function exportToTelegram(Request $request)
     $message .= "👶 ታዳጊ: **{$totalBaby}** | 👦 ወጣት: **{$totalAdult}**\n";
     $message .= "👨 ጎልማሳ: **{$totalMiddleAged}** | 👴 ሽማግሌ: **{$totalSenior}**\n \n";
     $message .= "♿ የአካል ጉዳት: የሌለባቸው =  **{$totalNone}** | ማየት  የተሳናቸው= **{$totalBlind}** | መስማት  የተሳናቸው= **{$totalDeaf}** | መናገር  የተሳናቸው= **{$totalSpeech}**\n \n";
-    $message .= "🚌 **ጠቅላላ የመርሀ-ግብር ብዛት: {$totalSchedules} - መለስተኛ **\n";
+    $message .= "🚌 **ጠቅላላ የመርሀ-ግብር ብዛት: {$totalSchedules}**\n";
+    $message .= "**ከፍተኛ: {$totalLevel1Buses}** | **መለስተኛ: {$totalLevel2Buses}** | **አነስተኛ: {$totalLevel3Buses}**\n";
     $message .= "🛣️ **Total KM : {$totalKm} km**\n\n";
     $message .= "═══════════════════════════════════\n";
     $message .= "📅 Generated: " . now()->format('Y-m-d H:i:s') . "\n";
