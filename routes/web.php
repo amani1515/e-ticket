@@ -33,6 +33,7 @@ use App\Http\Controllers\Admin\BackupController;
 use App\Http\Controllers\Admin\SmsTemplateController;
 use App\Http\Controllers\Admin\SyncController;
 use App\Http\Controllers\Balehabt\BusController as BalehabtBusController;
+use App\Http\Controllers\Admin\TransportAuthorityController;
 
 // --------------------
 // Public Routes
@@ -136,6 +137,10 @@ Route::delete('/sync/clear-failed', [SyncController::class, 'clearFailed'])->nam
 Route::post('/sync/retry-failed', [SyncController::class, 'retryFailed'])->name('sync.retry-failed');
 Route::post('/sync/auto-toggle', [SyncController::class, 'toggleAutoSync'])->name('sync.auto-toggle');
 Route::get('/sync/auto-status', [SyncController::class, 'getAutoSyncStatus'])->name('sync.auto-status');
+
+// Transport Authority
+Route::get('transport-authority', [TransportAuthorityController::class, 'index'])->name('transport-authority.index');
+Route::post('transport-authority/send', [TransportAuthorityController::class, 'send'])->name('transport-authority.send');
 
 });
 
