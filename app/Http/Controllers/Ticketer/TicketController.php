@@ -123,6 +123,9 @@ public function store(Request $request)
     // Add leading 0 to phone number for storage
     $phoneNo = $request->phone_no ? '0' . $request->phone_no : null;
     
+    // Get the correct tariff based on bus level
+    $tariff = $destination->getTariffForLevel($bus->level);
+    
     $ticket = Ticket::create([
         'cargo_id' => $request->cargo_id,
         'passenger_name' => $request->passenger_name,
@@ -134,7 +137,8 @@ public function store(Request $request)
         'departure_datetime' => $request->departure_datetime,
         'ticket_code' => 'SE' . now()->format('Ymd') . strtoupper(uniqid()),
         'creator_user_id' => auth()->id(),
-        'tax' => $destination->tariff,
+        'tariff' => $tariff,
+        'tax' => $destination->tax,
         'service_fee' => $destination->service_fee,
         'ticket_status' => 'created',
         'disability_status' => $request->disability_status,

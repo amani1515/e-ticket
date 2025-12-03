@@ -95,9 +95,20 @@
                                 </div>
                             </div>
 
-                            <!-- Tariff -->
-                            <div>
-                                <label class="block text-sm font-semibold text-amber-800 mb-2 uppercase tracking-wide">Base Tariff</label>
+                            <!-- Same for All Levels Checkbox -->
+                            <div class="md:col-span-2">
+                                <div class="flex items-center space-x-3 p-4 bg-amber-50 rounded-xl border-2 border-amber-200">
+                                    <input type="checkbox" id="same_for_all_levels" name="same_for_all_levels" value="1" 
+                                           class="w-5 h-5 text-amber-600 bg-white border-amber-300 rounded focus:ring-amber-500" checked>
+                                    <label for="same_for_all_levels" class="text-sm font-semibold text-amber-800">
+                                        Same tariff for all bus levels (Level 1, 2, 3)
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Base Tariff -->
+                            <div id="base_tariff_section" class="md:col-span-2">
+                                <label class="block text-sm font-semibold text-amber-800 mb-2 uppercase tracking-wide">Base Tariff (All Levels)</label>
                                 <div class="relative">
                                     <input 
                                         type="number" 
@@ -109,6 +120,62 @@
                                         required>
                                     <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                                         <span class="text-amber-600 text-sm font-medium">ETB</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Level-Specific Tariffs -->
+                            <div id="level_tariffs_section" class="md:col-span-2 hidden">
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <!-- Level 1 Tariff -->
+                                    <div>
+                                        <label class="block text-sm font-semibold text-amber-800 mb-2 uppercase tracking-wide">Level 1 Tariff</label>
+                                        <div class="relative">
+                                            <input 
+                                                type="number" 
+                                                step="0.01"
+                                                name="level1_tariff" 
+                                                id="level1_tariff"
+                                                class="w-full px-4 py-3 border-2 border-amber-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition duration-200 bg-amber-50"
+                                                placeholder="0.00">
+                                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                                <span class="text-amber-600 text-sm font-medium">ETB</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Level 2 Tariff -->
+                                    <div>
+                                        <label class="block text-sm font-semibold text-amber-800 mb-2 uppercase tracking-wide">Level 2 Tariff</label>
+                                        <div class="relative">
+                                            <input 
+                                                type="number" 
+                                                step="0.01"
+                                                name="level2_tariff" 
+                                                id="level2_tariff"
+                                                class="w-full px-4 py-3 border-2 border-amber-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition duration-200 bg-amber-50"
+                                                placeholder="0.00">
+                                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                                <span class="text-amber-600 text-sm font-medium">ETB</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Level 3 Tariff -->
+                                    <div>
+                                        <label class="block text-sm font-semibold text-amber-800 mb-2 uppercase tracking-wide">Level 3 Tariff</label>
+                                        <div class="relative">
+                                            <input 
+                                                type="number" 
+                                                step="0.01"
+                                                name="level3_tariff" 
+                                                id="level3_tariff"
+                                                class="w-full px-4 py-3 border-2 border-amber-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition duration-200 bg-amber-50"
+                                                placeholder="0.00">
+                                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                                <span class="text-amber-600 text-sm font-medium">ETB</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -217,8 +284,31 @@
         limitInput(document.getElementById('destination_name'));
         limitInput(document.getElementById('start_from'));
 
+        // Toggle level tariffs visibility
+        const sameForAllCheckbox = document.getElementById('same_for_all_levels');
+        const baseTariffSection = document.getElementById('base_tariff_section');
+        const levelTariffsSection = document.getElementById('level_tariffs_section');
+        
+        sameForAllCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                baseTariffSection.classList.remove('hidden');
+                levelTariffsSection.classList.add('hidden');
+                document.getElementById('tariff').required = true;
+                document.getElementById('level1_tariff').required = false;
+                document.getElementById('level2_tariff').required = false;
+                document.getElementById('level3_tariff').required = false;
+            } else {
+                baseTariffSection.classList.add('hidden');
+                levelTariffsSection.classList.remove('hidden');
+                document.getElementById('tariff').required = false;
+                document.getElementById('level1_tariff').required = true;
+                document.getElementById('level2_tariff').required = true;
+                document.getElementById('level3_tariff').required = true;
+            }
+        });
+
         // Numeric input restrictions with alert
-        const numericFields = ['distance', 'tariff', 'tax', 'service_fee'];
+        const numericFields = ['distance', 'tariff', 'tax', 'service_fee', 'level1_tariff', 'level2_tariff', 'level3_tariff'];
 
         // Create alert box
         let alertBox = document.createElement('div');

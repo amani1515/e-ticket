@@ -24,6 +24,7 @@ class Ticket extends Model
         'ticket_code',
         'ticket_status',
         'creator_user_id',
+        'tariff',
         'tax',
         'service_fee',
         'fayda_id',
@@ -74,6 +75,22 @@ public function mahberat()
 public function balehabt()
 {
     return $this->belongsTo(User::class, 'balehabt_id');
+}
+
+public function calculateTotalPrice(): float
+{
+    // Use stored tariff if available, otherwise calculate from destination
+    $baseTariff = (float) ($this->tariff ?? $this->destination->tariff);
+    
+    // If no stored tariff and bus has level, get level-specific tariff
+    if (!$this->tariff && $this->bus && $this->bus->level && $this->destination) {
+        $baseTariff = $this->destination->getTariffForLevel($this->bus->level);
+    }
+    
+    $tax = (float) ($this->tax ?? $this->destination->tax ?? 0);
+    $serviceFee = (float) ($this->service_fee ?? $this->destination->service_fee ?? 0);
+    
+    return $baseTariff + $tax + $serviceFee;
 }
 
 protected function getUuidData(): array
