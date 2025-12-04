@@ -141,6 +141,7 @@ Route::get('/sync/auto-status', [SyncController::class, 'getAutoSyncStatus'])->n
 // Transport Authority
 Route::get('transport-authority', [TransportAuthorityController::class, 'index'])->name('transport-authority.index');
 Route::post('transport-authority/send', [TransportAuthorityController::class, 'send'])->name('transport-authority.send');
+Route::get('transport-authority/export', [TransportAuthorityController::class, 'export'])->name('transport-authority.export');
 
 });
 

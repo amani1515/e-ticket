@@ -33,8 +33,13 @@ class TransportAuthorityController extends Controller
     {
         $date = $request->get('date', Carbon::today()->format('Y-m-d'));
         
+        // Check if API URL is configured
+        if (!env('TRANSPORT_API_URL')) {
+            return back()->with('error', 'Transport Authority API URL not configured');
+        }
+        
         try {
-            $response = Http::timeout(30)->asForm()->post(env('TRANSPORT_API_URL') . '/api/upload-csv', [
+            $response = Http::timeout(10)->asForm()->post(env('TRANSPORT_API_URL') . '/api/upload-csv', [
                 'type' => 'all',
                 'date' => $date,
                 'csv_data' => $this->generateAllData($date),
@@ -46,6 +51,8 @@ class TransportAuthorityController extends Controller
             } else {
                 return back()->with('error', 'Failed to send data: ' . $response->body());
             }
+        } catch (\Illuminate\Http\Client\ConnectionException $e) {
+            return back()->with('error', 'Cannot connect to Transport Authority server. Please ensure the API server is running on ' . env('TRANSPORT_API_URL'));
         } catch (\Exception $e) {
             return back()->with('error', 'Error: ' . $e->getMessage());
         }
@@ -100,5 +107,17 @@ class TransportAuthorityController extends Controller
         ];
 
         return json_encode($data);
+    }
+
+    public function export(Request $request)
+    {
+        $date = $request->get('date', Carbon::today()->format('Y-m-d'));
+        $data = json_decode($this->generateAllData($date), true);
+        
+        $filename = 'transport_authority_data_' . $date . '.json';
+        
+        return response()->json($data)
+            ->header('Content-Disposition', 'attachment; filename="' . $filename . '"')
+            ->header('Content-Type', 'application/json');
     }
 }
