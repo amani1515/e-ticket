@@ -137,6 +137,10 @@ Route::post('/sync/retry-failed', [SyncController::class, 'retryFailed'])->name(
 Route::post('/sync/auto-toggle', [SyncController::class, 'toggleAutoSync'])->name('sync.auto-toggle');
 Route::get('/sync/auto-status', [SyncController::class, 'getAutoSyncStatus'])->name('sync.auto-status');
 
+// Export page
+Route::get('/export', [\App\Http\Controllers\Admin\ExportController::class, 'index'])->name('export.index');
+Route::get('/export/destinations-csv', [\App\Http\Controllers\Admin\ExportController::class, 'exportDestinationsCsv'])->name('export.destinations.csv');
+
 });
 
 // Reports accessible by both admin and headoffice
