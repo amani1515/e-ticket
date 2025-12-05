@@ -48,6 +48,20 @@
                     Export CSV
                 </a>
             </div>
+
+            <!-- Schedules Export -->
+            <div class="bg-orange-50 border border-orange-200 rounded-lg p-6">
+                <div class="flex items-center mb-4">
+                    <svg class="w-8 h-8 text-orange-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3a1 1 0 011-1h6a1 1 0 011 1v4h3a1 1 0 011 1v8a1 1 0 01-1 1H5a1 1 0 01-1-1V8a1 1 0 011-1h3z"></path>
+                    </svg>
+                    <h3 class="text-lg font-semibold text-orange-800">Schedules</h3>
+                </div>
+                <p class="text-orange-600 mb-4">Export schedule data</p>
+                <a href="{{ route('admin.export.schedules.csv') }}" class="block w-full bg-orange-600 text-white py-2 px-4 rounded hover:bg-orange-700 transition-colors text-center">
+                    Export CSV
+                </a>
+            </div>
         </div>
     </div>
 </div>

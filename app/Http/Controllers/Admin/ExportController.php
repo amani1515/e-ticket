@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Destination;
 use App\Models\Bus;
+use App\Models\Schedule;
 use Illuminate\Http\Response;
 
 class ExportController extends Controller
@@ -59,5 +60,28 @@ class ExportController extends Controller
         return response($csvData)
             ->header('Content-Type', 'text/csv')
             ->header('Content-Disposition', 'attachment; filename="buses_export.csv"');
+    }
+
+    public function exportSchedulesCsv()
+    {
+        $schedules = Schedule::with(['bus', 'destination'])->get();
+        
+        $csvData = "schedule_uuid,targa,route_uuid,ticket_office_uuid,scheduled_at,status,boarding\n";
+        
+        foreach ($schedules as $schedule) {
+            $scheduleUuid = $schedule->uuid ?? '';
+            $targa = $schedule->bus->targa ?? '';
+            $routeUuid = $schedule->destination ? substr($schedule->destination->destination_name, 0, 3) . '/' .substr($schedule->destination->start_from, 0, 3) : '';
+            $ticketOfficeUuid = $schedule->destination->start_from .' ' .'bus station 1' ?? '';
+            $scheduledAt = $schedule->created_at ?? '';
+            $status = $schedule->status ?? 'scheduled';
+            $boarding = $schedule->boarding ?? 0;
+            
+            $csvData .= "\"$scheduleUuid\",\"$targa\",\"$routeUuid\",\"$ticketOfficeUuid\",\"$scheduledAt\",\"$status\",$boarding\n";
+        }
+        
+        return response($csvData)
+            ->header('Content-Type', 'text/csv')
+            ->header('Content-Disposition', 'attachment; filename="schedules_export.csv"');
     }
 }
