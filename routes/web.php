@@ -145,6 +145,7 @@ Route::get('/export/schedules-csv', [\App\Http\Controllers\Admin\ExportControlle
 Route::get('/export/tickets-csv', [\App\Http\Controllers\Admin\ExportController::class, 'exportTicketsCsv'])->name('export.tickets.csv');
 Route::get('/export/download-all', [\App\Http\Controllers\Admin\ExportController::class, 'downloadAllSeparate'])->name('export.download.all');
 Route::get('/export/all-csv', [\App\Http\Controllers\Admin\ExportController::class, 'exportAllCsv'])->name('export.all.csv');
+Route::get('/export/count', [\App\Http\Controllers\Admin\ExportController::class, 'getExportCounts'])->name('export.count');
 
 });
 

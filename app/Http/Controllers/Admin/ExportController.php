@@ -8,6 +8,8 @@ use App\Models\Bus;
 use App\Models\Schedule;
 use App\Models\Ticket;
 use Illuminate\Http\Response;
+use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class ExportController extends Controller
 {
@@ -67,9 +69,27 @@ class ExportController extends Controller
             ->header('Content-Disposition', "attachment; filename=\"$filename\"");
     }
 
-    public function exportSchedulesCsv()
+    public function exportSchedulesCsv(Request $request)
     {
-        $schedules = Schedule::with(['bus', 'destination'])->get();
+        $query = Schedule::with(['bus', 'destination']);
+        
+        if ($request->has('filter')) {
+            switch ($request->filter) {
+                case 'daily':
+                    $query->whereDate('created_at', Carbon::today());
+                    break;
+                case 'weekly':
+                    $query->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
+                    break;
+                case 'range':
+                    if ($request->start_date && $request->end_date) {
+                        $query->whereBetween('created_at', [$request->start_date, $request->end_date]);
+                    }
+                    break;
+            }
+        }
+        
+        $schedules = $query->get();
         $dateTime = now()->format('Y-m-d_H-i-s');
         $firstSchedule = $schedules->first();
         $startFrom = $firstSchedule && $firstSchedule->destination ? $firstSchedule->destination->start_from : 'schedules';
@@ -94,9 +114,27 @@ class ExportController extends Controller
             ->header('Content-Disposition', "attachment; filename=\"$filename\"");
     }
 
-    public function exportTicketsCsv()
+    public function exportTicketsCsv(Request $request)
     {
-        $tickets = Ticket::with(['schedule.destination'])->get();
+        $query = Ticket::with(['schedule.destination']);
+        
+        if ($request->has('filter')) {
+            switch ($request->filter) {
+                case 'daily':
+                    $query->whereDate('created_at', Carbon::today());
+                    break;
+                case 'weekly':
+                    $query->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
+                    break;
+                case 'range':
+                    if ($request->start_date && $request->end_date) {
+                        $query->whereBetween('created_at', [$request->start_date, $request->end_date]);
+                    }
+                    break;
+            }
+        }
+        
+        $tickets = $query->get();
         $dateTime = now()->format('Y-m-d_H-i-s');
         $firstTicket = $tickets->first();
         $startFrom = $firstTicket && $firstTicket->schedule && $firstTicket->schedule->destination ? $firstTicket->schedule->destination->start_from : 'tickets';
@@ -118,12 +156,12 @@ class ExportController extends Controller
             ->header('Content-Disposition', "attachment; filename=\"$filename\"");
     }
 
-    public function downloadAllSeparate()
+    public function downloadAllSeparate(Request $request)
     {
-        return view('admin.export.download-all-auto');
+        return view('admin.export.download-all-auto', compact('request'));
     }
 
-    public function exportAllCsv()
+    public function exportAllCsv(Request $request)
     {
         $dateTime = now()->format('Y-m-d_H-i-s');
         $filename = "all_data_export_{$dateTime}.csv";
@@ -164,7 +202,25 @@ class ExportController extends Controller
         // Schedules
         $csvData .= "\n=== SCHEDULES ===\n";
         $csvData .= "schedule_uuid,targa,route_uuid,ticket_office_uuid,scheduled_at,status,boarding\n";
-        $schedules = Schedule::with(['bus', 'destination'])->get();
+        $scheduleQuery = Schedule::with(['bus', 'destination']);
+        
+        if ($request->has('filter')) {
+            switch ($request->filter) {
+                case 'daily':
+                    $scheduleQuery->whereDate('created_at', Carbon::today());
+                    break;
+                case 'weekly':
+                    $scheduleQuery->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
+                    break;
+                case 'range':
+                    if ($request->start_date && $request->end_date) {
+                        $scheduleQuery->whereBetween('created_at', [$request->start_date, $request->end_date]);
+                    }
+                    break;
+            }
+        }
+        
+        $schedules = $scheduleQuery->get();
         foreach ($schedules as $schedule) {
             $scheduleUuid = $schedule->uuid ?? '';
             $targa = $schedule->bus->targa ?? '';
@@ -179,7 +235,25 @@ class ExportController extends Controller
         // Tickets
         $csvData .= "\n=== TICKETS ===\n";
         $csvData .= "ticket_uuid,schedule_uuid,passenger_name,gender\n";
-        $tickets = Ticket::with(['schedule.destination'])->get();
+        $ticketQuery = Ticket::with(['schedule.destination']);
+        
+        if ($request->has('filter')) {
+            switch ($request->filter) {
+                case 'daily':
+                    $ticketQuery->whereDate('created_at', Carbon::today());
+                    break;
+                case 'weekly':
+                    $ticketQuery->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
+                    break;
+                case 'range':
+                    if ($request->start_date && $request->end_date) {
+                        $ticketQuery->whereBetween('created_at', [$request->start_date, $request->end_date]);
+                    }
+                    break;
+            }
+        }
+        
+        $tickets = $ticketQuery->get();
         foreach ($tickets as $ticket) {
             $ticketUuid = $ticket->uuid ?? '';
             $scheduleUuid = $ticket->schedule->uuid ?? '';
@@ -191,5 +265,43 @@ class ExportController extends Controller
         return response($csvData)
             ->header('Content-Type', 'text/csv')
             ->header('Content-Disposition', "attachment; filename=\"$filename\"");
+    }
+
+    public function getExportCounts(Request $request)
+    {
+        $destinations = Destination::count();
+        $buses = Bus::count();
+        
+        $scheduleQuery = Schedule::query();
+        $ticketQuery = Ticket::query();
+        
+        if ($request->has('filter')) {
+            switch ($request->filter) {
+                case 'daily':
+                    $scheduleQuery->whereDate('created_at', Carbon::today());
+                    $ticketQuery->whereDate('created_at', Carbon::today());
+                    break;
+                case 'weekly':
+                    $scheduleQuery->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
+                    $ticketQuery->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
+                    break;
+                case 'range':
+                    if ($request->start_date && $request->end_date) {
+                        $scheduleQuery->whereBetween('created_at', [$request->start_date, $request->end_date]);
+                        $ticketQuery->whereBetween('created_at', [$request->start_date, $request->end_date]);
+                    }
+                    break;
+            }
+        }
+        
+        $schedules = $scheduleQuery->count();
+        $tickets = $ticketQuery->count();
+        
+        return response()->json([
+            'destinations' => $destinations,
+            'buses' => $buses,
+            'schedules' => $schedules,
+            'tickets' => $tickets
+        ]);
     }
 }

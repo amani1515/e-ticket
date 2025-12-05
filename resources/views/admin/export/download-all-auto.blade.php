@@ -11,21 +11,19 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const filterParams = urlParams.toString();
+    
     const downloads = [
         '{{ route("admin.export.destinations.csv") }}',
         '{{ route("admin.export.buses.csv") }}',
-        '{{ route("admin.export.schedules.csv") }}',
-        '{{ route("admin.export.tickets.csv") }}'
+        '{{ route("admin.export.schedules.csv") }}' + (filterParams ? '?' + filterParams : ''),
+        '{{ route("admin.export.tickets.csv") }}' + (filterParams ? '?' + filterParams : '')
     ];
     
     downloads.forEach((url, index) => {
         setTimeout(() => {
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = '';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            window.open(url, '_blank');
         }, index * 1000);
     });
 });
