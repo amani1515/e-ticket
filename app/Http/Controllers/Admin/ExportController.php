@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Destination;
+use App\Models\Bus;
 use Illuminate\Http\Response;
 
 class ExportController extends Controller
@@ -38,5 +39,25 @@ class ExportController extends Controller
         return response($csvData)
             ->header('Content-Type', 'text/csv')
             ->header('Content-Disposition', 'attachment; filename="destinations_export.csv"');
+    }
+
+    public function exportBusesCsv()
+    {
+        $buses = Bus::all();
+        
+        $csvData = "targa,capacity,level,is_active\n";
+        
+        foreach ($buses as $bus) {
+            $targa = $bus->targa ?? '';
+            $capacity = $bus->total_seats ?? 0;
+            $level = $bus->level ?? 1;
+            $isActive = 1;
+            
+            $csvData .= "\"$targa\",$capacity,$level,$isActive\n";
+        }
+        
+        return response($csvData)
+            ->header('Content-Type', 'text/csv')
+            ->header('Content-Disposition', 'attachment; filename="buses_export.csv"');
     }
 }

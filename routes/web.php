@@ -140,6 +140,7 @@ Route::get('/sync/auto-status', [SyncController::class, 'getAutoSyncStatus'])->n
 // Export page
 Route::get('/export', [\App\Http\Controllers\Admin\ExportController::class, 'index'])->name('export.index');
 Route::get('/export/destinations-csv', [\App\Http\Controllers\Admin\ExportController::class, 'exportDestinationsCsv'])->name('export.destinations.csv');
+Route::get('/export/buses-csv', [\App\Http\Controllers\Admin\ExportController::class, 'exportBusesCsv'])->name('export.buses.csv');
 
 });
 

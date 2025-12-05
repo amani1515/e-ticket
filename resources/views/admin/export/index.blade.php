@@ -29,9 +29,9 @@
                     <h3 class="text-lg font-semibold text-green-800">Buses</h3>
                 </div>
                 <p class="text-green-600 mb-4">Export bus information</p>
-                <button class="w-full bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition-colors">
-                    Export Buses
-                </button>
+                <a href="{{ route('admin.export.buses.csv') }}" class="block w-full bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition-colors text-center">
+                    Export CSV
+                </a>
             </div>
 
             <!-- Destinations Export -->
