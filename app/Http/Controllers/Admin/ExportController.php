@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Destination;
 use App\Models\Bus;
 use App\Models\Schedule;
+use App\Models\Ticket;
 use Illuminate\Http\Response;
 
 class ExportController extends Controller
@@ -83,5 +84,25 @@ class ExportController extends Controller
         return response($csvData)
             ->header('Content-Type', 'text/csv')
             ->header('Content-Disposition', 'attachment; filename="schedules_export.csv"');
+    }
+
+    public function exportTicketsCsv()
+    {
+        $tickets = Ticket::with('schedule')->get();
+        
+        $csvData = "ticket_uuid,schedule_uuid,passenger_name,gender\n";
+        
+        foreach ($tickets as $ticket) {
+            $ticketUuid = $ticket->uuid ?? '';
+            $scheduleUuid = $ticket->schedule->uuid ?? '';
+            $passengerName = $ticket->passenger_name ?? '';
+            $gender = $ticket->gender ?? '';
+            
+            $csvData .= "\"$ticketUuid\",\"$scheduleUuid\",\"$passengerName\",\"$gender\"\n";
+        }
+        
+        return response($csvData)
+            ->header('Content-Type', 'text/csv')
+            ->header('Content-Disposition', 'attachment; filename="tickets_export.csv"');
     }
 }
