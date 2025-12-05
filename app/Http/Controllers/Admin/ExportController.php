@@ -13,28 +13,6 @@ use Carbon\Carbon;
 
 class ExportController extends Controller
 {
-    private function getRouteUuid($destination)
-    {
-        if (!$destination) return '';
-        
-        $routeMap = [
-            'አዘና->ኮሶበር' => 'AZE/KOS',
-            'አዘና->ግምጃ ቤት' => 'AZE/GMJ',
-            'ዚገም->ቻግኒ' => 'ZIG/CHG',
-            'ሽንዲ->ወገዳድ' => 'SHD/WOG',
-            'ሽንዲ->ኮኪ' => 'SHD/KOK',
-            'ሽንዲ->ዋዝንግዝ' => 'SHD/WZG',
-            'ሽንዲ->ጎመር' => 'SHD/GOM',
-            'ሽንዲ->ኽረጥ' => 'SHD/HRT',
-            'ሽንዲ->ቡሬ' => 'SHD/BUR',
-            'ሽንዲ->ቲሊሊ' => 'SHD/TIL',
-            'ሽንዲ->በሊማ' => 'SHD/BEL'
-        ];
-        
-        $key = $destination->start_from . '->' . $destination->destination_name;
-        return $routeMap[$key] ?? substr($destination->destination_name, 0, 3) . '/' . substr($destination->start_from, 0, 3);
-    }
-
     public function index()
     {
         return view('admin.export.index');
@@ -122,8 +100,8 @@ class ExportController extends Controller
         foreach ($schedules as $schedule) {
             $scheduleUuid = $schedule->uuid ?? '';
             $targa = $schedule->bus->targa ?? '';
-            $routeUuid = $this->getRouteUuid($schedule->destination);
-            $ticketOfficeUuid = 'Azena1';
+            $routeUuid = $schedule->destination ? substr($schedule->destination->destination_name, 0, 3) . '/' .substr($schedule->destination->start_from, 0, 3) : '';
+            $ticketOfficeUuid = $schedule->destination->start_from .' ' .'bus station 1' ?? '';
             $scheduledAt = $schedule->created_at ?? '';
             $status = $schedule->status ?? 'scheduled';
             $boarding = $schedule->boarding ?? 0;
