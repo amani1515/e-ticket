@@ -134,38 +134,7 @@
     @enderror
 </div>
 
-                <!-- Destination -->
-                <div>
-                    <label for="destination_id" class="block text-sm font-semibold text-blue-800 mb-2 uppercase tracking-wide">
-                        Destination <span class="text-red-500">*</span>
-                    </label>
-                    <div class="relative">
-                        <select name="destination_id" id="destination_id"
-                            class="w-full px-4 py-3 border-2 border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-blue-50 text-lg appearance-none"
-                            required>
-                            <option value="" disabled selected>Select Destination *</option>
-                            @foreach (auth()->user()->destinations as $destination)
-                                <option value="{{ $destination->id }}"
-                                    {{ old('destination_id') == $destination->id ? 'selected' : '' }}>
-                                    📍 {{ e($destination->destination_name) }}
-                                </option>
-                            @endforeach
-                        </select>
-                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        </div>
-                    </div>
-                    @error('destination_id')
-                        <span class="text-red-500 text-sm flex items-center mt-1">
-                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                            {{ e($message) }}
-                        </span>
-                    @enderror
-                </div>
+               
                 <!-- Age Status -->
                 <div>
                     <label for="age_status" class="block text-sm font-semibold text-blue-800 mb-2 uppercase tracking-wide">
@@ -229,7 +198,38 @@
                     @enderror
                 </div>
 
-
+ <!-- Destination -->
+                <div>
+                    <label for="destination_id" class="block text-sm font-semibold text-blue-800 mb-2 uppercase tracking-wide">
+                        Destination <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
+                        <select name="destination_id" id="destination_id"
+                            class="w-full px-4 py-3 border-2 border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-blue-50 text-lg appearance-none"
+                            required>
+                            <option value="" disabled selected>Select Destination *</option>
+                            @foreach (auth()->user()->destinations as $destination)
+                                <option value="{{ $destination->id }}"
+                                    {{ old('destination_id') == $destination->id ? 'selected' : '' }}>
+                                    📍 {{ e($destination->destination_name) }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    @error('destination_id')
+                        <span class="text-red-500 text-sm flex items-center mt-1">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            {{ e($message) }}
+                        </span>
+                    @enderror
+                </div>
 
                 <!-- Bus ID -->
                 <div>
