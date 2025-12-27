@@ -93,7 +93,7 @@ class ExportController extends Controller
 
     public function exportSchedulesCsv(Request $request)
     {
-        $query = Schedule::with(['bus', 'destination']);
+        $query = Schedule::with(['bus', 'destination', 'user']);
         
         if ($request->has('filter')) {
             switch ($request->filter) {
@@ -117,7 +117,7 @@ class ExportController extends Controller
         $startFrom = $firstSchedule && $firstSchedule->destination ? $firstSchedule->destination->start_from : 'schedules';
         $filename = "{$startFrom}_schedules_export_{$dateTime}.csv";
         
-        $csvData = "schedule_uuid,targa,route_uuid,ticket_office_uuid,scheduled_at,status,boarding\n";
+        $csvData = "schedule_uuid,targa,route_uuid,ticket_office_uuid,scheduled_at,status,boarding,scheduled_by\n";
         
         foreach ($schedules as $schedule) {
             $scheduleUuid = $schedule->uuid ?? '';
@@ -127,8 +127,9 @@ class ExportController extends Controller
             $scheduledAt = $schedule->created_at ?? '';
             $status = $schedule->status ?? 'scheduled';
             $boarding = $schedule->boarding ?? 0;
+            $scheduledBy = $schedule->user->name ?? '';
             
-            $csvData .= "\"$scheduleUuid\",\"$targa\",\"$routeUuid\",\"$ticketOfficeUuid\",\"$scheduledAt\",\"$status\",$boarding\n";
+            $csvData .= "\"$scheduleUuid\",\"$targa\",\"$routeUuid\",\"$ticketOfficeUuid\",\"$scheduledAt\",\"$status\",$boarding,\"$scheduledBy\"\n";
         }
         
         return response($csvData)
@@ -224,8 +225,8 @@ class ExportController extends Controller
         
         // Schedules
         $csvData .= "\n=== SCHEDULES ===\n";
-        $csvData .= "schedule_uuid,targa,route_uuid,ticket_office_uuid,scheduled_at,status,boarding\n";
-        $scheduleQuery = Schedule::with(['bus', 'destination']);
+        $csvData .= "schedule_uuid,targa,route_uuid,ticket_office_uuid,scheduled_at,status,boarding,scheduled_by\n";
+        $scheduleQuery = Schedule::with(['bus', 'destination', 'user']);
         
         if ($request->has('filter')) {
             switch ($request->filter) {
@@ -252,7 +253,8 @@ class ExportController extends Controller
             $scheduledAt = $schedule->created_at ?? '';
             $status = $schedule->status ?? 'scheduled';
             $boarding = $schedule->boarding ?? 0;
-            $csvData .= "\"$scheduleUuid\",\"$targa\",\"$routeUuid\",\"$ticketOfficeUuid\",\"$scheduledAt\",\"$status\",$boarding\n";
+            $scheduledBy = $schedule->user->name ?? '';
+            $csvData .= "\"$scheduleUuid\",\"$targa\",\"$routeUuid\",\"$ticketOfficeUuid\",\"$scheduledAt\",\"$status\",$boarding,\"$scheduledBy\"\n";
         }
         
         // Tickets
