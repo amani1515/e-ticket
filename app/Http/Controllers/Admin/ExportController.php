@@ -138,7 +138,7 @@ class ExportController extends Controller
 
     public function exportTicketsCsv(Request $request)
     {
-        $query = Ticket::with(['schedule.destination']);
+        $query = Ticket::with(['schedule.destination', 'user']);
         
         if ($request->has('filter')) {
             switch ($request->filter) {
@@ -162,15 +162,16 @@ class ExportController extends Controller
         $startFrom = $firstTicket && $firstTicket->schedule && $firstTicket->schedule->destination ? $firstTicket->schedule->destination->start_from : 'tickets';
         $filename = "{$startFrom}_tickets_export_{$dateTime}.csv";
         
-        $csvData = "ticket_uuid,schedule_uuid,passenger_name,gender\n";
+        $csvData = "ticket_uuid,schedule_uuid,passenger_name,gender,created_by\n";
         
         foreach ($tickets as $ticket) {
             $ticketUuid = $ticket->uuid ?? '';
             $scheduleUuid = $ticket->schedule->uuid ?? '';
             $passengerName = $ticket->passenger_name ?? '';
             $gender = $ticket->gender ?? '';
+            $createdBy = $ticket->user->name ?? '';
             
-            $csvData .= "\"$ticketUuid\",\"$scheduleUuid\",\"$passengerName\",\"$gender\"\n";
+            $csvData .= "\"$ticketUuid\",\"$scheduleUuid\",\"$passengerName\",\"$gender\",\"$createdBy\"\n";
         }
         
         return response($csvData)
@@ -256,8 +257,8 @@ class ExportController extends Controller
         
         // Tickets
         $csvData .= "\n=== TICKETS ===\n";
-        $csvData .= "ticket_uuid,schedule_uuid,passenger_name,gender\n";
-        $ticketQuery = Ticket::with(['schedule.destination']);
+        $csvData .= "ticket_uuid,schedule_uuid,passenger_name,gender,created_by\n";
+        $ticketQuery = Ticket::with(['schedule.destination', 'user']);
         
         if ($request->has('filter')) {
             switch ($request->filter) {
@@ -281,7 +282,8 @@ class ExportController extends Controller
             $scheduleUuid = $ticket->schedule->uuid ?? '';
             $passengerName = $ticket->passenger_name ?? '';
             $gender = $ticket->gender ?? '';
-            $csvData .= "\"$ticketUuid\",\"$scheduleUuid\",\"$passengerName\",\"$gender\"\n";
+            $createdBy = $ticket->user->name ?? '';
+            $csvData .= "\"$ticketUuid\",\"$scheduleUuid\",\"$passengerName\",\"$gender\",\"$createdBy\"\n";
         }
         
         return response($csvData)
